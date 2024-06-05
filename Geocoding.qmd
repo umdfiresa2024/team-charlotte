@@ -179,7 +179,8 @@ points(x = pts, col="red", pch = 20, cex = 1)
 ```{r}
 x <- vect(sample_latlon, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 plot(x)
-pts_buffer <- buffer(x, width = 1000)
+# You can change this
+pts_buffer <- buffer(x, width = 3000)
 plot(pts_buffer)
 
 char_lr <- vect("/Users/paditya9/team-charlotte/lr_1km_buff/lr_1km_buff.shp")
@@ -207,8 +208,4 @@ points(x)
 lines(lr_project, col="blue")
 lines(pts_buffer1, col = "green")
 lines(pts_buffer, col = "red")
-
-
-
-#?buffer
 ```
