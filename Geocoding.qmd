@@ -35,7 +35,7 @@ library("maptiles")
 Using Google API
 
 ```{r}
-
+# DONT RUN THIS CODE
 c<-read.csv("FinalLightBlueDataset.csv")
 c
 
@@ -51,6 +51,7 @@ addr.geo <- mutate_geocode(c, location = stations, output = "latlona")
 ### Transferring Data into CSV File
 
 ```{r}
+# DONT RUN THIS CODE
 write.csv(addr.geo, "geocoded_data.csv", row.names = FALSE)
 ```
 
@@ -179,7 +180,7 @@ points(x = pts, col="red", pch = 20, cex = 1)
 ```{r}
 x <- vect(sample_latlon, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 plot(x)
-# You can change this
+# You can change the width (min = 1000m, max = 3000m)
 pts_buffer <- buffer(x, width = 3000)
 plot(pts_buffer)
 
