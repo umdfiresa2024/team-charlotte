@@ -5,19 +5,43 @@ format: gfm
 editor: visual
 ---
 
-## Quarto
+# Weekly Reports
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+## Week 1 Report
+
+### Team Tasks
+
+-   Choose a City for the Research
+
+    -   Charlotte, North Carolina
+
+-   Create a [spreadsheet](https://docs.google.com/spreadsheets/d/1ZFwtPYZDcX4K_ywbQWh51AtqWkiJgJTiqacHCCI4Mdc/edit#gid=0) that tracks the following:
+
+    1.  Station Name
+
+    2.  Address
+
+    3.  Built Date
+
+    4.  Coordinates
+
+    5.  Location
+
+    6.  Parking Availability
+
+-   Complete GeoCoding to find coordinates of all the stations in Lynx Blue Line, Charlotte, NC
+
+-   Create an account, project and use the Google GeoCoding API
+
+-   Convert coordinates into spatial objects and plot them
+
+### Individual Tasks
+
+-   Complete Tidyverse DataCamp: David Guan
+
+-   Complete Spatial Training: Adityaraj Padmanabhan
 
 ## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
-```
-
-You can add options to executable code like this
 
 ```{r}
 #| echo: false
