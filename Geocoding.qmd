@@ -4,7 +4,7 @@ format: gfm
 editor: visual
 ---
 
-## GeoCoding 
+## GeoCoding   
 
 This script leverages the Google Maps Geocoding API to retrieve the latitude and longitude coordinates for each station on the Charlotte Light Rail Blue Line. The retrieved coordinates are then used to create a plot, effectively visualizing the spatial distribution of the stations.
 
