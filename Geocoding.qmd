@@ -4,7 +4,7 @@ format: gfm
 editor: visual
 ---
 
-## GeoCoding   
+## GeoCoding
 
 This script leverages the Google Maps Geocoding API to retrieve the latitude and longitude coordinates for each station on the Charlotte Light Rail Blue Line. The retrieved coordinates are then used to create a plot, effectively visualizing the spatial distribution of the stations.
 
@@ -215,6 +215,8 @@ lines(pts_buffer1, col = "green")
 lines(pts_buffer, col = "red")
 ```
 
+### Interactive Map
+
 ```{r}
 bg <- get_tiles(ext(extent))
 points <- x
@@ -222,7 +224,6 @@ lines_lr <- lr_project
 lines_buffer1 <- pts_buffer1
 lines_buffer2 <- pts_buffer
 
-# Create an interactive map using plet
 interactive_map <- leaflet() %>%
   addTiles() %>%
   addMarkers(data = points) %>%
@@ -231,9 +232,3 @@ interactive_map <- leaflet() %>%
   addPolylines(data = lines_buffer2, color = "red")
 interactive_map
 ```
-
-
-
-
-
-
