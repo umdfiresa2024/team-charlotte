@@ -137,7 +137,7 @@ new_addr <- addrs.geo %>%
 ### Storing Lat-lon
 
 ```{r}
-sample_latlon <- cbind(addrs.geo$lon, addrs.geo$lat)
+sample_latlon <- cbind(new_addr$lon2, new_addr$lat2)
 sample_latlon
 ```
 
@@ -184,35 +184,38 @@ points(x = pts, col="red", pch = 20, cex = 1)
 ```{r}
 x <- vect(sample_latlon, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 plot(x)
+pm_sources <- vect("pm_sources.shp")
+plot(pm_sources)
+
+# This Buffer is around the stations
 # You can change the width (min = 1000m, max = 3000m)
-pts_buffer <- buffer(x, width = 3000)
+pts_buffer <- buffer(x, width = 800)
 plot(pts_buffer)
 
-char_lr <- vect("/Users/paditya9/team-charlotte/lr_1km_buff/lr_1km_buff.shp")
-char_lr_line <- aggregate(char_lr, dissolve = TRUE )
-plot(char_lr_line)
-
-# Converting the Light Rails map with the required CRS
-lr_project <- project(char_lr_line, "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
-
-# The centroids function computes the geometric center (centroid) of each geometry. 
-# The argument inside = FALSE indicates that the centroids should be calculated regardless of whether they fall within the geometries or not
-
-lrc <- centroids(lr_project, inside = FALSE)
-
-# Creating Buffer for the centroid of the entire map with respect to the polygon
-pts_buffer1 <- buffer(lrc, width = 10000)
-
 # Creating Buffer for Map
-extent<-buffer(x, width = 5000)
+extent<-buffer(x, width = 1000)
 
 bg <- get_tiles(ext(extent))
 
-plot(bg)
-points(x)
-lines(lr_project, col="blue")
-lines(pts_buffer1, col = "green")
-lines(pts_buffer, col = "red")
+#plot(bg)
+
+plot(x)
+points(pm_sources, col="yellow", pch=17, cex=1.5)
+
+# pch=19 gives filled circles
+points(x, col="blue", pch=19, cex=0.2)
+
+ # pch=17 gives filled triangles
+points(pm_sources, col="yellow", pch=17, cex=1.5)
+
+# Plot the buffer around the stations
+lines(pts_buffer, col="red")
+```
+
+### Saving Buffer Radius as Shape File
+
+```{r}
+writeVector(pts_buffer, "buffer_light_rail.shp")
 ```
 
 ### Interactive Map
@@ -220,15 +223,16 @@ lines(pts_buffer, col = "red")
 ```{r}
 bg <- get_tiles(ext(extent))
 points <- x
-lines_lr <- lr_project
-lines_buffer1 <- pts_buffer1
+#lines_lr <- lr_project
+#lines_buffer1 <- pts_buffer1
 lines_buffer2 <- pts_buffer
 
 interactive_map <- leaflet() %>%
   addTiles() %>%
   addMarkers(data = points) %>%
-  addPolylines(data = lines_lr, color = "blue") %>%
-  addPolylines(data = lines_buffer1, color = "green") %>%
-  addPolylines(data = lines_buffer2, color = "red")
+  #addPolylines(data = lines_lr, color = "blue") %>%
+  #addPolylines(data = lines_buffer1, color = "green") %>%
+  addPolylines(data = lines_buffer2, color = "red") %>%
+  addCircleMarkers(data = pm_sources)
 interactive_map
 ```
