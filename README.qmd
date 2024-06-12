@@ -23,7 +23,10 @@ We hypothesize that:
     -   Table with corresponding above stations
 
         ```{r}
+        library("knitr")
 
+        stations_table <- read.csv("geocoded_data.csv")
+        kable(stations_table)
         ```
 
 -   Time Frame: November 2003 - November 2011
@@ -41,9 +44,6 @@ We hypothesize that:
         -   Table with corresponding above factors
 
             ```{r}
-            library("knitr")
-
-
             factors_table <- read.csv("pm_geocoded_data.csv")
             kable(factors_table)
             ```
