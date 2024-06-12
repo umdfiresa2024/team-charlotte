@@ -25,7 +25,7 @@ We hypothesize that:
         ```{r}
         library("knitr")
 
-        stations_table <- read.csv("geocoded_data.csv")
+        stations_table <- read.csv("new_station_coords_data.csv")
         kable(stations_table)
         ```
 
