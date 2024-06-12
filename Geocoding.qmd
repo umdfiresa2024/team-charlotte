@@ -200,13 +200,13 @@ bg <- get_tiles(ext(extent))
 #plot(bg)
 
 plot(x)
-points(pm_sources, col="yellow", pch=17, cex=1.5)
+points(pm_sources, col="yellow", pch=17, cex=0.5)
 
 # pch=19 gives filled circles
 points(x, col="blue", pch=19, cex=0.2)
 
  # pch=17 gives filled triangles
-points(pm_sources, col="yellow", pch=17, cex=1.5)
+points(pm_sources, col="yellow", pch=17, cex=0.5)
 
 # Plot the buffer around the stations
 lines(pts_buffer, col="red")
