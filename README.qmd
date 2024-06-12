@@ -5,7 +5,48 @@ format: gfm
 editor: visual
 ---
 
-## Week 1 Report
+## Research Question
+
+What is the impact of particulate matter (PM2.5) and other environmental factors on human health for individuals living in proximity to the Blue Line light rail in Charlotte, North Carolina.
+
+## Hypothesis
+
+We hypothesize that:
+
+1.  The concentration of PM2.5 is higher near the Blue Line light rail stations compared to areas further away.
+2.  Proximity to major traffic intersections, industrial areas, power plants, and airports exacerbates the level of PM
+
+## Context
+
+-   Area of study: Blue Lynx Light Rail, Charlotte, North Caroline
+
+    -   Table with corresponding above stations
+
+        ```{r}
+
+        ```
+
+-   Time Frame: November 2003 - November 2011
+
+-   Factors associated with PM2.5
+
+    -   Airport
+
+    -   Power Plant(s)
+
+    -   Factories
+
+    -   Major Intersection
+
+        -   Table with corresponding above factors
+
+            ```{r}
+            library("knitr")
+
+
+            factors_table <- read.csv("pm_geocoded_data.csv")
+            kable(factors_table)
+            ```
 
 ### Team Tasks
 
