@@ -44,7 +44,7 @@ We hypothesize that:
         -   Table with corresponding above factors
 
             ```{r}
-            factors_table <- read.csv("new_pm_geocoded_data2.csv")
+            factors_table <- read.csv("new_pm_coords_data.csv")
             kable(factors_table)
             ```
 

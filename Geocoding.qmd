@@ -134,6 +134,10 @@ new_addr <- addrs.geo %>%
 
 ```
 
+```{r}
+write.csv(new_addr, "new_station_coords_data.csv", row.names = FALSE)
+```
+
 ### Storing Lat-lon
 
 ```{r}
@@ -184,7 +188,7 @@ points(x = pts, col="red", pch = 20, cex = 1)
 ```{r}
 x <- vect(sample_latlon, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 plot(x)
-pm_sources <- vect("pm_sources.shp")
+pm_sources <- vect("new_pm_coords_sources.shp")
 plot(pm_sources)
 
 # This Buffer is around the stations
@@ -215,7 +219,7 @@ lines(pts_buffer, col="red")
 ### Saving Buffer Radius as Shape File
 
 ```{r}
-writeVector(pts_buffer, "buffer_light_rail.shp")
+writeVector(pts_buffer, "new_buffer_light_rail.shp")
 ```
 
 ### Interactive Map

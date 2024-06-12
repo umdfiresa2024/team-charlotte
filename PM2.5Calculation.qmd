@@ -38,12 +38,12 @@ pm_addr.geo <- mutate_geocode(c, location = sources, output = "latlona")
 ```
 
 ```{r}
-write.csv(pm_addrs.geo, "pm_geocoded_data2.csv", row.names = FALSE)
+write.csv(pm_addr.geo, "pm_geocoded_data2.csv", row.names = FALSE)
 ```
 
 ```{r}
-pm_addrs.geo <- read.csv("pm_geocoded_data.csv")
-pm_new_addr <- pm_addrs.geo %>% 
+pm_addrs.geo <- read.csv("pm_geocoded_data2.csv")
+pm_new_addr_coords <- pm_addrs.geo %>% 
   mutate(
     lat2 = ifelse(
       sources == "Charlottetowne Av I-277 OL Ramp Kenilworth Av", 
@@ -81,11 +81,11 @@ pm_new_addr <- pm_addrs.geo %>%
 ```
 
 ```{r}
-write.csv(pm_new_addr, "new_pm_geocoded_data2.csv", row.names = FALSE)
+write.csv(pm_new_addr_coords, "new_pm_coords_data.csv", row.names = FALSE)
 ```
 
 ```{r}
-pm_latlon <- cbind(pm_new_addr$lon2, pm_new_addr$lat2)
+pm_latlon <- cbind(pm_new_addr_coords$lon2, pm_new_addr_coords$lat2)
 pm_latlon
 ```
 
@@ -148,5 +148,5 @@ plot(x)
 ```
 
 ```{r}
-writeVector(x, "new_pm_sources.shp")
+writeVector(x, "new_pm_coords_sources.shp")
 ```
