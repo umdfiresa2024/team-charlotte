@@ -7,7 +7,7 @@ editor: visual
 
 ## Week 1 Report
 
-### Team Tasks 
+### Team Tasks  
 
 -   Chose a City for the Research
 
