@@ -53,18 +53,18 @@ We hypothesize that:
 ### Installing Packages
 
 ```{r}
-#| echo: false
-# install.packages("tidyverse")
-# install.packages("ggmap")
-# install.packages("maptiles")
-# install.packages("terra")
-# install.packages("leaflet")
+#| eval: false
+install.packages("tidyverse")
+install.packages("ggmap")
+install.packages("maptiles")
+install.packages("terra")
+install.packages("leaflet")
 ```
 
 ### Loading Libraries
 
 ```{r}
-#| echo: false
+#| eval: false
 library("tidyverse")
 library("ggmap")
 library("terra")
@@ -79,7 +79,7 @@ GitHub doesn't allow to publicly release the API into README. Use the "geocoded_
 ### Cleaning Data
 
 ```{r}
-#| echo: false
+#| eval: false
 addrs.geo <- read.csv("geocoded_data.csv")
 new_addr <- addrs.geo %>% 
   mutate(
@@ -156,14 +156,13 @@ new_addr <- addrs.geo %>%
 ### Storing Data into new CSV File
 
 ```{r}
-#| echo: false
+#| eval: false
 # write.csv(new_addr, "new_station_coords_data.csv", row.names = FALSE)
 ```
 
 ### Storing Latitude and Longtitude
 
 ```{r}
-#| echo: false
 sample_latlon <- cbind(new_addr$lon2, new_addr$lat2)
 sample_latlon
 ```
@@ -171,11 +170,7 @@ sample_latlon
 ### Storing into Vector Data
 
 ```{r}
-#| echo: false
 pts <-  vect(sample_latlon)
-class(pts)
-pts
-geom(pts)
 crdref <- "+proj=longlat +datum=WGS84"
 pts <- vect(sample_latlon, crs=crdref)
 plot(pts)
