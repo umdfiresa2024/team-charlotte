@@ -188,29 +188,27 @@ points(x = pts, col="red", pch = 20, cex = 1)
 ```{r}
 x <- vect(sample_latlon, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 plot(x)
-pm_sources <- vect("new_pm_coords_sources.shp")
+pm_sources <- vect("/Users/paditya9/teamCharlotte/PM2.5 ShapeFiles/new_pm_coords_sources.shp")
 plot(pm_sources)
 
-# This Buffer is around the stations
-# You can change the width (min = 1000m, max = 3000m)
+# Creating Buffer around stations
+
+# Ued Buffer Radius is 800 meters
 pts_buffer <- buffer(x, width = 800)
 plot(pts_buffer)
 
 # Creating Buffer for Map
-extent<-buffer(x, width = 1000)
+extent<-buffer(x, width = 200)
 
-bg <- get_tiles(ext(extent))
+bg <- get_tiles(ext(extent), zoom = 11)
 
-#plot(bg)
-
-plot(x)
-points(pm_sources, col="yellow", pch=17, cex=1.5)
+plot(bg)
 
 # pch=19 gives filled circles
-points(x, col="blue", pch=19, cex=0.2)
+points(x, col="blue", pch=19, cex=0.5)
 
- # pch=17 gives filled triangles
-points(pm_sources, col="yellow", pch=17, cex=1.5)
+# pch=17 gives filled triangles
+points(pm_sources, col="purple", pch=17, cex=1)
 
 # Plot the buffer around the stations
 lines(pts_buffer, col="red")

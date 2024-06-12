@@ -111,46 +111,221 @@ We hypothesize that:
       | Intersection  | South Blvd Tyvola Rd                                    | South Blvd Tyvola Rd, Charlotte, NC                                    |                                                                                                 | -80.87604 | 35.16482 | tyvola rd & south blvd, charlotte, nc 28210, usa                                                   | 35.16482 | -80.87604 | tyvola rd & south blvd, charlotte, nc 28210, usa                                                   |
       | Intersection  | South Blvd Woodlawn Rd                                  | South Blvd Woodlawn Rd, Charlotte, NC                                  |                                                                                                 | -80.87582 | 35.17653 | e woodlawn rd & south blvd, charlotte, nc 28209, usa                                               | 35.17653 | -80.87582 | e woodlawn rd & south blvd, charlotte, nc 28209, usa                                               |
 
-### Team Tasks
+## Running Code
 
-- Chose a City for the Research
+### Installing Packages
 
-  - Charlotte, North Carolina
+### Loading Libraries
 
-- Created a
-  [spreadsheet](https://docs.google.com/spreadsheets/d/1ZFwtPYZDcX4K_ywbQWh51AtqWkiJgJTiqacHCCI4Mdc/edit#gid=0)
-  that tracks the following:
+    ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+    ✔ dplyr     1.1.4     ✔ readr     2.1.5
+    ✔ forcats   1.0.0     ✔ stringr   1.5.1
+    ✔ ggplot2   3.4.4     ✔ tibble    3.2.1
+    ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+    ✔ purrr     1.0.2     
+    ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+    ✖ dplyr::filter() masks stats::filter()
+    ✖ dplyr::lag()    masks stats::lag()
+    ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+    ℹ Google's Terms of Service: <https://mapsplatform.google.com>
+      Stadia Maps' Terms of Service: <https://stadiamaps.com/terms-of-service/>
+      OpenStreetMap's Tile Usage Policy: <https://operations.osmfoundation.org/policies/tiles/>
+    ℹ Please cite ggmap if you use it! Use `citation("ggmap")` for details.
 
-  1.  Station Name
+    Warning: package 'terra' was built under R version 4.3.3
 
-  2.  Address
+    terra 1.7.78
 
-  3.  Built Date
+    Attaching package: 'terra'
 
-  4.  Coordinates
+    The following object is masked from 'package:ggmap':
 
-  5.  Location
+        inset
 
-  6.  Parking Availability
+    The following object is masked from 'package:tidyr':
 
-- Completed GeoCoding to find coordinates of all the stations in Lynx
-  Blue Line, Charlotte, NC
+        extract
 
-- Created an account, project and use the Google GeoCoding API
+    The following object is masked from 'package:knitr':
 
-- Converted coordinates into spatial objects and plot them
+        spin
 
-- Created buffers around stations and calculate daily PM2.5
+### Gathering Data using Google API
 
-- Found sources around stations that contribute towards the PM2.5 levels
+GitHub doesn’t allow to publicly release the API into README. Use the
+“geocoded_data.csv” to refer the data requested from API
 
-- Created an Interactive Map with buffer zones around stations
-  \[optional\]
+### Cleaning Data
 
-### Individual Tasks
+### Storing Data into new CSV File
 
-- Complete Tidyverse DataCamp: David Guan
+### Storing Latitude and Longtitude
 
-- Complete Spatial Training: Adityaraj Padmanabhan
+               [,1]     [,2]
+     [1,] -80.88292 35.10708
+     [2,] -80.88219 35.11927
+     [3,] -80.87637 35.13569
+     [4,] -80.87748 35.15290
+     [5,] -80.87750 35.16285
+     [6,] -80.87930 35.17590
+     [7,] -80.87501 35.19092
+     [8,] -80.86904 35.19985
+     [9,] -80.85895 35.21212
+    [10,] -80.85446 35.21622
+    [11,] -80.84823 35.21944
+    [12,] -80.84299 35.21867
+    [13,] -80.84312 35.22375
+    [14,] -80.84823 35.21944
+    [15,] -80.83798 35.22751
+    [16,] -80.83516 35.22948
+    [17,] -80.82323 35.23689
+    [18,] -80.81708 35.24174
+    [19,] -80.80545 35.24854
+    [20,] -80.79184 35.25106
+    [21,] -80.77271 35.25996
+    [22,] -80.76629 35.27795
+    [23,] -80.76074 35.28692
+    [24,] -80.75288 35.30112
+    [25,] -80.74547 35.31155
+    [26,] -80.73371 35.31218
 
-## 
+### Storing into Vector Data
+
+    [1] "SpatVector"
+    attr(,"package")
+    [1] "terra"
+
+     class       : SpatVector 
+     geometry    : points 
+     dimensions  : 26, 0  (geometries, attributes)
+     extent      : -80.88292, -80.73371, 35.10708, 35.31218  (xmin, xmax, ymin, ymax)
+     coord. ref. :  
+
+          geom part         x        y hole
+     [1,]    1    1 -80.88292 35.10708    0
+     [2,]    2    1 -80.88219 35.11927    0
+     [3,]    3    1 -80.87637 35.13569    0
+     [4,]    4    1 -80.87748 35.15290    0
+     [5,]    5    1 -80.87750 35.16285    0
+     [6,]    6    1 -80.87930 35.17590    0
+     [7,]    7    1 -80.87501 35.19092    0
+     [8,]    8    1 -80.86904 35.19985    0
+     [9,]    9    1 -80.85895 35.21212    0
+    [10,]   10    1 -80.85446 35.21622    0
+    [11,]   11    1 -80.84823 35.21944    0
+    [12,]   12    1 -80.84299 35.21867    0
+    [13,]   13    1 -80.84312 35.22375    0
+    [14,]   14    1 -80.84823 35.21944    0
+    [15,]   15    1 -80.83798 35.22751    0
+    [16,]   16    1 -80.83516 35.22948    0
+    [17,]   17    1 -80.82323 35.23689    0
+    [18,]   18    1 -80.81708 35.24174    0
+    [19,]   19    1 -80.80545 35.24854    0
+    [20,]   20    1 -80.79184 35.25106    0
+    [21,]   21    1 -80.77271 35.25996    0
+    [22,]   22    1 -80.76629 35.27795    0
+    [23,]   23    1 -80.76074 35.28692    0
+    [24,]   24    1 -80.75288 35.30112    0
+    [25,]   25    1 -80.74547 35.31155    0
+    [26,]   26    1 -80.73371 35.31218    0
+
+![](README_files/figure-commonmark/unnamed-chunk-8-1.png)
+
+    [1] "GEOGCRS[\"unknown\",\n    DATUM[\"World Geodetic System 1984\",\n        ELLIPSOID[\"WGS 84\",6378137,298.257223563,\n            LENGTHUNIT[\"metre\",1]],\n        ID[\"EPSG\",6326]],\n    PRIMEM[\"Greenwich\",0,\n        ANGLEUNIT[\"degree\",0.0174532925199433],\n        ID[\"EPSG\",8901]],\n    CS[ellipsoidal,2],\n        AXIS[\"longitude\",east,\n            ORDER[1],\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]],\n        AXIS[\"latitude\",north,\n            ORDER[2],\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]]]"
+
+### Plotting Station Coordinates
+
+``` r
+point_map <- vect(sample_latlon, type="points", crs = crdref)
+point_map
+```
+
+     class       : SpatVector 
+     geometry    : points 
+     dimensions  : 26, 0  (geometries, attributes)
+     extent      : -80.88292, -80.73371, 35.10708, 35.31218  (xmin, xmax, ymin, ymax)
+     coord. ref. : +proj=longlat +datum=WGS84 +no_defs 
+
+``` r
+plot(point_map)
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-9-1.png)
+
+``` r
+pols <- vect(sample_latlon, type="polygons", crs = crdref)
+pols
+```
+
+     class       : SpatVector 
+     geometry    : polygons 
+     dimensions  : 1, 0  (geometries, attributes)
+     extent      : -80.88292, -80.73371, 35.10708, 35.31218  (xmin, xmax, ymin, ymax)
+     coord. ref. : +proj=longlat +datum=WGS84 +no_defs 
+
+``` r
+plot(pols)
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-9-2.png)
+
+``` r
+plot(pols, border="blue", col="yellow", lwd=2)
+# pch = plot charater = 20 - circle 
+# cex = charater expansion
+points(x = pts, col="red", pch = 20, cex = 1)
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-9-3.png)
+
+### Overlaying Stations with PM2.5
+
+``` r
+x <- vect(sample_latlon, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+plot(x)
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-10-1.png)
+
+``` r
+pm_sources <- vect("/Users/paditya9/teamCharlotte/PM2.5 ShapeFiles/new_pm_coords_sources.shp")
+plot(pm_sources)
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-10-2.png)
+
+``` r
+# Creating Buffer around stations
+
+# Ued Buffer Radius is 800 meters
+pts_buffer <- buffer(x, width = 800)
+plot(pts_buffer)
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-10-3.png)
+
+``` r
+# Creating Buffer for Map
+extent<-buffer(x, width = 200)
+
+bg <- get_tiles(ext(extent), zoom = 11)
+
+plot(bg)
+
+# pch=19 gives filled circles
+points(x, col="blue", pch=19, cex=0.5)
+
+# pch=17 gives filled triangles
+points(pm_sources, col="purple", pch=17, cex=1)
+
+# Plot the buffer around the stations
+lines(pts_buffer, col="red")
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-10-4.png)
+
+### Saving the Buffer’s into ShapeFile
+
+``` r
+# writeVector(pts_buffer, "new_buffer_light_rail.shp")
+```
