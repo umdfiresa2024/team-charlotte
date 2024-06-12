@@ -115,7 +115,19 @@ We hypothesize that:
 
 ### Installing Packages
 
+``` r
+# install.packages("tidyverse")
+# install.packages("ggmap")
+# install.packages("maptiles")
+# install.packages("terra")
+# install.packages("leaflet")
+```
+
 ### Loading Libraries
+
+``` r
+library("tidyverse")
+```
 
     ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
     ✔ dplyr     1.1.4     ✔ readr     2.1.5
@@ -127,10 +139,19 @@ We hypothesize that:
     ✖ dplyr::filter() masks stats::filter()
     ✖ dplyr::lag()    masks stats::lag()
     ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+
+``` r
+library("ggmap")
+```
+
     ℹ Google's Terms of Service: <https://mapsplatform.google.com>
       Stadia Maps' Terms of Service: <https://stadiamaps.com/terms-of-service/>
       OpenStreetMap's Tile Usage Policy: <https://operations.osmfoundation.org/policies/tiles/>
     ℹ Please cite ggmap if you use it! Use `citation("ggmap")` for details.
+
+``` r
+library("terra")
+```
 
     Warning: package 'terra' was built under R version 4.3.3
 
@@ -150,6 +171,11 @@ We hypothesize that:
 
         spin
 
+``` r
+library("maptiles")
+library("leaflet")
+```
+
 ### Gathering Data using Google API
 
 GitHub doesn’t allow to publicly release the API into README. Use the
@@ -157,9 +183,91 @@ GitHub doesn’t allow to publicly release the API into README. Use the
 
 ### Cleaning Data
 
+``` r
+addrs.geo <- read.csv("geocoded_data.csv")
+new_addr <- addrs.geo %>% 
+  mutate(
+    lat2 = ifelse(
+      stations == "Bland Street station", 
+      35.21622, 
+      lat
+    ), 
+    lon2 = ifelse(
+      stations == "Bland Street station", 
+      -80.85446, 
+      lon
+    ),
+    address2 = ifelse(
+      stations == "Bland Street station", 
+      "1511 Camden Road, charlotte, nc, usa", address
+      
+    )
+  ) %>% 
+  mutate(
+    lat2 = ifelse(
+      stations == "Carson light rail station (Charlotte)", 
+      35.21944, 
+      lat2
+    ), 
+    lon2 = ifelse(
+      stations == "Carson light rail station (Charlotte)", 
+      -80.84823, 
+      lon2
+    ),
+    address2 = ifelse(
+      stations == "Carson light rail station (Charlotte)", 
+      "218 East Carson Boulevard, charlotte, nc, usa",
+      address2
+    )
+  ) %>% 
+  mutate(
+    lat2 = ifelse(
+      stations == "Charlotte Transportation Center", 
+      35.21944, 
+      lat2
+    ), 
+    lon2 = ifelse(
+      stations == "Charlotte Transportation Center", 
+      -80.84823, 
+      lon2
+    ),
+    address2 = ifelse(
+      stations == "Charlotte Transportation Center", 
+      "310 East Trade Street, charlotte, nc, usa", address2 
+    )
+  ) %>% 
+  
+  
+  mutate(
+    lat2 = ifelse(
+      stations == "JW Clay Blvd/UNC Charlotte station", 
+      35.31155, 
+      lat2
+    ), 
+    lon2 = ifelse(
+      stations == "JW Clay Blvd/UNC Charlotte station", 
+      -80.74547, 
+      lon2
+    ),
+    address2 = ifelse(
+      stations == "JW Clay Blvd/UNC Charlotte station", 
+      "9048 North Tryon Street, charlotte, nc, usa", address2 
+    )
+  )
+```
+
 ### Storing Data into new CSV File
 
+``` r
+# write.csv(new_addr, "new_station_coords_data.csv", row.names = FALSE)
+```
+
 ### Storing Latitude and Longtitude
+
+``` r
+sample_latlon <- cbind(new_addr$lon2, new_addr$lat2)
+sample_latlon
+```
 
                [,1]     [,2]
      [1,] -80.88292 35.10708
@@ -191,45 +299,18 @@ GitHub doesn’t allow to publicly release the API into README. Use the
 
 ### Storing into Vector Data
 
-    [1] "SpatVector"
-    attr(,"package")
-    [1] "terra"
-
-     class       : SpatVector 
-     geometry    : points 
-     dimensions  : 26, 0  (geometries, attributes)
-     extent      : -80.88292, -80.73371, 35.10708, 35.31218  (xmin, xmax, ymin, ymax)
-     coord. ref. :  
-
-          geom part         x        y hole
-     [1,]    1    1 -80.88292 35.10708    0
-     [2,]    2    1 -80.88219 35.11927    0
-     [3,]    3    1 -80.87637 35.13569    0
-     [4,]    4    1 -80.87748 35.15290    0
-     [5,]    5    1 -80.87750 35.16285    0
-     [6,]    6    1 -80.87930 35.17590    0
-     [7,]    7    1 -80.87501 35.19092    0
-     [8,]    8    1 -80.86904 35.19985    0
-     [9,]    9    1 -80.85895 35.21212    0
-    [10,]   10    1 -80.85446 35.21622    0
-    [11,]   11    1 -80.84823 35.21944    0
-    [12,]   12    1 -80.84299 35.21867    0
-    [13,]   13    1 -80.84312 35.22375    0
-    [14,]   14    1 -80.84823 35.21944    0
-    [15,]   15    1 -80.83798 35.22751    0
-    [16,]   16    1 -80.83516 35.22948    0
-    [17,]   17    1 -80.82323 35.23689    0
-    [18,]   18    1 -80.81708 35.24174    0
-    [19,]   19    1 -80.80545 35.24854    0
-    [20,]   20    1 -80.79184 35.25106    0
-    [21,]   21    1 -80.77271 35.25996    0
-    [22,]   22    1 -80.76629 35.27795    0
-    [23,]   23    1 -80.76074 35.28692    0
-    [24,]   24    1 -80.75288 35.30112    0
-    [25,]   25    1 -80.74547 35.31155    0
-    [26,]   26    1 -80.73371 35.31218    0
+``` r
+pts <-  vect(sample_latlon)
+crdref <- "+proj=longlat +datum=WGS84"
+pts <- vect(sample_latlon, crs=crdref)
+plot(pts)
+```
 
 ![](README_files/figure-commonmark/unnamed-chunk-8-1.png)
+
+``` r
+crs(pts)
+```
 
     [1] "GEOGCRS[\"unknown\",\n    DATUM[\"World Geodetic System 1984\",\n        ELLIPSOID[\"WGS 84\",6378137,298.257223563,\n            LENGTHUNIT[\"metre\",1]],\n        ID[\"EPSG\",6326]],\n    PRIMEM[\"Greenwich\",0,\n        ANGLEUNIT[\"degree\",0.0174532925199433],\n        ID[\"EPSG\",8901]],\n    CS[ellipsoidal,2],\n        AXIS[\"longitude\",east,\n            ORDER[1],\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]],\n        AXIS[\"latitude\",north,\n            ORDER[2],\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]]]"
 
@@ -281,6 +362,7 @@ points(x = pts, col="red", pch = 20, cex = 1)
 ### Overlaying Stations with PM2.5
 
 ``` r
+# Plot Stations
 x <- vect(sample_latlon, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 plot(x)
 ```
@@ -288,6 +370,7 @@ plot(x)
 ![](README_files/figure-commonmark/unnamed-chunk-10-1.png)
 
 ``` r
+# Plot Factors
 pm_sources <- vect("/Users/paditya9/teamCharlotte/PM2.5 ShapeFiles/new_pm_coords_sources.shp")
 plot(pm_sources)
 ```
@@ -295,9 +378,8 @@ plot(pm_sources)
 ![](README_files/figure-commonmark/unnamed-chunk-10-2.png)
 
 ``` r
-# Creating Buffer around stations
-
-# Ued Buffer Radius is 800 meters
+# Plot Buffer around stations
+# Target Buffer Radius =  800 meters
 pts_buffer <- buffer(x, width = 800)
 plot(pts_buffer)
 ```

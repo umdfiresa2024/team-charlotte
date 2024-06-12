@@ -54,17 +54,16 @@ We hypothesize that:
 
 ```{r}
 #| eval: false
-install.packages("tidyverse")
-install.packages("ggmap")
-install.packages("maptiles")
-install.packages("terra")
-install.packages("leaflet")
+# install.packages("tidyverse")
+# install.packages("ggmap")
+# install.packages("maptiles")
+# install.packages("terra")
+# install.packages("leaflet")
 ```
 
 ### Loading Libraries
 
 ```{r}
-#| eval: false
 library("tidyverse")
 library("ggmap")
 library("terra")
@@ -79,7 +78,6 @@ GitHub doesn't allow to publicly release the API into README. Use the "geocoded_
 ### Cleaning Data
 
 ```{r}
-#| eval: false
 addrs.geo <- read.csv("geocoded_data.csv")
 new_addr <- addrs.geo %>% 
   mutate(
