@@ -5,42 +5,226 @@ format: gfm
 editor: visual
 ---
 
-## Week 1 Report
+## Research Question
 
-### Team Tasks
+What is the impact of particulate matter (PM2.5) and other environmental factors on human health for individuals living in proximity to the Blue Line light rail in Charlotte, North Carolina.
 
--   Chose a City for the Research
+## Hypothesis
 
-    -   Charlotte, North Carolina
+We hypothesize that:
 
--   Created a [spreadsheet](https://docs.google.com/spreadsheets/d/1ZFwtPYZDcX4K_ywbQWh51AtqWkiJgJTiqacHCCI4Mdc/edit#gid=0) that tracks the following:
+1.  The concentration of PM2.5 is higher near the Blue Line light rail stations compared to areas further away.
+2.  Proximity to major traffic intersections, industrial areas, power plants, and airports exacerbates the level of PM
 
-    1.  Station Name
+## Context
 
-    2.  Address
+-   Area of study: Blue Lynx Light Rail, Charlotte, North Caroline
 
-    3.  Built Date
+    -   Table with corresponding above stations
 
-    4.  Coordinates
+        ```{r}
+        library("knitr")
 
-    5.  Location
+        stations_table <- read.csv("new_station_coords_data.csv")
+        kable(stations_table)
+        ```
 
-    6.  Parking Availability
+-   Time Frame: November 2003 - November 2011
 
--   Completed GeoCoding to find coordinates of all the stations in Lynx Blue Line, Charlotte, NC
+-   Factors associated with PM2.5
 
--   Created an account, project and use the Google GeoCoding API
+    -   Airport
 
--   Converted coordinates into spatial objects and plot them
+    -   Power Plant(s)
 
--   Created buffers around stations and calculate daily PM2.5
+    -   Factories
 
--   Found sources around stations that contribute towards the PM2.5 levels
+    -   Major Intersection
 
--   Created an Interactive Map with buffer zones around stations \[optional\]
+        -   Table with corresponding above factors
 
-### Individual Tasks
+            ```{r}
+            factors_table <- read.csv("new_pm_coords_data.csv")
+            kable(factors_table)
+            ```
 
--   Complete Tidyverse DataCamp: David Guan
+## Running Code
 
--   Complete Spatial Training: Adityaraj Padmanabhan
+### Installing Packages
+
+```{r}
+#| eval: false
+# install.packages("tidyverse")
+# install.packages("ggmap")
+# install.packages("maptiles")
+# install.packages("terra")
+# install.packages("leaflet")
+```
+
+### Loading Libraries
+
+```{r}
+library("tidyverse")
+library("ggmap")
+library("terra")
+library("maptiles")
+library("leaflet")
+```
+
+### Gathering Data using Google API
+
+GitHub doesn't allow to publicly release the API into README. Use the "geocoded_data.csv" to refer the data requested from API
+
+### Cleaning Data
+
+```{r}
+addrs.geo <- read.csv("geocoded_data.csv")
+new_addr <- addrs.geo %>% 
+  mutate(
+    lat2 = ifelse(
+      stations == "Bland Street station", 
+      35.21622, 
+      lat
+    ), 
+    lon2 = ifelse(
+      stations == "Bland Street station", 
+      -80.85446, 
+      lon
+    ),
+    address2 = ifelse(
+      stations == "Bland Street station", 
+      "1511 Camden Road, charlotte, nc, usa", address
+      
+    )
+  ) %>% 
+  mutate(
+    lat2 = ifelse(
+      stations == "Carson light rail station (Charlotte)", 
+      35.21944, 
+      lat2
+    ), 
+    lon2 = ifelse(
+      stations == "Carson light rail station (Charlotte)", 
+      -80.84823, 
+      lon2
+    ),
+    address2 = ifelse(
+      stations == "Carson light rail station (Charlotte)", 
+      "218 East Carson Boulevard, charlotte, nc, usa",
+      address2
+    )
+  ) %>% 
+  mutate(
+    lat2 = ifelse(
+      stations == "Charlotte Transportation Center", 
+      35.21944, 
+      lat2
+    ), 
+    lon2 = ifelse(
+      stations == "Charlotte Transportation Center", 
+      -80.84823, 
+      lon2
+    ),
+    address2 = ifelse(
+      stations == "Charlotte Transportation Center", 
+      "310 East Trade Street, charlotte, nc, usa", address2 
+    )
+  ) %>% 
+  
+  
+  mutate(
+    lat2 = ifelse(
+      stations == "JW Clay Blvd/UNC Charlotte station", 
+      35.31155, 
+      lat2
+    ), 
+    lon2 = ifelse(
+      stations == "JW Clay Blvd/UNC Charlotte station", 
+      -80.74547, 
+      lon2
+    ),
+    address2 = ifelse(
+      stations == "JW Clay Blvd/UNC Charlotte station", 
+      "9048 North Tryon Street, charlotte, nc, usa", address2 
+    )
+  )
+
+```
+
+### Storing Data into new CSV File
+
+```{r}
+#| eval: false
+# write.csv(new_addr, "new_station_coords_data.csv", row.names = FALSE)
+```
+
+### Storing Latitude and Longtitude
+
+```{r}
+sample_latlon <- cbind(new_addr$lon2, new_addr$lat2)
+sample_latlon
+```
+
+### Storing into Vector Data
+
+```{r}
+pts <-  vect(sample_latlon)
+crdref <- "+proj=longlat +datum=WGS84"
+pts <- vect(sample_latlon, crs=crdref)
+plot(pts)
+crs(pts)
+```
+
+### Plotting Station Coordinates
+
+```{r}
+point_map <- vect(sample_latlon, type="points", crs = crdref)
+point_map
+plot(point_map)
+pols <- vect(sample_latlon, type="polygons", crs = crdref)
+pols
+plot(pols)
+plot(pols, border="blue", col="yellow", lwd=2)
+# pch = plot charater = 20 - circle 
+# cex = charater expansion
+points(x = pts, col="red", pch = 20, cex = 1)
+```
+
+### Overlaying Stations with PM2.5
+
+```{r}
+# Plot Stations
+x <- vect(sample_latlon, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+plot(x)
+
+# Plot Factors
+pm_sources <- vect("/Users/paditya9/teamCharlotte/PM2.5 ShapeFiles/new_pm_coords_sources.shp")
+plot(pm_sources)
+
+# Plot Buffer around stations
+# Target Buffer Radius =  800 meters
+pts_buffer <- buffer(x, width = 800)
+plot(pts_buffer)
+
+# Creating Buffer for Map
+extent<-buffer(x, width = 200)
+
+bg <- get_tiles(ext(extent), zoom = 11)
+
+plot(bg)
+
+# pch=19 gives filled circles
+points(x, col="blue", pch=19, cex=0.5)
+
+# pch=17 gives filled triangles
+points(pm_sources, col="purple", pch=17, cex=1)
+
+# Plot the buffer around the stations
+lines(pts_buffer, col="red")
+```
+
+### Saving the Buffer's into ShapeFile
+
+```{r}
+# writeVector(pts_buffer, "new_buffer_light_rail.shp")
+```

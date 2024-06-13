@@ -1,0 +1,152 @@
+---
+title: "PM2.5Calulcation"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+#| echo: false
+library("tidyverse")
+library("ggmap")
+library("terra")
+library("maptiles")
+library("leaflet")
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+dir()
+c<-read.csv("PM2.5 - Sheet1 (1).csv")
+c
+
+
+register_google(key = "AIzaSyCA9_G1smyPrHEIa92k1IF0dwBsAGFCNXM", write = TRUE)
+
+#dir()
+
+pm_addr.geo <- mutate_geocode(c, location = sources, output = "latlona")
+```
+
+```{r}
+write.csv(pm_addr.geo, "pm_geocoded_data2.csv", row.names = FALSE)
+```
+
+```{r}
+pm_addrs.geo <- read.csv("pm_geocoded_data2.csv")
+pm_new_addr_coords <- pm_addrs.geo %>% 
+  mutate(
+    lat2 = ifelse(
+      sources == "Charlottetowne Av I-277 OL Ramp Kenilworth Av", 
+      35.21393, 
+      lat
+    ), 
+    lon2 = ifelse(
+      sources == "Charlottetowne Av I-277 OL Ramp Kenilworth Av", 
+      -80.83748, 
+      lon
+    ),
+    address2 = ifelse(
+      sources == "Charlottetowne Av I-277 OL Ramp Kenilworth Av", 
+      "Charlottetowne Av I-277 OL Ramp Kenilworth Av, Charlotte, NC", address
+      
+    )
+  ) %>% 
+  mutate(
+    lat2 = ifelse(
+      sources == "Providence Rd Queens Rd", 
+      35.19589, 
+      lat2
+    ), 
+    lon2 = ifelse(
+      sources == "Providence Rd Queens Rd", 
+      -80.82715, 
+      lon2
+    ),
+    address2 = ifelse(
+      sources == "Providence Rd Queens Rd", 
+      "Providence Rd Queens Rd, Charlotte, NC",
+      address2
+    )
+  )
+```
+
+```{r}
+write.csv(pm_new_addr_coords, "new_pm_coords_data.csv", row.names = FALSE)
+```
+
+```{r}
+pm_latlon <- cbind(pm_new_addr_coords$lon2, pm_new_addr_coords$lat2)
+pm_latlon
+```
+
+```{r}
+crdref <- "+proj=longlat +datum=WGS84"
+pm_pts <- vect(pm_latlon, crs=crdref)
+plot(pm_pts)
+crs(pm_pts)
+```
+
+```{r}
+pm_point_map <- vect(pm_latlon, type="points", crs = crdref)
+pm_point_map
+plot(pm_point_map)
+pm_pols <- vect(pm_latlon, type="polygons", crs = crdref)
+pm_pols
+plot(pm_pols)
+plot(pm_pols, border="blue", col="yellow", lwd=2)
+# pch = plot charater = 20 - circle 
+# cex = charater expansion
+points(x = pm_pts, col="red", pch = 20, cex = 1)
+```
+
+```{r}
+x <- vect(pm_latlon, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+plot(x)
+
+# This Buffer is around the stations
+# You can change the width (min = 1000m, max = 3000m)
+# pts_buffer <- buffer(x, width = 5000)
+# plot(pts_buffer)
+# 
+# # Creating Buffer for the centroid of the entire map with respect to the polygon
+# pts_buffer1 <- buffer(lrc, width = 10000)
+# 
+# # Creating Buffer for Map
+# extent<-buffer(x, width = 5000)
+# 
+# bg <- get_tiles(ext(extent))
+# 
+# plot(bg)
+# points(x)
+#lines(pts_buffer, col = "red")
+```
+
+```{r}
+# bg <- get_tiles(ext(extent))
+# points <- x
+# #lines_lr <- lr_project
+# #lines_buffer1 <- pts_buffer1
+# lines_buffer2 <- pts_buffer
+# 
+# interactive_map <- leaflet() %>%
+#   addTiles() %>%
+#   addMarkers(data = points) %>%
+#   #addPolylines(data = lines_lr, color = "blue") %>%
+#   #addPolylines(data = lines_buffer1, color = "green") %>%
+#   addPolylines(data = lines_buffer2, color = "red")
+# interactive_map
+```
+
+```{r}
+writeVector(x, "new_pm_coords_sources.shp")
+```
