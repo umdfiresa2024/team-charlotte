@@ -238,3 +238,38 @@ interactive_map <- leaflet() %>%
   addCircleMarkers(data = pm_sources)
 interactive_map
 ```
+
+```{r}
+dir()
+```
+
+### Combining PM_25 Daily Data
+
+```{r}
+# List all CSV files in the directory
+file_list <- list.files(path = "PM25_daily", pattern = "*.csv", full.names = TRUE)
+
+# Read and combine all CSV files into one data frame
+combined_df <- do.call(rbind, lapply(file_list, function(file) {
+  df <- read.csv(file)
+  # Assuming your date column is named 'date' and is in format '%Y%m%d'
+  df$date <- as.Date(df$date, format = "%Y%m%d")
+  df
+}))
+
+# Filter rows from 2003-11-24 to 2011-11-24
+combined_df_filtered <- combined_df %>%
+  filter(date >= as.Date("2003-11-24") & date <= as.Date("2011-11-24"))
+
+# Write the filtered data frame to a new CSV file
+write.csv(combined_df_filtered, "refined_PM25_daily_combined_data.csv", row.names = FALSE)
+
+PM_25_with_date <- read.csv("refined_PM25_daily_combined_data.csv")
+
+PM_25_with_date <- PM_25_with_date %>%
+   mutate(formatted_date = paste(substr(date, 1, 4), substr(date, 6, 7), substr(date, 9, 10), sep = "-")) %>% mutate(station_ID = PM_25_with_date$city_num )
+
+
+PM_25_with_date
+
+```
