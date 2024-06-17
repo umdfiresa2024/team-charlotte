@@ -246,7 +246,7 @@ interactive_map
 dir()
 ```
 
-### Combining PM_25 Daily Data 
+### Combining PM_25 Daily Data
 
 ```{r}
 # List all CSV files in the directory
