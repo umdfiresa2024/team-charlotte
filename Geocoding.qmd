@@ -243,7 +243,7 @@ interactive_map
 dir()
 ```
 
-### Combining PM_25 Daily Data
+### Combining PM_25 Daily Data 
 
 ```{r}
 # List all CSV files in the directory
@@ -270,6 +270,6 @@ PM_25_with_date <- PM_25_with_date %>%
    mutate(formatted_date = paste(substr(date, 1, 4), substr(date, 6, 7), substr(date, 9, 10), sep = "-")) %>% mutate(station_ID = PM_25_with_date$city_num )
 
 
-PM_25_with_date
+PM_25_with_date 
 
 ```
