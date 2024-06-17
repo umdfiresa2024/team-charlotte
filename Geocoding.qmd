@@ -286,28 +286,47 @@ stations_coords <- stations_coords %>% mutate(station_ID = row_number())
 write.csv(stations_coords, "station_coords_with_stationID_data.csv", row.names = F)
 ```
 
+### Cleaning Holiday Data file
+
+```{r}
+holidays_data <- read.csv("/Users/paditya9/teamCharlotte/major_holidays_2000_2025.csv", header = TRUE, stringsAsFactors = FALSE)
+
+holidays_data <- holidays_data %>% filter(date >= as.Date("2003-11-24") & date <= as.Date("2011-11-24")) %>% mutate(formatted_date = date)
+
+write.csv(holidays_data, "refined_holidays_data.csv", row.names = F)
+```
+
 ### Cumulative Date
 
 ```{r}
+#Reading Stations Data
 stationID_data <- read.csv("station_coords_with_stationID_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("stations", "station_ID", "address2")]
 
-
+#Reading PM2.5 Daily Data
 pm_25_data <- read.csv("refined_date_PM25_daily_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("station_ID", "formatted_date", "pm25")]
 
-
+#Reading Meterological Data
 met_data <- read.csv("met_data_charlotte/combinedMeteorologyDataCharlotte.csv", header = TRUE, stringsAsFactors = FALSE)[, c("Tair_f_tavg", "Wind_f_tavg", "Qair_f_tavg", "formatted_date")]
+
+#Reading Holiday Data
+holidays_data <- read.csv("/Users/paditya9/teamCharlotte/refined_holidays_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("holiday", "formatted_date")]
 
 station_pm_met_dataCombined <- merge(stationID_data,pm_25_data, by="station_ID", all = F )
 
 station_pm_met_dataCombined <- merge(station_pm_met_dataCombined, met_data, by="formatted_date", all = F)
 
+station_pm_met_holiday_dataCombined <- merge(station_pm_met_dataCombined, holidays_data, by = "formatted_date", all = F)
+
+
 # Ordering the list by date followed by station ID
-station_pm_met_dataCombined <- station_pm_met_dataCombined[order(station_pm_met_dataCombined$formatted_date, station_pm_met_dataCombined$station_ID), ]
+station_pm_met_holiday_dataCombined <- station_pm_met_holiday_dataCombined[order(station_pm_met_holiday_dataCombined$formatted_date, station_pm_met_holiday_dataCombined$station_ID), ]
 
 # %B is used for abbrevation for Month 
-station_pm_met_dataCombined <- station_pm_met_dataCombined %>%
-  mutate(month = format(as.Date(station_pm_met_dataCombined$formatted_date, format = "%Y-%m-%d"), "%B")) %>% 
-  mutate (day_of_week = weekdays(as.Date(station_pm_met_dataCombined$formatted_date, format = "%Y-%m-%d")))
+station_pm_met_holiday_dataCombined <- station_pm_met_holiday_dataCombined %>%
+  mutate(month = format(as.Date(station_pm_met_holiday_dataCombined$formatted_date, format = "%Y-%m-%d"), "%B")) %>% 
+  mutate (day_of_week = weekdays(as.Date(station_pm_met_holiday_dataCombined$formatted_date, format = "%Y-%m-%d")))
+
+
 
 
 ```
