@@ -25,4 +25,8 @@ for (i in 24:((24+2) + 8*365)){
 }
 View(combined)
 
-write.csv(combined,"combinedMeteorologyDataCharlotte.csv")
+
+withdates <- combined %>% mutate(formatted_date = paste(substr(date,1,4),substr(date,5,6),substr(date,7,8),sep = "-"))
+View(withdates)
+
+write.csv(withdates,"combinedMeteorologyDataCharlotte.csv")
