@@ -19,6 +19,7 @@ install.packages("ggmap")
 install.packages("maptiles")
 install.packages("terra")
 install.packages("leaflet")
+install.packages("lubridate")
 ```
 
 ### Loading Libraries
@@ -30,6 +31,8 @@ library("ggmap")
 library("terra")
 library("maptiles")
 library("leaflet")
+library("lubridate")
+library("dplyr")
 ```
 
 ### Fetching the Coordinates
@@ -269,7 +272,42 @@ PM_25_with_date <- read.csv("refined_PM25_daily_combined_data.csv")
 PM_25_with_date <- PM_25_with_date %>%
    mutate(formatted_date = paste(substr(date, 1, 4), substr(date, 6, 7), substr(date, 9, 10), sep = "-")) %>% mutate(station_ID = PM_25_with_date$city_num )
 
+write.csv(PM_25_with_date, "refined_date_PM25_daily_data.csv")
 
-PM_25_with_date 
+```
+
+### Creating Station ID
+
+```{r}
+stations_coords <- read.csv("/Users/paditya9/teamCharlotte/new_station_coords_data.csv")
+
+stations_coords <- stations_coords %>% mutate(station_ID = row_number())
+
+write.csv(stations_coords, "station_coords_with_stationID_data.csv", row.names = F)
+```
+
+### Cumulative Date
+
+```{r}
+stationID_data <- read.csv("station_coords_with_stationID_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("stations", "station_ID", "address2")]
+
+
+pm_25_data <- read.csv("refined_date_PM25_daily_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("station_ID", "formatted_date", "pm25")]
+
+
+met_data <- read.csv("met_data_charlotte/combinedMeteorologyDataCharlotte.csv", header = TRUE, stringsAsFactors = FALSE)[, c("Tair_f_tavg", "Wind_f_tavg", "Qair_f_tavg", "formatted_date")]
+
+station_pm_met_dataCombined <- merge(stationID_data,pm_25_data, by="station_ID", all = F )
+
+station_pm_met_dataCombined <- merge(station_pm_met_dataCombined, met_data, by="formatted_date", all = F)
+
+# Ordering the list by date followed by station ID
+station_pm_met_dataCombined <- station_pm_met_dataCombined[order(station_pm_met_dataCombined$formatted_date, station_pm_met_dataCombined$station_ID), ]
+
+# %B is used for abbrevation for Month 
+station_pm_met_dataCombined <- station_pm_met_dataCombined %>%
+  mutate(month = format(as.Date(station_pm_met_dataCombined$formatted_date, format = "%Y-%m-%d"), "%B")) %>% 
+  mutate (day_of_week = weekdays(as.Date(station_pm_met_dataCombined$formatted_date, format = "%Y-%m-%d")))
+
 
 ```
