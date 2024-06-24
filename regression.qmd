@@ -1,0 +1,69 @@
+---
+title: "Light rail analysis"
+format: html
+editor: visual
+---
+
+## DB-OLS
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+df <-read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
+```
+
+```{r}
+
+df
+df2<-df %>% mutate(date = as.Date(formatted_date,format = "%Y-%m-%d"))
+df2
+```
+
+```{r}
+startdate <- as.Date("2003-11-24",format = "%Y-%m-%d")
+
+enddate <- as.Date("2011-11-24",format = "%Y-%m-%d")
+
+opendate <- as.Date("2007-11-24",format = "%Y-%m-%d")
+
+constructionstart <- as.Date("2005-02-26",format = "%Y-%m-%d")
+
+#add policies here
+
+```
+
+```{r}
+
+
+df3<- df2 %>% filter(date >= startdate & date<=enddate)%>%
+  mutate(MetroOpen = ifelse(date>=opendate,1,0))%>%
+  mutate(construction = ifelse(date>=constructionstart & date<opendate,1,0))  %>%
+  
+  
+  group_by(station_ID)%>%
+  arrange(station_ID,date)%>%
+  mutate(lTair_f_tavg = lag(Tair_f_tavg))%>%
+  mutate(t=as.numeric(date-startdate))%>%
+  mutate(t2 = t^2,t3=t^3,t4=t^4)
+  #incomplete
+  
+```
+
+```{r}
+
+summary(m1 <- lm(log(pm25)~MetroOpen,data = df3))
+
+
+summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month),data = df3))
+
+summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg,data = df3))
+
+summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg,data = df3))
+
+summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg,data = df3))
+
+summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg+holiday_binary,data = df3))
+
+```
