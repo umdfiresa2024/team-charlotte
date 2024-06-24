@@ -47,7 +47,7 @@ df3<- df2 %>% filter(date >= startdate & date<=enddate)%>%
   mutate(lTair_f_tavg = lag(Tair_f_tavg))%>%
   mutate(t=as.numeric(date-startdate))%>%
   mutate(t2 = t^2,t3=t^3,t4=t^4)
-  #incomplete
+  #incomplete 3
   
 ```
 
