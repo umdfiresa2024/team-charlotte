@@ -322,16 +322,15 @@ station_pm_met_holiday_dataCombined <- station_pm_met_dataCombined %>%
 
 
 # Ordering the list by date followed by station ID
-station_pm_met_holiday_dataCombined <- station_pm_met_holiday_dataCombined[order(station_pm_met_holiday_dataCombined$formatted_date, station_pm_met_holiday_dataCombined$station_ID), ]
+station_pm_met_holiday_dataCombined_order <- station_pm_met_holiday_dataCombined[order(station_pm_met_holiday_dataCombined$formatted_date, station_pm_met_holiday_dataCombined$station_ID), ]
 
 # %B is used for abbrevation for Month 
-station_pm_met_holiday_dataCombined <- station_pm_met_holiday_dataCombined %>%
-  mutate(month = format(as.Date(station_pm_met_holiday_dataCombined$formatted_date, format = "%Y-%m-%d"), "%B")) %>% 
-  mutate (day_of_week = weekdays(as.Date(station_pm_met_holiday_dataCombined$formatted_date, format = "%Y-%m-%d")))
+station_pm_met_holiday_dataCombined_formatted <- station_pm_met_holiday_dataCombined_order %>%
+  mutate(month = format(as.Date(station_pm_met_holiday_dataCombined_order$formatted_date, format = "%Y-%m-%d"), "%B")) %>% 
+  mutate (day_of_week = weekdays(as.Date(station_pm_met_holiday_dataCombined_order$formatted_date, format = "%Y-%m-%d"))) %>% 
+  mutate(holiday_binary = ifelse(is.na(holiday), 0, 1))
 
 # summary(station_pm_met_holiday_dataCombined)
-
-
 
 
 ```
