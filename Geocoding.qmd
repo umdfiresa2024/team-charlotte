@@ -291,7 +291,7 @@ write.csv(stations_coords, "station_coords_with_stationID_data.csv", row.names =
 ```{r}
 holidays_data <- read.csv("/Users/paditya9/teamCharlotte/major_holidays_2000_2025.csv", header = TRUE, stringsAsFactors = FALSE)
 
-holidays_data <- holidays_data %>% filter(date >= as.Date("2003-11-24") & date <= as.Date("2011-11-24")) %>% mutate(formatted_date = date)
+holidays_data <- holidays_data %>% filter(date >= as.Date("2003-11-24") & date <= as.Date("2011-11-24")) %>% mutate(formatted_date = date) %>% distinct(formatted_date)
 
 write.csv(holidays_data, "refined_holidays_data.csv", row.names = F)
 ```
@@ -309,7 +309,8 @@ pm_25_data <- read.csv("refined_date_PM25_daily_data.csv", header = TRUE, string
 met_data <- read.csv("met_data_charlotte/combinedMeteorologyDataCharlotte.csv", header = TRUE, stringsAsFactors = FALSE)[, c("Tair_f_tavg", "Wind_f_tavg", "Qair_f_tavg", "formatted_date")]
 
 #Reading Holiday Data
-holidays_data <- read.csv("/Users/paditya9/teamCharlotte/refined_holidays_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("holiday", "formatted_date")]
+holidays_data <- read.csv("/Users/paditya9/teamCharlotte/refined_holidays_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("formatted_date")]
+
 
 station_pm_met_dataCombined <- merge(stationID_data,pm_25_data, by="station_ID", all = F )
 
@@ -317,7 +318,7 @@ station_pm_met_dataCombined <- merge(station_pm_met_dataCombined, met_data, by="
 
 # Check code, 
 # station_pm_met_dataCombined rows ≠ station_pm_met_holiday_dataCombined
-station_pm_met_holiday_dataCombined <- station_pm_met_dataCombined %>% left_join(holidays_data, by = "formatted_date", keep = FALSE, unmatched = "drop")
+station_pm_met_holiday_dataCombined <- station_pm_met_dataCombined %>% left_join(refined_holidayData, by = "formatted_date", keep = FALSE, unmatched = "drop")
 
 
 # Ordering the list by date followed by station ID
