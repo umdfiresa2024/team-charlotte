@@ -317,8 +317,7 @@ station_pm_met_dataCombined <- merge(station_pm_met_dataCombined, met_data, by="
 
 # Check code, 
 # station_pm_met_dataCombined rows ≠ station_pm_met_holiday_dataCombined
-station_pm_met_holiday_dataCombined <- station_pm_met_dataCombined %>%
-  left_join(holidays_data, by = "formatted_date", keep = FALSE, unmatched = "drop")
+station_pm_met_holiday_dataCombined <- station_pm_met_dataCombined %>% left_join(holidays_data, by = "formatted_date", keep = FALSE, unmatched = "drop")
 
 
 # Ordering the list by date followed by station ID
@@ -327,12 +326,30 @@ station_pm_met_holiday_dataCombined_order <- station_pm_met_holiday_dataCombined
 # %B is used for abbrevation for Month 
 station_pm_met_holiday_dataCombined_formatted <- station_pm_met_holiday_dataCombined_order %>%
   mutate(month = format(as.Date(station_pm_met_holiday_dataCombined_order$formatted_date, format = "%Y-%m-%d"), "%B")) %>% 
+# NA = 0; Holiday = 1
   mutate (day_of_week = weekdays(as.Date(station_pm_met_holiday_dataCombined_order$formatted_date, format = "%Y-%m-%d"))) %>% 
   mutate(holiday_binary = ifelse(is.na(holiday), 0, 1))
-
-write_csv(station_pm_met_holiday_dataCombined_formatted, "station_pm_met_holiday_dataCombined_formatted.csv", row.names = FALSE)
 
 # summary(station_pm_met_holiday_dataCombined)
 
 
+```
+
+### Storing Combined Data Frame 
+
+```{r}
+write_csv(station_pm_met_holiday_dataCombined_formatted, "station_pm_met_holiday_dataCombined_formatted.csv")
+
+```
+
+### Adding Binary Column for PM Factor's
+
+```{r}
+combinedData <- read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
+
+# 1 = PM Source near Station; 0 = No PM sources
+binaryPMFactor <- combinedData %>% 
+  mutate(PMFactor = ifelse(
+    station_ID %in% c(5, 6, 9, 10), 1, 0
+  ))
 ```
