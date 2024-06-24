@@ -259,6 +259,7 @@ new_addr <- addrs.geo %>%
 ### Storing Data into new CSV File
 
 ``` r
+# First-time users: Do NOT overwrite the CSV file.
 # write.csv(new_addr, "new_station_coords_data.csv", row.names = FALSE)
 ```
 
@@ -410,4 +411,126 @@ lines(pts_buffer, col="red")
 
 ``` r
 # writeVector(pts_buffer, "new_buffer_light_rail.shp")
+```
+
+### Combining PM2.5 Data
+
+``` r
+# List all CSV files in the directory
+file_list <- list.files(path = "PM25_daily", pattern = "*.csv", full.names = TRUE)
+
+# Read and combine all CSV files into one data frame
+combined_df <- do.call(rbind, lapply(file_list, function(file) {
+  df <- read.csv(file)
+  # Assuming your date column is named 'date' and is in format '%Y%m%d'
+  df$date <- as.Date(df$date, format = "%Y%m%d")
+  df
+}))
+
+# Filter rows from 2003-11-24 to 2011-11-24
+combined_df_filtered <- combined_df %>%
+  filter(date >= as.Date("2003-11-24") & date <= as.Date("2011-11-24"))
+
+# Write the filtered data frame to a new CSV file
+# First-time users: Do NOT overwrite the CSV file.
+# write.csv(combined_df_filtered, "refined_PM25_daily_combined_data.csv", row.names = FALSE)
+
+PM_25_with_date <- read.csv("refined_PM25_daily_combined_data.csv")
+
+PM_25_with_date <- PM_25_with_date %>%
+   mutate(formatted_date = paste(substr(date, 1, 4), substr(date, 6, 7), substr(date, 9, 10), sep = "-")) %>% mutate(station_ID = PM_25_with_date$city_num )
+
+# First-time users: Do NOT overwrite the CSV file.
+# write.csv(PM_25_with_date, "refined_date_PM25_daily_data.csv")
+```
+
+### Creating Station ID
+
+``` r
+stations_coords <- read.csv("/Users/paditya9/teamCharlotte/new_station_coords_data.csv")
+
+stations_coords <- stations_coords %>% mutate(station_ID = row_number())
+
+# First-time users: Do NOT overwrite the CSV file.
+# write.csv(stations_coords, "station_coords_with_stationID_data.csv", row.names = F)
+```
+
+### Using and Cleaning Holiday Data Set
+
+``` r
+holidays_data <- read.csv("/Users/paditya9/teamCharlotte/major_holidays_2000_2025.csv", header = TRUE, stringsAsFactors = FALSE)
+
+holidays_data <- holidays_data %>% filter(date >= as.Date("2003-11-24") & date <= as.Date("2011-11-24")) %>% mutate(formatted_date = date)
+
+# First-time users: Do NOT overwrite the CSV file.
+# write.csv(holidays_data, "refined_holidays_data.csv", row.names = F)
+```
+
+### Cumulative Data
+
+This code combines various data frames into a single data frame,
+emphasizing code reusability and avoiding complexity. The code
+integrates data from:
+
+1.  Stations
+2.  PM2.5 measurements
+3.  Meteorological data
+4.  Public holidays
+
+``` r
+#Reading Stations Data
+stationID_data <- read.csv("station_coords_with_stationID_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("stations", "station_ID", "address2")]
+
+#Reading PM2.5 Daily Data
+pm_25_data <- read.csv("refined_date_PM25_daily_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("station_ID", "formatted_date", "pm25")]
+
+#Reading Meterological Data
+met_data <- read.csv("met_data_charlotte/combinedMeteorologyDataCharlotte.csv", header = TRUE, stringsAsFactors = FALSE)[, c("Tair_f_tavg", "Wind_f_tavg", "Qair_f_tavg", "formatted_date")]
+
+#Reading Holiday Data
+holidays_data <- read.csv("/Users/paditya9/teamCharlotte/refined_holidays_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("holiday", "formatted_date")]
+
+station_pm_met_dataCombined <- merge(stationID_data,pm_25_data, by="station_ID", all = F )
+
+station_pm_met_dataCombined <- merge(station_pm_met_dataCombined, met_data, by="formatted_date", all = F)
+
+# Check code, 
+# station_pm_met_dataCombined rows ≠ station_pm_met_holiday_dataCombined
+station_pm_met_holiday_dataCombined <- station_pm_met_dataCombined %>% left_join(holidays_data, by = "formatted_date", keep = FALSE, unmatched = "drop")
+```
+
+    Warning in left_join(., holidays_data, by = "formatted_date", keep = FALSE, : Detected an unexpected many-to-many relationship between `x` and `y`.
+    ℹ Row 59125 of `x` matches multiple rows in `y`.
+    ℹ Row 1 of `y` matches multiple rows in `x`.
+    ℹ If a many-to-many relationship is expected, set `relationship =
+      "many-to-many"` to silence this warning.
+
+``` r
+# Ordering the list by date followed by station ID
+station_pm_met_holiday_dataCombined_order <- station_pm_met_holiday_dataCombined[order(station_pm_met_holiday_dataCombined$formatted_date, station_pm_met_holiday_dataCombined$station_ID), ]
+
+# %B is used for abbrevation for Month 
+station_pm_met_holiday_dataCombined_formatted <- station_pm_met_holiday_dataCombined_order %>%
+  mutate(month = format(as.Date(station_pm_met_holiday_dataCombined_order$formatted_date, format = "%Y-%m-%d"), "%B")) %>% 
+# NA = 0; Holiday = 1
+  mutate (day_of_week = weekdays(as.Date(station_pm_met_holiday_dataCombined_order$formatted_date, format = "%Y-%m-%d"))) %>% 
+  mutate(holiday_binary = ifelse(is.na(holiday), 0, 1))
+
+# First-time users: Do NOT overwrite the CSV file.
+# write_csv(station_pm_met_holiday_dataCombined_formatted, "station_pm_met_holiday_dataCombined_formatted.csv")
+```
+
+### Adding Binary variable to Check for PM Sources
+
+``` r
+combinedData <- read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
+
+# 1 = PM Source near Station; 0 = No PM sources
+binaryPMFactor <- combinedData %>% 
+  mutate(PMFactor = ifelse(
+    station_ID %in% c(5, 6, 9, 10), 1, 0
+  ))
+
+# First-time users: Do NOT overwrite the CSV file.
+# write.csv(binaryPMFactor, "station_pm_met_holiday_dataCombined_formatted.csv", row.names = FALSE)
 ```
