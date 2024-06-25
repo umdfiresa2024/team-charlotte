@@ -335,7 +335,7 @@ station_pm_met_holiday_dataCombined_formatted <- station_pm_met_holiday_dataComb
 
 ```
 
-### Storing Combined Data Frame 
+### Storing Combined Data Frame
 
 ```{r}
 write_csv(station_pm_met_holiday_dataCombined_formatted, "station_pm_met_holiday_dataCombined_formatted.csv")
