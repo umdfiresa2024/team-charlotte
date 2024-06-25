@@ -29,37 +29,34 @@ We hypothesize that:
     kable(stations_table)
     ```
 
-    | stations                               | Opening.Dates                                 | Parking   |       lon |                                         lat | address                                                                 |      lat2 |                                        lon2 | address2                                                                |
-    |:---------------------------------------|:----------------------------------------------|:----------|----------:|--------------------------------------------:|:------------------------------------------------------------------------|----------:|--------------------------------------------:|:------------------------------------------------------------------------|
-    | I-485/South Boulevard                  | November 24, 2007                             | TRUE      | -80.88292 |                                    35.10708 | i-485/south boulevard station, charlotte, nc 28134, usa                 |  35.10708 |                                   -80.88292 | i-485/south boulevard station, charlotte, nc 28134, usa                 |
-    | Sharon Road West station               | November 24, 2007                             | TRUE      | -80.88219 |                                    35.11927 | sharon road west station, charlotte, nc 28134, usa                      |  35.11927 |                                   -80.88219 | sharon road west station, charlotte, nc 28134, usa                      |
-    | Arrowood station                       | November 24, 2007                             | TRUE      | -80.87637 |                                    35.13569 | arrowood, 7717 england st, charlotte, nc 28273, usa                     |  35.13569 |                                   -80.87637 | arrowood, 7717 england st, charlotte, nc 28273, usa                     |
-    | Archdale station                       | November 24, 2007                             | TRUE      | -80.87748 |                                    35.15290 | archdale, charlotte, nc 28217, usa                                      |  35.15290 |                                   -80.87748 | archdale, charlotte, nc 28217, usa                                      |
-    | Tyvola station                         | November 24, 2007                             | TRUE      | -80.87750 |                                    35.16285 | tyvola, 5703 old pineville rd, charlotte, nc 28217, usa                 |  35.16285 |                                   -80.87750 | tyvola, 5703 old pineville rd, charlotte, nc 28217, usa                 |
-    | Woodlawn station (Charlotte)           | November 24, 2007                             | TRUE      | -80.87930 |                                    35.17590 | woodlawn station, charlotte, nc 28217, usa                              |  35.17590 |                                   -80.87930 | woodlawn station, charlotte, nc 28217, usa                              |
-    | Scaleybark station                     | November 24, 2007                             | FALSE     | -80.87501 |                                    35.19092 | scaleybark, charlotte, nc 28217, usa                                    |  35.19092 |                                   -80.87501 | scaleybark, charlotte, nc 28217, usa                                    |
-    | New Bern station                       | November 24, 2007                             | FALSE     | -80.86904 |                                    35.19985 | new bern station, charlotte, nc 28209, usa                              |  35.19985 |                                   -80.86904 | new bern station, charlotte, nc 28209, usa                              |
-    | East/West Boulevard station            | August 30, 1996 \| (rebuilt November 24, 2007 |           |           |                                             |                                                                         |           |                                             |                                                                         |
-    | )                                      | FALSE                                         | -80.85895 |  35.21212 | east/west station, charlotte, nc 28203, usa | 35.21212                                                                | -80.85895 | east/west station, charlotte, nc 28203, usa |                                                                         |
-    | Bland Street station                   | August 30, 1996 \| (rebuilt November 24, 2007 |           |           |                                             |                                                                         |           |                                             |                                                                         |
-    | )                                      | FALSE                                         | -80.85525 |  35.21582 |             bland, charlotte, nc 28203, usa | 35.21622                                                                | -80.85446 |        1511 Camden Road, charlotte, nc, usa |                                                                         |
-    | Carson light rail station (Charlotte)  | November 24, 2007                             | FALSE     | -80.84313 |                                    35.22709 | charlotte, nc, usa                                                      |  35.21944 |                                   -80.84823 | 218 East Carson Boulevard, charlotte, nc, usa                           |
-    | Brooklyn Village (Charlotte)           | August 30, 1996 \| (rebuilt November 24, 2007 |           |           |                                             |                                                                         |           |                                             |                                                                         |
-    | )                                      | FALSE                                         | -80.84299 |  35.21867 |      e brooklyn vlg ave, charlotte, nc, usa | 35.21867                                                                | -80.84299 |      e brooklyn vlg ave, charlotte, nc, usa |                                                                         |
-    | Third Street/Convention Center station | June 28, 2004 \| (rebuilt November 24, 2007)  | FALSE     | -80.84312 |                                    35.22375 | 3rd st./convention center, charlotte, nc 28244, usa                     |  35.22375 |                                   -80.84312 | 3rd st./convention center, charlotte, nc 28244, usa                     |
-    | Charlotte Transportation Center        | November 24, 2007                             | FALSE     | -80.84313 |                                    35.22709 | charlotte, nc, usa                                                      |  35.21944 |                                   -80.84823 | 310 East Trade Street, charlotte, nc, usa                               |
-    | 7th Street station (Charlotte)         | June 28, 2004 \| (rebuilt November 24, 2007)  | FALSE     | -80.83798 |                                    35.22751 | 7th st station, charlotte, nc 28202, usa                                |  35.22751 |                                   -80.83798 | 7th st station, charlotte, nc 28202, usa                                |
-    | 9th Street station (Charlotte)         | June 24, 2004 \| (rebuilt March 16, 2018)     | FALSE     | -80.83516 |                                    35.22948 | 239 e 9th st, charlotte, nc 28202, usa                                  |  35.22948 |                                   -80.83516 | 239 e 9th st, charlotte, nc 28202, usa                                  |
-    | Parkwood station                       | March 16, 2018                                | FALSE     | -80.82323 |                                    35.23689 | parkwood, charlotte, nc 28206, usa                                      |  35.23689 |                                   -80.82323 | parkwood, charlotte, nc 28206, usa                                      |
-    | 25th Street station (Charlotte)        | March 16, 2018                                | FALSE     | -80.81708 |                                    35.24174 | 25th street, charlotte, nc 28206, usa                                   |  35.24174 |                                   -80.81708 | 25th street, charlotte, nc 28206, usa                                   |
-    | 36th Street station (Charlotte)        | March 16, 2018                                | FALSE     | -80.80545 |                                    35.24854 | 36th street station, charlotte, nc 28205, usa                           |  35.24854 |                                   -80.80545 | 36th street station, charlotte, nc 28205, usa                           |
-    | Sugar Creek station (Charlotte)        | March 16, 2018                                | TRUE      | -80.79184 |                                    35.25106 | sugar creek station, bearwood ave, charlotte, nc 28205, usa             |  35.25106 |                                   -80.79184 | sugar creek station, bearwood ave, charlotte, nc 28205, usa             |
-    | Old Concord Road station               | March 16, 2018                                | TRUE      | -80.77271 |                                    35.25996 | old concord road station, charlotte, nc 28213, usa                      |  35.25996 |                                   -80.77271 | old concord road station, charlotte, nc 28213, usa                      |
-    | Tom Hunter station                     | March 16, 2018                                | FALSE     | -80.76629 |                                    35.27795 | tom hunter station, charlotte, nc 28213, usa                            |  35.27795 |                                   -80.76629 | tom hunter station, charlotte, nc 28213, usa                            |
-    | University City Blvd station           | March 16, 2018                                | TRUE      | -80.76074 |                                    35.28692 | university city blvd, 7205 n tryon st, charlotte, nc 28262, usa         |  35.28692 |                                   -80.76074 | university city blvd, 7205 n tryon st, charlotte, nc 28262, usa         |
-    | McCullough station                     | March 16, 2018                                | FALSE     | -80.75288 |                                    35.30112 | mccullough, 8312 n tryon st, charlotte, nc 28262, usa                   |  35.30112 |                                   -80.75288 | mccullough, 8312 n tryon st, charlotte, nc 28262, usa                   |
-    | JW Clay Blvd/UNC Charlotte station     | March 16, 2018                                | TRUE      | -80.74503 |                                    35.31083 | 9234-9300 n tryon st, charlotte, nc 28262, usa                          |  35.31155 |                                   -80.74547 | 9048 North Tryon Street, charlotte, nc, usa                             |
-    | UNC Charlotte–Main station             | March 16, 2018                                | FALSE     | -80.73371 |                                    35.31218 | unc charlotte main station, 9025 cameron blvd, charlotte, nc 28262, usa |  35.31218 |                                   -80.73371 | unc charlotte main station, 9025 cameron blvd, charlotte, nc 28262, usa |
+    | stations                               | Opening.Dates                                  | Parking |       lon |      lat | address                                                                 |     lat2 |      lon2 | address2                                                                |
+    |:---------------------------------------|:-----------------------------------------------|:--------|----------:|---------:|:------------------------------------------------------------------------|---------:|----------:|:------------------------------------------------------------------------|
+    | I-485/South Boulevard                  | November 24, 2007                              | TRUE    | -80.88292 | 35.10708 | i-485/south boulevard station, charlotte, nc 28134, usa                 | 35.10708 | -80.88292 | i-485/south boulevard station, charlotte, nc 28134, usa                 |
+    | Sharon Road West station               | November 24, 2007                              | TRUE    | -80.88219 | 35.11927 | sharon road west station, charlotte, nc 28134, usa                      | 35.11927 | -80.88219 | sharon road west station, charlotte, nc 28134, usa                      |
+    | Arrowood station                       | November 24, 2007                              | TRUE    | -80.87637 | 35.13569 | arrowood, 7717 england st, charlotte, nc 28273, usa                     | 35.13569 | -80.87637 | arrowood, 7717 england st, charlotte, nc 28273, usa                     |
+    | Archdale station                       | November 24, 2007                              | TRUE    | -80.87748 | 35.15290 | archdale, charlotte, nc 28217, usa                                      | 35.15290 | -80.87748 | archdale, charlotte, nc 28217, usa                                      |
+    | Tyvola station                         | November 24, 2007                              | TRUE    | -80.87750 | 35.16285 | tyvola, 5703 old pineville rd, charlotte, nc 28217, usa                 | 35.16285 | -80.87750 | tyvola, 5703 old pineville rd, charlotte, nc 28217, usa                 |
+    | Woodlawn station (Charlotte)           | November 24, 2007                              | TRUE    | -80.87930 | 35.17590 | woodlawn station, charlotte, nc 28217, usa                              | 35.17590 | -80.87930 | woodlawn station, charlotte, nc 28217, usa                              |
+    | Scaleybark station                     | November 24, 2007                              | FALSE   | -80.87501 | 35.19092 | scaleybark, charlotte, nc 28217, usa                                    | 35.19092 | -80.87501 | scaleybark, charlotte, nc 28217, usa                                    |
+    | New Bern station                       | November 24, 2007                              | FALSE   | -80.86904 | 35.19985 | new bern station, charlotte, nc 28209, usa                              | 35.19985 | -80.86904 | new bern station, charlotte, nc 28209, usa                              |
+    | East/West Boulevard station            | August 30, 1996 \| (rebuilt November 24, 2007) | FALSE   | -80.85895 | 35.21212 | east/west station, charlotte, nc 28203, usa                             | 35.21212 | -80.85895 | east/west station, charlotte, nc 28203, usa                             |
+    | Bland Street station                   | August 30, 1996 \| (rebuilt November 24, 2007) | FALSE   | -80.85525 | 35.21582 | bland, charlotte, nc 28203, usa                                         | 35.21622 | -80.85446 | 1511 Camden Road, charlotte, nc, usa                                    |
+    | Carson light rail station (Charlotte)  | November 24, 2007                              | FALSE   | -80.84313 | 35.22709 | charlotte, nc, usa                                                      | 35.21944 | -80.84823 | 218 East Carson Boulevard, charlotte, nc, usa                           |
+    | Brooklyn Village (Charlotte)           | August 30, 1996 \| (rebuilt November 24, 2007) | FALSE   | -80.84299 | 35.21867 | e brooklyn vlg ave, charlotte, nc, usa                                  | 35.21867 | -80.84299 | e brooklyn vlg ave, charlotte, nc, usa                                  |
+    | Third Street/Convention Center station | June 28, 2004 \| (rebuilt November 24, 2007)   | FALSE   | -80.84312 | 35.22375 | 3rd st./convention center, charlotte, nc 28244, usa                     | 35.22375 | -80.84312 | 3rd st./convention center, charlotte, nc 28244, usa                     |
+    | Charlotte Transportation Center        | November 24, 2007                              | FALSE   | -80.84313 | 35.22709 | charlotte, nc, usa                                                      | 35.21944 | -80.84823 | 310 East Trade Street, charlotte, nc, usa                               |
+    | 7th Street station (Charlotte)         | June 28, 2004 \| (rebuilt November 24, 2007)   | FALSE   | -80.83798 | 35.22751 | 7th st station, charlotte, nc 28202, usa                                | 35.22751 | -80.83798 | 7th st station, charlotte, nc 28202, usa                                |
+    | 9th Street station (Charlotte)         | June 24, 2004 \| (rebuilt March 16, 2018)      | FALSE   | -80.83516 | 35.22948 | 239 e 9th st, charlotte, nc 28202, usa                                  | 35.22948 | -80.83516 | 239 e 9th st, charlotte, nc 28202, usa                                  |
+    | Parkwood station                       | March 16, 2018                                 | FALSE   | -80.82323 | 35.23689 | parkwood, charlotte, nc 28206, usa                                      | 35.23689 | -80.82323 | parkwood, charlotte, nc 28206, usa                                      |
+    | 25th Street station (Charlotte)        | March 16, 2018                                 | FALSE   | -80.81708 | 35.24174 | 25th street, charlotte, nc 28206, usa                                   | 35.24174 | -80.81708 | 25th street, charlotte, nc 28206, usa                                   |
+    | 36th Street station (Charlotte)        | March 16, 2018                                 | FALSE   | -80.80545 | 35.24854 | 36th street station, charlotte, nc 28205, usa                           | 35.24854 | -80.80545 | 36th street station, charlotte, nc 28205, usa                           |
+    | Sugar Creek station (Charlotte)        | March 16, 2018                                 | TRUE    | -80.79184 | 35.25106 | sugar creek station, bearwood ave, charlotte, nc 28205, usa             | 35.25106 | -80.79184 | sugar creek station, bearwood ave, charlotte, nc 28205, usa             |
+    | Old Concord Road station               | March 16, 2018                                 | TRUE    | -80.77271 | 35.25996 | old concord road station, charlotte, nc 28213, usa                      | 35.25996 | -80.77271 | old concord road station, charlotte, nc 28213, usa                      |
+    | Tom Hunter station                     | March 16, 2018                                 | FALSE   | -80.76629 | 35.27795 | tom hunter station, charlotte, nc 28213, usa                            | 35.27795 | -80.76629 | tom hunter station, charlotte, nc 28213, usa                            |
+    | University City Blvd station           | March 16, 2018                                 | TRUE    | -80.76074 | 35.28692 | university city blvd, 7205 n tryon st, charlotte, nc 28262, usa         | 35.28692 | -80.76074 | university city blvd, 7205 n tryon st, charlotte, nc 28262, usa         |
+    | McCullough station                     | March 16, 2018                                 | FALSE   | -80.75288 | 35.30112 | mccullough, 8312 n tryon st, charlotte, nc 28262, usa                   | 35.30112 | -80.75288 | mccullough, 8312 n tryon st, charlotte, nc 28262, usa                   |
+    | JW Clay Blvd/UNC Charlotte station     | March 16, 2018                                 | TRUE    | -80.74503 | 35.31083 | 9234-9300 n tryon st, charlotte, nc 28262, usa                          | 35.31155 | -80.74547 | 9048 North Tryon Street, charlotte, nc, usa                             |
+    | UNC Charlotte–Main station             | March 16, 2018                                 | FALSE   | -80.73371 | 35.31218 | unc charlotte main station, 9025 cameron blvd, charlotte, nc 28262, usa | 35.31218 | -80.73371 | unc charlotte main station, 9025 cameron blvd, charlotte, nc 28262, usa |
 
 - Time Frame: November 2003 - November 2011
 
@@ -80,7 +77,7 @@ We hypothesize that:
       kable(factors_table)
       ```
 
-      | Type          | sources                                                 | Address                                                                | Reason.s.                                                                                       |       lon |      lat | address                                                                                            |     lat2 |      lon2 | address2                                                                                           |
+      | Type          | sources                                                 | Address                                                                | Reasons.                                                                                        |       lon |      lat | address                                                                                            |     lat2 |      lon2 | address2                                                                                           |
       |:--------------|:--------------------------------------------------------|:-----------------------------------------------------------------------|:------------------------------------------------------------------------------------------------|----------:|---------:|:---------------------------------------------------------------------------------------------------|---------:|----------:|:---------------------------------------------------------------------------------------------------|
       | Power Plant   | GG Allen steam station                                  | 253 Plant Allen Rd, Belmont, NC 28012                                  | Coal-fired power plant.                                                                         | -81.00855 | 35.18982 | 253 plant allen rd, belmont, nc 28012, usa                                                         | 35.18982 | -81.00855 | 253 plant allen rd, belmont, nc 28012, usa                                                         |
       | Neighbourhood | South End                                               | South End, Charlotte, NC 28203                                         | Once heavily industrial, still contains some light industrial facilities despite redevelopment. | -80.85878 | 35.21256 | south end, charlotte, nc 28203, usa                                                                | 35.21256 | -80.85878 | south end, charlotte, nc 28203, usa                                                                |
@@ -262,6 +259,7 @@ new_addr <- addrs.geo %>%
 ### Storing Data into new CSV File
 
 ``` r
+# First time users - do NOT over-wrrite CSV file
 # write.csv(new_addr, "new_station_coords_data.csv", row.names = FALSE)
 ```
 
@@ -412,6 +410,7 @@ lines(pts_buffer, col="red")
 ### Saving the Buffer’s into ShapeFile
 
 ``` r
+# First time users - do NOT over-wrrite CSV file
 # writeVector(pts_buffer, "new_buffer_light_rail.shp")
 ```
 
@@ -441,5 +440,102 @@ PM_25_with_date <- read.csv("refined_PM25_daily_combined_data.csv")
 PM_25_with_date <- PM_25_with_date %>%
    mutate(formatted_date = paste(substr(date, 1, 4), substr(date, 6, 7), substr(date, 9, 10), sep = "-")) %>% mutate(station_ID = PM_25_with_date$city_num )
 
-write.csv(PM_25_with_date, "refined_date_PM25_daily_data.csv")
+# First time users - do NOT over-wrrite CSV file
+# write.csv(PM_25_with_date, "refined_date_PM25_daily_data.csv")
 ```
+
+### Creating Station ID
+
+``` r
+stations_coords <- read.csv("/Users/paditya9/teamCharlotte/new_station_coords_data.csv")
+
+stations_coords <- stations_coords %>% mutate(station_ID = row_number())
+
+# First time users - do NOT over-wrrite CSV file
+# write.csv(stations_coords, "station_coords_with_stationID_data.csv", row.names = F)
+```
+
+### Creating Holiday Data
+
+``` r
+holidays_data <- read.csv("/Users/paditya9/teamCharlotte/major_holidays_2000_2025.csv", header = TRUE, stringsAsFactors = FALSE)
+
+holidays_data <- holidays_data %>% filter(date >= as.Date("2003-11-24") & date <= as.Date("2011-11-24")) %>% mutate(formatted_date = date)
+
+# First time users - do NOT over-wrrite CSV file
+# write.csv(holidays_data, "refined_holidays_data.csv", row.names = F)
+```
+
+### Cumulative Data
+
+``` r
+#Reading Stations Data
+stationID_data <- read.csv("station_coords_with_stationID_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("stations", "station_ID", "address2")]
+
+#Reading PM2.5 Daily Data
+pm_25_data <- read.csv("refined_date_PM25_daily_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("station_ID", "formatted_date", "pm25")]
+
+#Reading Meterological Data
+met_data <- read.csv("met_data_charlotte/combinedMeteorologyDataCharlotte.csv", header = TRUE, stringsAsFactors = FALSE)[, c("Tair_f_tavg", "Wind_f_tavg", "Qair_f_tavg", "formatted_date")]
+
+#Reading Holiday Data
+holidays_data <- read.csv("/Users/paditya9/teamCharlotte/refined_holidays_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("holiday", "formatted_date")]
+
+station_pm_met_dataCombined <- merge(stationID_data,pm_25_data, by="station_ID", all = F )
+
+station_pm_met_dataCombined <- merge(station_pm_met_dataCombined, met_data, by="formatted_date", all = F)
+
+# Check code, 
+# station_pm_met_dataCombined rows ≠ station_pm_met_holiday_dataCombined
+station_pm_met_holiday_dataCombined <- station_pm_met_dataCombined %>% left_join(holidays_data, by = "formatted_date", keep = FALSE, unmatched = "drop")
+```
+
+    Warning in left_join(., holidays_data, by = "formatted_date", keep = FALSE, : Detected an unexpected many-to-many relationship between `x` and `y`.
+    ℹ Row 59125 of `x` matches multiple rows in `y`.
+    ℹ Row 1 of `y` matches multiple rows in `x`.
+    ℹ If a many-to-many relationship is expected, set `relationship =
+      "many-to-many"` to silence this warning.
+
+``` r
+# Ordering the list by date followed by station ID
+station_pm_met_holiday_dataCombined_order <- station_pm_met_holiday_dataCombined[order(station_pm_met_holiday_dataCombined$formatted_date, station_pm_met_holiday_dataCombined$station_ID), ]
+
+# %B is used for abbrevation for Month 
+station_pm_met_holiday_dataCombined_formatted <- station_pm_met_holiday_dataCombined_order %>%
+  mutate(month = format(as.Date(station_pm_met_holiday_dataCombined_order$formatted_date, format = "%Y-%m-%d"), "%B")) %>% 
+  mutate (day_of_week = weekdays(as.Date(station_pm_met_holiday_dataCombined_order$formatted_date, format = "%Y-%m-%d"))) %>% 
+# NA = 0; Holiday = 1
+  mutate(holiday_binary = ifelse(is.na(holiday), 0, 1))
+
+# First time users - do NOT over-wrrite CSV file
+# write_csv(station_pm_met_holiday_dataCombined_formatted, "station_pm_met_holiday_dataCombined_formatted.csv")
+```
+
+``` r
+combinedData <- read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
+
+# No PM sources = 0; PM Source near Station = 1
+binaryPMFactor <- combinedData %>% 
+  mutate(PMFactor = ifelse(
+    station_ID %in% c(5, 6, 9, 10), 1, 0
+  ))
+
+# write.csv(binaryPMFactor, "station_pm_met_holiday_dataCombined_formatted.csv" )
+```
+
+### Adding Binary Column for PM Factor’s
+
+``` r
+combinedData_table <- read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
+head(combinedData_table) %>%
+  kable()
+```
+
+|   X | formatted_date | station_ID | stations                     | address2                                                |     pm25 | Tair_f_tavg | Wind_f_tavg | Qair_f_tavg | holiday | month    | day_of_week | holiday_binary | PMFactor |
+|----:|:---------------|-----------:|:-----------------------------|:--------------------------------------------------------|---------:|------------:|------------:|------------:|:--------|:---------|:------------|---------------:|---------:|
+|   1 | 2003-11-24     |          1 | I-485/South Boulevard        | i-485/south boulevard station, charlotte, nc 28134, usa | 10.70957 |    288.6281 |    5.050052 |   0.0097345 | NA      | November | Monday      |              0 |        0 |
+|   2 | 2003-11-24     |          2 | Sharon Road West station     | sharon road west station, charlotte, nc 28134, usa      | 10.95833 |    288.6281 |    5.050052 |   0.0097345 | NA      | November | Monday      |              0 |        0 |
+|   3 | 2003-11-24     |          3 | Arrowood station             | arrowood, 7717 england st, charlotte, nc 28273, usa     | 10.23755 |    288.6281 |    5.050052 |   0.0097345 | NA      | November | Monday      |              0 |        0 |
+|   4 | 2003-11-24     |          4 | Archdale station             | archdale, charlotte, nc 28217, usa                      | 11.35159 |    288.6281 |    5.050052 |   0.0097345 | NA      | November | Monday      |              0 |        0 |
+|   5 | 2003-11-24     |          5 | Tyvola station               | tyvola, 5703 old pineville rd, charlotte, nc 28217, usa | 10.90818 |    288.6281 |    5.050052 |   0.0097345 | NA      | November | Monday      |              0 |        1 |
+|   6 | 2003-11-24     |          6 | Woodlawn station (Charlotte) | woodlawn station, charlotte, nc 28217, usa              | 10.76754 |    288.6281 |    5.050052 |   0.0097345 | NA      | November | Monday      |              0 |        1 |

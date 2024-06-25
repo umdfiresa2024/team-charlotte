@@ -338,5 +338,8 @@ binaryPMFactor <- combinedData %>%
 
 ```{r}
 combinedData_table <- read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
-kable(combinedData_table)
+head(combinedData_table) %>%
+  kable()
+
+
 ```
