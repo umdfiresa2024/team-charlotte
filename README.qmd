@@ -286,6 +286,13 @@ holidays_data <- holidays_data %>% filter(date >= as.Date("2003-11-24") & date <
 
 ### Cumulative Data
 
+This code chunk combines various data frames into a single data frame, emphasizing code re usability and avoiding complexity. It integrates data from below CSV files
+
+1.  Stations Data
+2.  PM2.5 measurements Data
+3.  Meteorological Data
+4.  Holidays Data
+
 ```{r}
 #Reading Stations Data
 stationID_data <- read.csv("station_coords_with_stationID_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("stations", "station_ID", "address2")]
@@ -303,8 +310,6 @@ station_pm_met_dataCombined <- merge(stationID_data,pm_25_data, by="station_ID",
 
 station_pm_met_dataCombined <- merge(station_pm_met_dataCombined, met_data, by="formatted_date", all = F)
 
-# Check code, 
-# station_pm_met_dataCombined rows ≠ station_pm_met_holiday_dataCombined
 station_pm_met_holiday_dataCombined <- station_pm_met_dataCombined %>% left_join(holidays_data, by = "formatted_date", keep = FALSE, unmatched = "drop")
 
 
