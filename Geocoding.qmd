@@ -329,10 +329,6 @@ station_pm_met_holiday_dataCombined_formatted <- station_pm_met_holiday_dataComb
 # NA = 0; Holiday = 1
   mutate (day_of_week = weekdays(as.Date(station_pm_met_holiday_dataCombined_order$formatted_date, format = "%Y-%m-%d"))) %>% 
   mutate(holiday_binary = ifelse(is.na(holiday), 0, 1))
-
-# summary(station_pm_met_holiday_dataCombined)
-
-
 ```
 
 ### Storing Combined Data Frame
@@ -347,9 +343,11 @@ write_csv(station_pm_met_holiday_dataCombined_formatted, "station_pm_met_holiday
 ```{r}
 combinedData <- read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
 
-# 1 = PM Source near Station; 0 = No PM sources
+# No PM sources = 0; PM Source near Station = 1
 binaryPMFactor <- combinedData %>% 
   mutate(PMFactor = ifelse(
     station_ID %in% c(5, 6, 9, 10), 1, 0
   ))
+
+write.csv(binaryPMFactor, "station_pm_met_holiday_dataCombined_formatted.csv" )
 ```
