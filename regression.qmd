@@ -12,9 +12,6 @@ library(tidyverse)
 
 ```{r}
 df <-read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
-```
-
-```{r}
 
 df
 df2<-df %>% mutate(date = as.Date(formatted_date,format = "%Y-%m-%d"))
@@ -37,10 +34,9 @@ constructionstart <- as.Date("2005-02-26",format = "%Y-%m-%d")
 ```{r}
 
 
-df3<- df2 %>% filter(date >= startdate & date<=enddate)%>%
+metroOpen_df <- df2 %>% filter(date >= startdate & date<=enddate)%>%
   mutate(MetroOpen = ifelse(date>=opendate,1,0))%>%
-  mutate(construction = ifelse(date>=constructionstart & date<opendate,1,0))  %>%
-  
+  mutate(construction = ifelse(date>=constructionstart & date<opendate,1,0))%>%
   
   group_by(station_ID)%>%
   arrange(station_ID,date)%>%
@@ -48,22 +44,21 @@ df3<- df2 %>% filter(date >= startdate & date<=enddate)%>%
   mutate(t=as.numeric(date-startdate))%>%
   mutate(t2 = t^2,t3=t^3,t4=t^4)
   #incomplete 3
-  
 ```
 
 ```{r}
 
-summary(m1 <- lm(log(pm25)~MetroOpen,data = df3))
+summary(m1 <- lm(log(pm25)~MetroOpen,data = metroOpen_df))
 
 
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month),data = df3))
+summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month),data = metroOpen_df))
 
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg,data = df3))
+summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg,data = metroOpen_df))
 
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg,data = df3))
+summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg,data = metroOpen_df))
 
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg,data = df3))
+summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg,data = metroOpen_df))
 
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg+holiday_binary,data = df3))
+summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg+holiday_binary,data = metroOpen_df))
 
 ```
