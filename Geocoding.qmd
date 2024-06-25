@@ -315,8 +315,6 @@ station_pm_met_dataCombined <- merge(stationID_data,pm_25_data, by="station_ID",
 
 station_pm_met_dataCombined <- merge(station_pm_met_dataCombined, met_data, by="formatted_date", all = F)
 
-# Check code, 
-# station_pm_met_dataCombined rows ≠ station_pm_met_holiday_dataCombined
 station_pm_met_holiday_dataCombined <- station_pm_met_dataCombined %>% left_join(holidays_data, by = "formatted_date", keep = FALSE, unmatched = "drop")
 
 
