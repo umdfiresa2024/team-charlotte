@@ -354,9 +354,7 @@ head(combinedData_table) %>%
 ```{r}
 df <-read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
 
-df
 df2 <- df %>% mutate(date = as.Date(formatted_date,format = "%Y-%m-%d"))
-df2
 
 startdate <- as.Date("2003-11-24",format = "%Y-%m-%d")
 
