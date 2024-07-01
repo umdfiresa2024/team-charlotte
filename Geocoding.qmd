@@ -309,7 +309,7 @@ pm_25_data <- read.csv("refined_date_PM25_daily_data.csv", header = TRUE, string
 met_data <- read.csv("met_data_charlotte/combinedMeteorologyDataCharlotte.csv", header = TRUE, stringsAsFactors = FALSE)[, c("Tair_f_tavg", "Wind_f_tavg", "Qair_f_tavg", "formatted_date")]
 
 #Reading Holiday Data
-holidays_data <- read.csv("/Users/paditya9/teamCharlotte/refined_holidays_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("holiday", "formatted_date")]
+holidays_data <- read.csv("refined_holidays_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("holiday", "formatted_date")]
 
 #Reading Parking Data
 parking <- read.csv("BlueLine Parking Dataset - Charlotte.csv", header = TRUE, stringsAsFactors = FALSE)[, c("station_ID", "Parking")]
@@ -356,7 +356,7 @@ write.csv(binaryPMFactor, "station_pm_met_holiday_dataCombined_formatted.csv" )
 
 ```
 
-### Finding Regression Model 
+### Finding Regression Model
 
 ```{r}
 df <-read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
