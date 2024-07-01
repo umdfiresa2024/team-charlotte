@@ -306,7 +306,7 @@ stationID_data <- read.csv("station_coords_with_stationID_data.csv", header = TR
 pm_25_data <- read.csv("refined_date_PM25_daily_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("station_ID", "formatted_date", "pm25")]
 
 #Reading Meterological Data
-met_data <- read.csv("met_data_charlotte/combinedMeteorologyDataCharlotte.csv", header = TRUE, stringsAsFactors = FALSE)[, c("Tair_f_tavg", "Wind_f_tavg", "Qair_f_tavg", "formatted_date")]
+met_data <- read.csv("met_data_charlotte/combinedMeteorologyDataCharlotte.csv", header = TRUE, stringsAsFactors = FALSE)[, c("Swnet_tavg","Lwnet_tavg","Qle_tavg","Qh_tavg","Snowf_tavg","Rainf_tavg", "Qsm_tavg", "SnowT_tavg","SWE_tavg","SnowDepth_tavg","Tair_f_tavg","Rainf_f_tavg", "Wind_f_tavg", "Qair_f_tavg", "Psurf_f_tavg", "formatted_date")]
 
 #Reading Holiday Data
 holidays_data <- read.csv("refined_holidays_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("holiday", "formatted_date")]
@@ -361,9 +361,8 @@ write.csv(binaryPMFactor, "station_pm_met_holiday_dataCombined_formatted.csv" )
 ```{r}
 df <-read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
 
-df
 df2 <- df %>% mutate(date = as.Date(formatted_date,format = "%Y-%m-%d"))
-df2
+
 
 startdate <- as.Date("2003-11-24",format = "%Y-%m-%d")
 
@@ -376,25 +375,48 @@ constructionstart <- as.Date("2005-02-26",format = "%Y-%m-%d")
 metroOpen_df <- df2 %>% filter(date >= startdate & date<=enddate)%>%
   mutate(MetroOpen = ifelse(date>=opendate,1,0))%>%
   mutate(construction = ifelse(date>=constructionstart & date<opendate,1,0))%>%
-  
   group_by(station_ID)%>%
   arrange(station_ID,date)%>%
   mutate(lTair_f_tavg = lag(Tair_f_tavg))%>%
+  mutate(lQair_f_tavg = lag(Qair_f_tavg)) %>%
+  mutate(lPsurf_f_tavg = lag(Psurf_f_tavg)) %>%
+  mutate(lWind_f_tavg = lag(Wind_f_tavg)) %>%
   mutate(t=as.numeric(date-startdate))%>%
   mutate(t2 = t^2,t3=t^3,t4=t^4)
 
-summary(m1 <- lm(log(pm25)~MetroOpen,data = metroOpen_df))
+regression_stats <- summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + Rainf_tavg + Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + Tair_f_tavg + Rainf_f_tavg + Wind_f_tavg + Qair_f_tavg + Psurf_f_tavg + Parking + Parking:MetroOpen, data = metroOpen_df))
 
+df2 <- df2 %>%
+  mutate(before_after = ifelse(date < opendate, "Before", "After"))
 
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month),data = metroOpen_df))
+# Plotting the data
+ggplot(df2, aes(x = date, y = pm25, color = before_after)) +
+  geom_line() +
+  labs(title = "PM2.5 Levels Before and After Metro Opening",
+       x = "Date",
+       y = "PM2.5 Levels",
+       color = "Metro Opening") +
+  theme_minimal()
 
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg,data = metroOpen_df))
+regression_stats
 
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg,data = metroOpen_df))
+metroOpen_df
 
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg,data = metroOpen_df))
-
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg+holiday_binary,data = metroOpen_df))
+# 
+# summary(m1 <- lm(log(pm25)~MetroOpen,data = metroOpen_df))
+# 
+# 
+# summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month),data = metroOpen_df))
+# 
+# summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg,data = metroOpen_df))
+# 
+# summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg,data = metroOpen_df))
+# 
+# summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg,data = metroOpen_df))
+# 
+# summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg+holiday_binary,data = metroOpen_df))
+# 
+# 
 
 
 ```
