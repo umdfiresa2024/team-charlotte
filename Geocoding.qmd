@@ -330,10 +330,9 @@ station_pm_met_holiday_dataCombined_order <- station_pm_met_holiday_dataCombined
 
 # %B is used for abbrevation for Month 
 station_pm_met_holiday_dataCombined_formatted <- station_pm_met_holiday_dataCombined_order %>%
-  mutate(month = format(as.Date(station_pm_met_holiday_dataCombined_order$formatted_date, format = "%Y-%m-%d"), "%B"))
+  mutate(month = format(as.Date(station_pm_met_holiday_dataCombined_order$formatted_date, format = "%Y-%m-%d"), "%B")) %>% 
 # NA = 0; Holiday = 1
-  # mutate (day_of_week = weekdays(as.Date(station_pm_met_holiday_dataCombined_order$formatted_date, format = "%Y-%m-%d"))) %>% 
-  # mutate(holiday_binary = ifelse(is.na(holiday), 0, 1))
+  mutate (day_of_week = weekdays(as.Date(station_pm_met_holiday_dataCombined_order$formatted_date, format = "%Y-%m-%d")))
 ```
 
 ### Storing Combined Data Frame
