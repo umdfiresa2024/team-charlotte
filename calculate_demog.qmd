@@ -16,50 +16,49 @@ library("knitr")
 Upload your team's full data frame required to estimate the impact of light rails on PM2.5 levels surrounding all stations. Below is a simplified example.
 
 ```{r}
-df<-read.csv("pm25_highway_daily.csv") 
+df <-read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
 
-df2<-df %>%
-  mutate(date=substr(date,1,8)) %>%
-  mutate(date=as.Date(date, format='%Y%m%d'))
+df2 <- df %>% mutate(date = as.Date(formatted_date,format = "%Y-%m-%d"))
 
-#period of analysis
-startdate<-as.Date("2003-11-01", format='%Y-%m-%d')
-enddate<-as.Date("2011-11-01", format='%Y-%m-%d')
 
-#opening data of metro
-opendate<-as.Date("2007-11-01", format='%Y-%m-%d')
+startdate <- as.Date("2003-11-24",format = "%Y-%m-%d")
 
-#date when groundbreak starts
-conststart<-as.Date("2005-01-01", format='%Y-%m-%d')
+enddate <- as.Date("2011-11-24",format = "%Y-%m-%d")
 
-#heavy duty vehicle run
-hvrule_start<-as.Date("2007-01-01", format='%Y-%m-%d')
+opendate <- as.Date("2007-11-24",format = "%Y-%m-%d")
 
-df3<-df2 %>%
-  filter(date>=startdate & date<=enddate) %>%
-  mutate(MetroOpen=ifelse(date>=opendate, 1, 0)) %>%
-  mutate(dow=wday(date)) %>%
-  mutate(construction=ifelse(date>conststart & date<opendate, 1, 0)) %>%
-  mutate(hv_rule=ifelse(date>hvrule_start,1,0)) %>%
-  mutate(t=as.numeric(date-startdate)) %>%
-  mutate(t2=t^2, t3=t^3, t4=t^4)
+constructionstart <- as.Date("2005-02-26",format = "%Y-%m-%d")
+
+metroOpen_df <- df2 %>% filter(date >= startdate & date<=enddate)%>%
+  mutate(MetroOpen = ifelse(date>=opendate,1,0))%>%
+  mutate(construction = ifelse(date>=constructionstart & date<opendate,1,0))%>%
+  group_by(station_ID)%>%
+  arrange(station_ID,date)%>%
+  mutate(lTair_f_tavg = lag(Tair_f_tavg))%>%
+  mutate(lQair_f_tavg = lag(Qair_f_tavg)) %>%
+  mutate(lPsurf_f_tavg = lag(Psurf_f_tavg)) %>%
+  mutate(lWind_f_tavg = lag(Wind_f_tavg)) %>%
+  mutate(t=as.numeric(date-startdate))%>%
+  mutate(t2 = t^2,t3=t^3,t4=t^4)
+
 ```
 
 Run stations level regressions. Use the best regression specification (in your team's opinion) from the average effect calculation.
 
 ```{r}
-summary(m1<-lm(log(pm25) ~ MetroOpen:as.factor(city_num) +
-                 construction + hv_rule + as.factor(month) + 
-                 t + t2 + t3 + t4, data=df3))
+
+regression_stats <- summary(m1 <- lm(log(pm25)~MetroOpen:as.factor(station_ID)+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + Rainf_tavg + Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + Tair_f_tavg + Rainf_f_tavg + Wind_f_tavg + Qair_f_tavg + Psurf_f_tavg , data = metroOpen_df))
 ```
 
 The code below prints out the station-level effect and the p-values
 
 ```{r}
+
+c<- coef(m1)
 len_coef<-length(coef(m1))
 
 #get coefficients of the station-level effect
-coef<-coef(m1)[(len_coef-3): len_coef]
+coef<-coef(m1)[(len_coef-(26-1)): len_coef]
 
 #get p values of the station-level effect (p<0.05 is statistically significant)
 pval<-summary(m1)$coefficients[,4][(len_coef-3): len_coef]
@@ -76,6 +75,11 @@ Get census key
 ```{r}
 library(tidycensus)
 api_key <- "43a847b486e6474534b5e09d747e72ffd18f4ba2"
+
+
+api_key <- "a7db1db93b5e9ba83fc6029eba22232d6a44c924"
+
+
 census_api_key(api_key, install=TRUE, overwrite = T)
 readRenviron("~/.Renviron")
 ```
@@ -83,6 +87,8 @@ readRenviron("~/.Renviron")
 Identify variables that you would like to query
 
 ```{r}
+
+#sf1 individual, sf2 is 
 vars<-load_variables(year=2010, dataset="sf1", cache = TRUE)
 #P005001 Total
 #P005003 White
@@ -90,13 +96,24 @@ vars<-load_variables(year=2010, dataset="sf1", cache = TRUE)
 #P005005 Native
 #P005006 Asian
 #P005010 Hispanic
+
+# write.csv(vars1, "demographics_variable.csv")
 ```
+
+![](images/clipboard-9133593.png)
 
 Query variables
 
 ```{r}
-targetvars<-c("P005001", "P005003", "P005004", "P005005", "P005006", "P005010")
-race<-get_decennial(geography = "block", variables=targetvars, state="AZ", county="Maricopa", output="wide")
+targetvars<-c("P005001", "P005003","P005004","P005005","P005006","P005010")
+
+
+
+race<-get_decennial(geography = "tract", variables=targetvars, state="NC", county="Mecklenburg", output="wide", year = 2010)
+
+race
+
+
 ```
 
 Rename columns
@@ -113,14 +130,14 @@ library("terra")
 ```
 
 ```{r}
-buff<-vect("Phoenix Shapefiles/roads_1km_buff/roads_1km_buff.shp")
+buff<-vect("Buffer Light Rail/new_buffer_light_rail.shp")
 plot(buff)
 ```
 
 Download shapefiles from [tigris package](https://github.com/walkerke/tigris)
 
 ```{r}
-shape<-tigris::blocks(state="AZ", county="Maricopa", class="sp", year=2010)
+shape<-tigris::blocks(state="NC", county="Mecklenburg", class="sp", year=2010)
 shapevect<-vect(shape)
 shapedf<-as.data.frame(shape)
 ```
@@ -140,11 +157,16 @@ summary(blockracedf)
 Intersect blocks with buffers
 
 ```{r}
-int<-crop(blockrace, buff)
+buffdf <- as.data.frame(buff)
+buff2 <- subset(buff,buff$FID ==1)
+int<-crop(blockrace, buff2)
 
 int$intarea<-expanse(int, unit="m")
 
-intdf<-as.data.frame(int) %>%
+intdf<-as.data.frame(int) 
+
+
+%>%
   mutate(frac_area=intarea/blockarea) %>%
   mutate(total=total*frac_area, 
          white=white*frac_area, 
