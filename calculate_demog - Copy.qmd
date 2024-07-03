@@ -1,0 +1,265 @@
+---
+title: "Calculate Affected Demographics"
+format: html
+editor: visual
+---
+
+In this document, you will calculate station-level PM2.5 changes. Afterward, you will calculate impacted demographic groups around each station.
+
+# Calculating Station-Level Pollution Change
+
+```{r}
+library("tidyverse")
+library("knitr")
+```
+
+Upload your team's full data frame required to estimate the impact of light rails on PM2.5 levels surrounding all stations. Below is a simplified example.
+
+```{r}
+df <-read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
+
+df2 <- df %>% mutate(date = as.Date(formatted_date,format = "%Y-%m-%d"))
+
+
+startdate <- as.Date("2003-11-24",format = "%Y-%m-%d")
+
+enddate <- as.Date("2011-11-24",format = "%Y-%m-%d")
+
+opendate <- as.Date("2007-11-24",format = "%Y-%m-%d")
+
+constructionstart <- as.Date("2005-02-26",format = "%Y-%m-%d")
+
+CAIR <- as.Date("2005-03-10",format = "%Y-%m-%d")
+
+metroOpen_df <- df2 %>% filter(date >= startdate & date<=enddate)%>%
+  mutate(MetroOpen = ifelse(date>=opendate,1,0))%>%
+  mutate(construction = ifelse(date>=constructionstart & date<opendate,1,0))%>%
+  group_by(station_ID)%>%
+  arrange(station_ID,date)%>%
+  mutate(lTair_f_tavg = lag(Tair_f_tavg))%>%
+  mutate(duringCAIR = ifelse(date>=CAIR & date<= enddate,1,0))%>%
+  mutate(lQair_f_tavg = lag(Qair_f_tavg)) %>%
+  mutate(lPsurf_f_tavg = lag(Psurf_f_tavg)) %>%
+  mutate(lWind_f_tavg = lag(Wind_f_tavg)) %>%
+  mutate(t=as.numeric(date-startdate))%>%
+  mutate(t2 = t^2,t3=t^3,t4=t^4)
+
+```
+
+Run stations level regressions. Use the best regression specification (in your team's opinion) from the average effect calculation.
+
+```{r}
+
+regression_stats <- summary(m1 <- lm(log(pm25)~MetroOpen:as.factor(station_ID)+construction+as.factor(day_of_week)+as.factor(month) + duringCAIR + Tair_f_tavg + Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + Rainf_tavg + Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + Tair_f_tavg + Rainf_f_tavg + Wind_f_tavg + Qair_f_tavg + Psurf_f_tavg , data = metroOpen_df))
+#leaving out parking as a factor, but its still being included in the regression stuff?
+```
+
+The code below prints out the station-level effect and the p-values
+
+```{r}
+
+c<- coef(m1)
+len_coef<-length(coef(m1))
+
+#get coefficients of the station-level effect
+coef<-coef(m1)[(len_coef-(26-1)): len_coef]
+
+#get p values of the station-level effect (p<0.05 is statistically significant)
+pval<-summary(m1)$coefficients[,4][(len_coef-3): len_coef]
+
+kable(cbind(coef, pval), digits=2)
+```
+
+# Query demographic data
+
+Helpful resource: <https://walker-data.com/tidycensus/articles/basic-usage.html>
+
+Get census key
+
+```{r}
+library(tidycensus)
+api_key <- "43a847b486e6474534b5e09d747e72ffd18f4ba2"
+
+
+api_key <- "a7db1db93b5e9ba83fc6029eba22232d6a44c924"
+
+
+census_api_key(api_key, install=TRUE, overwrite = T)
+readRenviron("~/.Renviron")
+```
+
+Identify variables that you would like to query
+
+```{r}
+
+#sf1 individual, sf2 is 
+vars<-load_variables(year=2010, dataset="sf1", cache = TRUE)
+#P005001 Total
+#P005003 White
+#P005004 Black
+#P005005 Native
+#P005006 Asian
+#P005010 Hispanic
+
+# write.csv(vars1, "demographics_variable.csv")
+```
+
+![](images/clipboard-9133593.png)
+
+Query variables
+
+```{r}
+targetvars<-c("P005001", "P005003","P005004","P005005","P005006","P005010")
+
+
+
+race<-get_decennial(geography = "block", variables=targetvars, state="NC", county="Mecklenburg", output="wide", year = 2010)
+
+race
+
+
+```
+
+Rename columns
+
+```{r}
+racename<-race %>%
+  rename(total=P005001, white=P005003, black=P005004, native=P005005, asian=P005006, hisp=P005010)
+```
+
+# Calculate affected demographic group
+
+```{r}
+library("terra")
+```
+
+```{r}
+buff<-vect("Buffer Light Rail/new_buffer_light_rail.shp")
+plot(buff)
+```
+
+Download shapefiles from [tigris package](https://github.com/walkerke/tigris)
+
+```{r}
+shape<-tigris::blocks(state="NC", county="Mecklenburg", class="sp", year=2010)
+shapevect<-vect(shape)
+shapedf<-as.data.frame(shape)
+```
+
+```{r}
+blockrace<-merge(shapevect, racename, by.x="GEOID10", by.y="GEOID")
+
+blockrace$blockarea<-expanse(blockrace, unit="m")
+
+blockracedf<-as.data.frame(blockrace)
+
+summary(blockracedf)
+
+#100 percent match
+```
+
+Intersect blocks with buffers
+
+```{r}
+
+buffdf <- as.data.frame(buff)
+
+output <- c()
+
+for(i in 0:25){
+  print(i)
+
+buff2 <- subset(buff,buff$FID ==i)
+
+int<-crop(blockrace, buff2)
+
+int$intarea<-expanse(int, unit="m")
+
+
+
+intdf<-as.data.frame(int)%>%
+
+  mutate(frac_area=intarea/blockarea) %>%
+  mutate(total=total*frac_area, 
+         white=white*frac_area, 
+         black=black*frac_area, 
+         native=native*frac_area, 
+         asian=asian*frac_area, 
+         hisp=hisp*frac_area) %>%
+  summarize(total=sum(total), 
+            white=sum(white), 
+            black=sum(black), 
+            native=sum(native), 
+            asian=sum(asian), 
+            hisp=sum(hisp)) %>%
+  mutate(pct_white=white*100/total, 
+         pct_black=black*100/total, 
+         pct_native=native*100/total,
+         pct_asian=asian*100/total,
+         pct_hisp=hisp*100/total)%>% mutate(FID = i)
+output <- rbind(output,intdf)
+}
+  
+  output
+```
+
+Summarize demographic groups that live near light rail stations
+
+```{r}
+sum_demog<-output %>%
+  summarize(total = sum(total),
+            white = sum(white),
+            black = sum(black),
+            native = sum(native),
+            asian = sum(asian),
+            hisp = sum(hisp))%>%
+  mutate(pct_white = white*100/total,pct_black = black*100/total,pct_native = native*100/total,pct_asian = asian*100/total,pct_hisp = hisp*100/total)
+
+kable(sum_demog, digits=2)
+```
+
+Merge station-level demographic data with station-level pollution reduction data.
+
+```{r}
+everything <- cbind(output,coef)
+```
+
+Calculate the average emissions that each demographic group sees by using the formula below:
+
+$\dfrac{Hisp_{area1} \times Reduction_{area1} + Hisp_{area2} \times Reduction_{area2}}{Hisp_{area1} + Hisp_{area2}}$
+
+```{r}
+
+reduction_benefit <- everything%>%
+  mutate(total_change = total*coef,white_change = white*coef,black_change = black*coef,
+         asian_change = asian*coef,native_change = native*coef,hisp_change = hisp*coef)%>%
+  summarize(total_change_sum=sum(total_change),
+            white_change_sum=sum(white_change),
+            black_change_sum=sum(black_change),
+            native_change_sum=sum(native_change),
+            asian_change_sum = sum(asian_change),
+            hisp_change_sum=sum(hisp_change),
+            total=sum(total), 
+            white=sum(white), 
+            black=sum(black), 
+            native=sum(native), 
+            asian=sum(asian), 
+            hisp=sum(hisp)) %>%
+  
+    mutate(total_change_ave=total_change_sum*100/total,
+         black_change_ave=black_change_sum*100/black,
+         white_change_ave=white_change_sum*100/white,
+         native_change_ave=native_change_sum*100/native,
+         hisp_change_ave=hisp_change_sum*100/hisp,
+         asian_change_ave = asian_change_sum*100/asian)
+
+
+
+final_result <- reduction_benefit %>%
+  select(total_change_ave,black_change_ave,white_change_ave,native_change_ave,asian_change_ave)
+
+
+kable(final_result,digits = 2)
+
+#all racial groups seemed to get a similar amount of benefit from pollution reduction, ranging with whites getting -26.16 and asians getting -24.9
+```
