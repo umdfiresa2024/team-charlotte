@@ -379,7 +379,7 @@ metroOpen_df <- df2 %>% filter(date >= startdate & date<=enddate)%>%
   mutate(construction = ifelse(date>=constructionstart & date<opendate,1,0))%>%
   mutate(duringCAIR = ifelse(date>=CAIR & date<= enddate,1,0))%>%
   group_by(station_ID)%>%
-  arrange(station_ID,date)%>%
+  arrange(date, station_ID)%>%
   mutate(lTair_f_tavg = lag(Tair_f_tavg))%>%
   mutate(lQair_f_tavg = lag(Qair_f_tavg)) %>%
   mutate(lPsurf_f_tavg = lag(Psurf_f_tavg)) %>%
