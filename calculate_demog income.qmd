@@ -29,6 +29,7 @@ opendate <- as.Date("2007-11-24",format = "%Y-%m-%d")
 
 constructionstart <- as.Date("2005-02-26",format = "%Y-%m-%d")
 
+#Clean Air Interstate Rule 
 CAIR <- as.Date("2005-03-10",format = "%Y-%m-%d")
 
 metroOpen_df <- df2 %>% filter(date >= startdate & date<=enddate)%>%
@@ -93,14 +94,9 @@ Identify variables that you would like to query
 
 ```{r}
 
-#sf1 individual, sf2 is 
+#using acs instead of decennial since decennial doesn't include income 
 vars<-load_variables(year=2010, dataset="acs1", cache = TRUE)
-#P005001 Total
-#P005003 White
-#P005004 Black
-#P005005 Native
-#P005006 Asian
-#P005010 Hispanic
+
 
 write.csv(vars, "demographics_variable_acs.csv")
 ```
@@ -110,16 +106,18 @@ write.csv(vars, "demographics_variable_acs.csv")
 Query variables
 
 ```{r}
+
+#vars range from less than 10k to more than 200k
+
 targetvars <- c("B19001_001", "B19001_002", "B19001_003", "B19001_004", "B19001_005", 
                 "B19001_006", "B19001_007", "B19001_008", "B19001_009", "B19001_010", 
                 "B19001_011", "B19001_012", "B19001_013", "B19001_014", "B19001_015", 
                 "B19001_016", "B19001_017")
 
+income<-get_acs(geography = "tract", variables=targetvars, state="NC", county="Mecklenburg", output="wide", year = 2010) %>% select(-ends_with("M"))
 
-
-race<-get_acs(geography = "tract", variables=targetvars, state="NC", county="Mecklenburg", output="wide", year = 2010)
-
-race
+#the variables that end in E are the estimates while the ones that end in M tell the margin of error.
+income
 
 
 ```
@@ -127,24 +125,24 @@ race
 Rename columns
 
 ```{r}
-racename<-race %>%
-  rename(total = B19001_001, 
-       less_than_10k = B19001_002, 
-       `10k_to_15k` = B19001_003, 
-       `15k_to_20k` = B19001_004, 
-       `20k_to_25k` = B19001_005, 
-       `25k_to_30k` = B19001_006, 
-       `30k_to_35k` = B19001_007, 
-       `35k_to_40k` = B19001_008, 
-       `40k_to_45k` = B19001_009, 
-       `45k_to_50k` = B19001_010, 
-       `50k_to_60k` = B19001_011, 
-       `60k_to_75k` = B19001_012, 
-       `75k_to_100k` = B19001_013, 
-       `100k_to_125k` = B19001_014, 
-       `125k_to_150k` = B19001_015, 
-       `150k_to_200k` = B19001_016, 
-       `200k_or_more` = B19001_017)
+income_name<-income %>%
+  rename(total = B19001_001E, 
+       less_than_10k = B19001_002E, 
+       `10k_to_15k` = B19001_003E, 
+       `15k_to_20k` = B19001_004E, 
+       `20k_to_25k` = B19001_005E, 
+       `25k_to_30k` = B19001_006E, 
+       `30k_to_35k` = B19001_007E, 
+       `35k_to_40k` = B19001_008E, 
+       `40k_to_45k` = B19001_009E, 
+       `45k_to_50k` = B19001_010E, 
+       `50k_to_60k` = B19001_011E, 
+       `60k_to_75k` = B19001_012E, 
+       `75k_to_100k` = B19001_013E, 
+       `100k_to_125k` = B19001_014E, 
+       `125k_to_150k` = B19001_015E, 
+       `150k_to_200k` = B19001_016E, 
+       `200k_or_more` = B19001_017E)
 ```
 
 # Calculate affected demographic group
@@ -161,19 +159,19 @@ plot(buff)
 Download shapefiles from [tigris package](https://github.com/walkerke/tigris)
 
 ```{r}
-shape<-tigris::blocks(state="NC", county="Mecklenburg", class="sp", year=2010)
+shape<-tigris::tracts(state="NC", county="Mecklenburg", class="sp", year=2010)
 shapevect<-vect(shape)
 shapedf<-as.data.frame(shape)
 ```
 
 ```{r}
-blockrace<-merge(shapevect, racename, by.x="GEOID10", by.y="GEOID")
+tract_income<-merge(shapevect, income_name, by.x="GEOID10", by.y="GEOID")
 
-blockrace$blockarea<-expanse(blockrace, unit="m")
+tract_income$tract_area<-expanse(tract_income, unit="m")
 
-blockracedf<-as.data.frame(blockrace)
+tract_income_df<-as.data.frame(tract_income)
 
-summary(blockracedf)
+summary(tract_income_df)
 
 #100 percent match
 ```
@@ -191,7 +189,7 @@ for(i in 0:25){
 
 buff2 <- subset(buff,buff$FID ==i)
 
-int<-crop(blockrace, buff2)
+int<-crop(tract_income, buff2)
 
 int$intarea<-expanse(int, unit="m")
 
@@ -199,24 +197,75 @@ int$intarea<-expanse(int, unit="m")
 
 intdf<-as.data.frame(int)%>%
 
-  mutate(frac_area=intarea/blockarea) %>%
+  mutate(frac_area=intarea/tract_area) %>%
   mutate(total=total*frac_area, 
-         white=white*frac_area, 
-         black=black*frac_area, 
-         native=native*frac_area, 
-         asian=asian*frac_area, 
-         hisp=hisp*frac_area) %>%
+         
+         
+         
+        `less_than_10k` = `less_than_10k` * frac_area,
+`10k_to_15k` = `10k_to_15k` * frac_area,
+`15k_to_20k` = `15k_to_20k` * frac_area,
+`20k_to_25k` = `20k_to_25k` * frac_area,
+`25k_to_30k` = `25k_to_30k` * frac_area,
+`30k_to_35k` = `30k_to_35k` * frac_area,
+`35k_to_40k` = `35k_to_40k` * frac_area,
+`40k_to_45k` = `40k_to_45k` * frac_area,
+`45k_to_50k` = `45k_to_50k` * frac_area,
+`50k_to_60k` = `50k_to_60k` * frac_area,
+`60k_to_75k` = `60k_to_75k` * frac_area,
+`75k_to_100k` = `75k_to_100k` * frac_area,
+`100k_to_125k` = `100k_to_125k` * frac_area,
+`125k_to_150k` = `125k_to_150k` * frac_area,
+`150k_to_200k` = `150k_to_200k` * frac_area,
+`200k_or_more` = `200k_or_more` * frac_area
+         
+         ) %>%
   summarize(total=sum(total), 
-            white=sum(white), 
-            black=sum(black), 
-            native=sum(native), 
-            asian=sum(asian), 
-            hisp=sum(hisp)) %>%
-  mutate(pct_white=white*100/total, 
-         pct_black=black*100/total, 
-         pct_native=native*100/total,
-         pct_asian=asian*100/total,
-         pct_hisp=hisp*100/total)%>% mutate(FID = i)
+            
+            
+            `less_than_10k` = sum(`less_than_10k`),
+`10k_to_15k` = sum(`10k_to_15k`),
+`15k_to_20k` = sum(`15k_to_20k`),
+`20k_to_25k` = sum(`20k_to_25k`),
+`25k_to_30k` = sum(`25k_to_30k`),
+`30k_to_35k` = sum(`30k_to_35k`),
+`35k_to_40k` = sum(`35k_to_40k`),
+`40k_to_45k` = sum(`40k_to_45k`),
+`45k_to_50k` = sum(`45k_to_50k`),
+`50k_to_60k` = sum(`50k_to_60k`),
+`60k_to_75k` = sum(`60k_to_75k`),
+`75k_to_100k` = sum(`75k_to_100k`),
+`100k_to_125k` = sum(`100k_to_125k`),
+`125k_to_150k` = sum(`125k_to_150k`),
+`150k_to_200k` = sum(`150k_to_200k`),
+`200k_or_more` = sum(`200k_or_more`)
+            
+            
+            
+            ) %>%
+  mutate(
+    
+    
+   `pct_less_than_10k` = `less_than_10k` * 100 / `total`,
+`pct_10k_to_15k` = `10k_to_15k` * 100 / `total`,
+`pct_15k_to_20k` = `15k_to_20k` * 100 / `total`,
+`pct_20k_to_25k` = `20k_to_25k` * 100 / `total`,
+`pct_25k_to_30k` = `25k_to_30k` * 100 / `total`,
+`pct_30k_to_35k` = `30k_to_35k` * 100 / `total`,
+`pct_35k_to_40k` = `35k_to_40k` * 100 / `total`,
+`pct_40k_to_45k` = `40k_to_45k` * 100 / `total`,
+`pct_45k_to_50k` = `45k_to_50k` * 100 / `total`,
+`pct_50k_to_60k` = `50k_to_60k` * 100 / `total`,
+`pct_60k_to_75k` = `60k_to_75k` * 100 / `total`,
+`pct_75k_to_100k` = `75k_to_100k` * 100 / `total`,
+`pct_100k_to_125k` = `100k_to_125k` * 100 / `total`,
+`pct_125k_to_150k` = `125k_to_150k` * 100 / `total`,
+`pct_150k_to_200k` = `150k_to_200k` * 100 / `total`,
+`pct_200k_or_more` = `200k_or_more` * 100 / `total`
+    
+    
+    
+    )%>% mutate(FID = i)
 output <- rbind(output,intdf)
 }
   
@@ -227,13 +276,48 @@ Summarize demographic groups that live near light rail stations
 
 ```{r}
 sum_demog<-output %>%
-  summarize(total = sum(total),
-            white = sum(white),
-            black = sum(black),
-            native = sum(native),
-            asian = sum(asian),
-            hisp = sum(hisp))%>%
-  mutate(pct_white = white*100/total,pct_black = black*100/total,pct_native = native*100/total,pct_asian = asian*100/total,pct_hisp = hisp*100/total)
+  #combinging all the station's data together
+  summarize(
+    total = sum(total),
+   `less_than_10k` = sum(`less_than_10k`),
+`10k_to_15k` = sum(`10k_to_15k`),
+`15k_to_20k` = sum(`15k_to_20k`),
+`20k_to_25k` = sum(`20k_to_25k`),
+`25k_to_30k` = sum(`25k_to_30k`),
+`30k_to_35k` = sum(`30k_to_35k`),
+`35k_to_40k` = sum(`35k_to_40k`),
+`40k_to_45k` = sum(`40k_to_45k`),
+`45k_to_50k` = sum(`45k_to_50k`),
+`50k_to_60k` = sum(`50k_to_60k`),
+`60k_to_75k` = sum(`60k_to_75k`),
+`75k_to_100k` = sum(`75k_to_100k`),
+`100k_to_125k` = sum(`100k_to_125k`),
+`125k_to_150k` = sum(`125k_to_150k`),
+`150k_to_200k` = sum(`150k_to_200k`),
+`200k_or_more` = sum(`200k_or_more`)
+            
+            
+            )%>%
+  mutate(
+    
+      `pct_less_than_10k` = `less_than_10k` * 100 / `total`,
+`pct_10k_to_15k` = `10k_to_15k` * 100 / `total`,
+`pct_15k_to_20k` = `15k_to_20k` * 100 / `total`,
+`pct_20k_to_25k` = `20k_to_25k` * 100 / `total`,
+`pct_25k_to_30k` = `25k_to_30k` * 100 / `total`,
+`pct_30k_to_35k` = `30k_to_35k` * 100 / `total`,
+`pct_35k_to_40k` = `35k_to_40k` * 100 / `total`,
+`pct_40k_to_45k` = `40k_to_45k` * 100 / `total`,
+`pct_45k_to_50k` = `45k_to_50k` * 100 / `total`,
+`pct_50k_to_60k` = `50k_to_60k` * 100 / `total`,
+`pct_60k_to_75k` = `60k_to_75k` * 100 / `total`,
+`pct_75k_to_100k` = `75k_to_100k` * 100 / `total`,
+`pct_100k_to_125k` = `100k_to_125k` * 100 / `total`,
+`pct_125k_to_150k` = `125k_to_150k` * 100 / `total`,
+`pct_150k_to_200k` = `150k_to_200k` * 100 / `total`,
+`pct_200k_or_more` = `200k_or_more` * 100 / `total`
+    
+    )
 
 kable(sum_demog, digits=2)
 ```
@@ -251,35 +335,99 @@ $\dfrac{Hisp_{area1} \times Reduction_{area1} + Hisp_{area2} \times Reduction_{a
 ```{r}
 
 reduction_benefit <- everything%>%
-  mutate(total_change = total*coef,white_change = white*coef,black_change = black*coef,
-         asian_change = asian*coef,native_change = native*coef,hisp_change = hisp*coef)%>%
+  mutate(
+    #multiplying number of people in demographic by change in pollution caused by light rail
+    total_change = total*coef,
+    `less_than_10k_change` = `less_than_10k` * `coef`,
+`10k_to_15k_change` = `10k_to_15k` * `coef`,
+`15k_to_20k_change` = `15k_to_20k` * `coef`,
+`20k_to_25k_change` = `20k_to_25k` * `coef`,
+`25k_to_30k_change` = `25k_to_30k` * `coef`,
+`30k_to_35k_change` = `30k_to_35k` * `coef`,
+`35k_to_40k_change` = `35k_to_40k` * `coef`,
+`40k_to_45k_change` = `40k_to_45k` * `coef`,
+`45k_to_50k_change` = `45k_to_50k` * `coef`,
+`50k_to_60k_change` = `50k_to_60k` * `coef`,
+`60k_to_75k_change` = `60k_to_75k` * `coef`,
+`75k_to_100k_change` = `75k_to_100k` * `coef`,
+`100k_to_125k_change` = `100k_to_125k` * `coef`,
+`125k_to_150k_change` = `125k_to_150k` * `coef`,
+`150k_to_200k_change` = `150k_to_200k` * `coef`,
+`200k_or_more_change` = `200k_or_more` * `coef`
+    
+    )%>%
+  #summing impact across all stations
   summarize(total_change_sum=sum(total_change),
-            white_change_sum=sum(white_change),
-            black_change_sum=sum(black_change),
-            native_change_sum=sum(native_change),
-            asian_change_sum = sum(asian_change),
-            hisp_change_sum=sum(hisp_change),
-            total=sum(total), 
-            white=sum(white), 
-            black=sum(black), 
-            native=sum(native), 
-            asian=sum(asian), 
-            hisp=sum(hisp)) %>%
-  
-    mutate(total_change_ave=total_change_sum*100/total,
-         black_change_ave=black_change_sum*100/black,
-         white_change_ave=white_change_sum*100/white,
-         native_change_ave=native_change_sum*100/native,
-         hisp_change_ave=hisp_change_sum*100/hisp,
-         asian_change_ave = asian_change_sum*100/asian)
+            total_pop = sum(total),
+            `less_than_10k_change_sum` = sum(`less_than_10k_change`),
+`10k_to_15k_change_sum` = sum(`10k_to_15k_change`),
+`15k_to_20k_change_sum` = sum(`15k_to_20k_change`),
+`20k_to_25k_change_sum` = sum(`20k_to_25k_change`),
+`25k_to_30k_change_sum` = sum(`25k_to_30k_change`),
+`30k_to_35k_change_sum` = sum(`30k_to_35k_change`),
+`35k_to_40k_change_sum` = sum(`35k_to_40k_change`),
+`40k_to_45k_change_sum` = sum(`40k_to_45k_change`),
+`45k_to_50k_change_sum` = sum(`45k_to_50k_change`),
+`50k_to_60k_change_sum` = sum(`50k_to_60k_change`),
+`60k_to_75k_change_sum` = sum(`60k_to_75k_change`),
+`75k_to_100k_change_sum` = sum(`75k_to_100k_change`),
+`100k_to_125k_change_sum` = sum(`100k_to_125k_change`),
+`125k_to_150k_change_sum` = sum(`125k_to_150k_change`),
+`150k_to_200k_change_sum` = sum(`150k_to_200k_change`),
+`200k_or_more_change_sum` = sum(`200k_or_more_change`),
+
+#sums together populations of different income brackets across the stations
+`less_than_10k` = sum(`less_than_10k`),
+`10k_to_15k` = sum(`10k_to_15k`),
+`15k_to_20k` = sum(`15k_to_20k`),
+`20k_to_25k` = sum(`20k_to_25k`),
+`25k_to_30k` = sum(`25k_to_30k`),
+`30k_to_35k` = sum(`30k_to_35k`),
+`35k_to_40k` = sum(`35k_to_40k`),
+`40k_to_45k` = sum(`40k_to_45k`),
+`45k_to_50k` = sum(`45k_to_50k`),
+`50k_to_60k` = sum(`50k_to_60k`),
+`60k_to_75k` = sum(`60k_to_75k`),
+`75k_to_100k` = sum(`75k_to_100k`),
+`100k_to_125k` = sum(`100k_to_125k`),
+`125k_to_150k` = sum(`125k_to_150k`),
+`150k_to_200k` = sum(`150k_to_200k`),
+`200k_or_more` = sum(`200k_or_more`)
+
+            
+            
+            ) %>%
+  #ave variables are the amount of change in pollution an individual of that demographic would recieve on average
+    mutate(total_change_average=total_change_sum/total_pop,
+           
+      `less_than_10k_average` = `less_than_10k_change_sum` / `less_than_10k`,
+`10k_to_15k_average` = `10k_to_15k_change_sum` / `10k_to_15k`,
+`15k_to_20k_average` = `15k_to_20k_change_sum` / `15k_to_20k`,
+`20k_to_25k_average` = `20k_to_25k_change_sum` / `20k_to_25k`,
+`25k_to_30k_average` = `25k_to_30k_change_sum` / `25k_to_30k`,
+`30k_to_35k_average` = `30k_to_35k_change_sum` / `30k_to_35k`,
+`35k_to_40k_average` = `35k_to_40k_change_sum` / `35k_to_40k`,
+`40k_to_45k_average` = `40k_to_45k_change_sum` / `40k_to_45k`,
+`45k_to_50k_average` = `45k_to_50k_change_sum` / `45k_to_50k`,
+`50k_to_60k_average` = `50k_to_60k_change_sum` / `50k_to_60k`,
+`60k_to_75k_average` = `60k_to_75k_change_sum` / `60k_to_75k`,
+`75k_to_100k_average` = `75k_to_100k_change_sum` / `75k_to_100k`,
+`100k_to_125k_average` = `100k_to_125k_change_sum` / `100k_to_125k`,
+`125k_to_150k_average` = `125k_to_150k_change_sum` / `125k_to_150k`,
+`150k_to_200k_average` = `150k_to_200k_change_sum` / `150k_to_200k`,
+`200k_or_more_average` = `200k_or_more_change_sum` / `200k_or_more`
+
+         
+         )
 
 
 
 final_result <- reduction_benefit %>%
-  select(total_change_ave,black_change_ave,white_change_ave,native_change_ave,asian_change_ave)
+  select(total_change_average,`less_than_10k_average`, `10k_to_15k_average`, `15k_to_20k_average`, `20k_to_25k_average`, `25k_to_30k_average`, `30k_to_35k_average`, `35k_to_40k_average`, `40k_to_45k_average`, `45k_to_50k_average`, `50k_to_60k_average`, `60k_to_75k_average`, `75k_to_100k_average`, `100k_to_125k_average`, `125k_to_150k_average`, `150k_to_200k_average`, `200k_or_more_average`
+)
 
 
 kable(final_result,digits = 2)
 
-#all racial groups seemed to get a similar amount of benefit from pollution reduction, ranging with whites getting -26.16 and asians getting -24.9
+#all income groups seem to be getting a similar pollution reduction benefit on the individual level.
 ```
