@@ -29,34 +29,37 @@ We hypothesize that:
     kable(stations_table)
     ```
 
-    | stations                               | Opening.Dates                                  | Parking |       lon |      lat | address                                                                 |     lat2 |      lon2 | address2                                                                |
-    |:---------------------------------------|:-----------------------------------------------|:--------|----------:|---------:|:------------------------------------------------------------------------|---------:|----------:|:------------------------------------------------------------------------|
-    | I-485/South Boulevard                  | November 24, 2007                              | TRUE    | -80.88292 | 35.10708 | i-485/south boulevard station, charlotte, nc 28134, usa                 | 35.10708 | -80.88292 | i-485/south boulevard station, charlotte, nc 28134, usa                 |
-    | Sharon Road West station               | November 24, 2007                              | TRUE    | -80.88219 | 35.11927 | sharon road west station, charlotte, nc 28134, usa                      | 35.11927 | -80.88219 | sharon road west station, charlotte, nc 28134, usa                      |
-    | Arrowood station                       | November 24, 2007                              | TRUE    | -80.87637 | 35.13569 | arrowood, 7717 england st, charlotte, nc 28273, usa                     | 35.13569 | -80.87637 | arrowood, 7717 england st, charlotte, nc 28273, usa                     |
-    | Archdale station                       | November 24, 2007                              | TRUE    | -80.87748 | 35.15290 | archdale, charlotte, nc 28217, usa                                      | 35.15290 | -80.87748 | archdale, charlotte, nc 28217, usa                                      |
-    | Tyvola station                         | November 24, 2007                              | TRUE    | -80.87750 | 35.16285 | tyvola, 5703 old pineville rd, charlotte, nc 28217, usa                 | 35.16285 | -80.87750 | tyvola, 5703 old pineville rd, charlotte, nc 28217, usa                 |
-    | Woodlawn station (Charlotte)           | November 24, 2007                              | TRUE    | -80.87930 | 35.17590 | woodlawn station, charlotte, nc 28217, usa                              | 35.17590 | -80.87930 | woodlawn station, charlotte, nc 28217, usa                              |
-    | Scaleybark station                     | November 24, 2007                              | FALSE   | -80.87501 | 35.19092 | scaleybark, charlotte, nc 28217, usa                                    | 35.19092 | -80.87501 | scaleybark, charlotte, nc 28217, usa                                    |
-    | New Bern station                       | November 24, 2007                              | FALSE   | -80.86904 | 35.19985 | new bern station, charlotte, nc 28209, usa                              | 35.19985 | -80.86904 | new bern station, charlotte, nc 28209, usa                              |
-    | East/West Boulevard station            | August 30, 1996 \| (rebuilt November 24, 2007) | FALSE   | -80.85895 | 35.21212 | east/west station, charlotte, nc 28203, usa                             | 35.21212 | -80.85895 | east/west station, charlotte, nc 28203, usa                             |
-    | Bland Street station                   | August 30, 1996 \| (rebuilt November 24, 2007) | FALSE   | -80.85525 | 35.21582 | bland, charlotte, nc 28203, usa                                         | 35.21622 | -80.85446 | 1511 Camden Road, charlotte, nc, usa                                    |
-    | Carson light rail station (Charlotte)  | November 24, 2007                              | FALSE   | -80.84313 | 35.22709 | charlotte, nc, usa                                                      | 35.21944 | -80.84823 | 218 East Carson Boulevard, charlotte, nc, usa                           |
-    | Brooklyn Village (Charlotte)           | August 30, 1996 \| (rebuilt November 24, 2007) | FALSE   | -80.84299 | 35.21867 | e brooklyn vlg ave, charlotte, nc, usa                                  | 35.21867 | -80.84299 | e brooklyn vlg ave, charlotte, nc, usa                                  |
-    | Third Street/Convention Center station | June 28, 2004 \| (rebuilt November 24, 2007)   | FALSE   | -80.84312 | 35.22375 | 3rd st./convention center, charlotte, nc 28244, usa                     | 35.22375 | -80.84312 | 3rd st./convention center, charlotte, nc 28244, usa                     |
-    | Charlotte Transportation Center        | November 24, 2007                              | FALSE   | -80.84313 | 35.22709 | charlotte, nc, usa                                                      | 35.21944 | -80.84823 | 310 East Trade Street, charlotte, nc, usa                               |
-    | 7th Street station (Charlotte)         | June 28, 2004 \| (rebuilt November 24, 2007)   | FALSE   | -80.83798 | 35.22751 | 7th st station, charlotte, nc 28202, usa                                | 35.22751 | -80.83798 | 7th st station, charlotte, nc 28202, usa                                |
-    | 9th Street station (Charlotte)         | June 24, 2004 \| (rebuilt March 16, 2018)      | FALSE   | -80.83516 | 35.22948 | 239 e 9th st, charlotte, nc 28202, usa                                  | 35.22948 | -80.83516 | 239 e 9th st, charlotte, nc 28202, usa                                  |
-    | Parkwood station                       | March 16, 2018                                 | FALSE   | -80.82323 | 35.23689 | parkwood, charlotte, nc 28206, usa                                      | 35.23689 | -80.82323 | parkwood, charlotte, nc 28206, usa                                      |
-    | 25th Street station (Charlotte)        | March 16, 2018                                 | FALSE   | -80.81708 | 35.24174 | 25th street, charlotte, nc 28206, usa                                   | 35.24174 | -80.81708 | 25th street, charlotte, nc 28206, usa                                   |
-    | 36th Street station (Charlotte)        | March 16, 2018                                 | FALSE   | -80.80545 | 35.24854 | 36th street station, charlotte, nc 28205, usa                           | 35.24854 | -80.80545 | 36th street station, charlotte, nc 28205, usa                           |
-    | Sugar Creek station (Charlotte)        | March 16, 2018                                 | TRUE    | -80.79184 | 35.25106 | sugar creek station, bearwood ave, charlotte, nc 28205, usa             | 35.25106 | -80.79184 | sugar creek station, bearwood ave, charlotte, nc 28205, usa             |
-    | Old Concord Road station               | March 16, 2018                                 | TRUE    | -80.77271 | 35.25996 | old concord road station, charlotte, nc 28213, usa                      | 35.25996 | -80.77271 | old concord road station, charlotte, nc 28213, usa                      |
-    | Tom Hunter station                     | March 16, 2018                                 | FALSE   | -80.76629 | 35.27795 | tom hunter station, charlotte, nc 28213, usa                            | 35.27795 | -80.76629 | tom hunter station, charlotte, nc 28213, usa                            |
-    | University City Blvd station           | March 16, 2018                                 | TRUE    | -80.76074 | 35.28692 | university city blvd, 7205 n tryon st, charlotte, nc 28262, usa         | 35.28692 | -80.76074 | university city blvd, 7205 n tryon st, charlotte, nc 28262, usa         |
-    | McCullough station                     | March 16, 2018                                 | FALSE   | -80.75288 | 35.30112 | mccullough, 8312 n tryon st, charlotte, nc 28262, usa                   | 35.30112 | -80.75288 | mccullough, 8312 n tryon st, charlotte, nc 28262, usa                   |
-    | JW Clay Blvd/UNC Charlotte station     | March 16, 2018                                 | TRUE    | -80.74503 | 35.31083 | 9234-9300 n tryon st, charlotte, nc 28262, usa                          | 35.31155 | -80.74547 | 9048 North Tryon Street, charlotte, nc, usa                             |
-    | UNC Charlotte–Main station             | March 16, 2018                                 | FALSE   | -80.73371 | 35.31218 | unc charlotte main station, 9025 cameron blvd, charlotte, nc 28262, usa | 35.31218 | -80.73371 | unc charlotte main station, 9025 cameron blvd, charlotte, nc 28262, usa |
+    | stations                               | Opening.Dates                                 | Parking   |       lon |                                         lat | address                                                                 |      lat2 |                                        lon2 | address2                                                                |
+    |:---------------------------------------|:----------------------------------------------|:----------|----------:|--------------------------------------------:|:------------------------------------------------------------------------|----------:|--------------------------------------------:|:------------------------------------------------------------------------|
+    | I-485/South Boulevard                  | November 24, 2007                             | TRUE      | -80.88292 |                                    35.10708 | i-485/south boulevard station, charlotte, nc 28134, usa                 |  35.10708 |                                   -80.88292 | i-485/south boulevard station, charlotte, nc 28134, usa                 |
+    | Sharon Road West station               | November 24, 2007                             | TRUE      | -80.88219 |                                    35.11927 | sharon road west station, charlotte, nc 28134, usa                      |  35.11927 |                                   -80.88219 | sharon road west station, charlotte, nc 28134, usa                      |
+    | Arrowood station                       | November 24, 2007                             | TRUE      | -80.87637 |                                    35.13569 | arrowood, 7717 england st, charlotte, nc 28273, usa                     |  35.13569 |                                   -80.87637 | arrowood, 7717 england st, charlotte, nc 28273, usa                     |
+    | Archdale station                       | November 24, 2007                             | TRUE      | -80.87748 |                                    35.15290 | archdale, charlotte, nc 28217, usa                                      |  35.15290 |                                   -80.87748 | archdale, charlotte, nc 28217, usa                                      |
+    | Tyvola station                         | November 24, 2007                             | TRUE      | -80.87750 |                                    35.16285 | tyvola, 5703 old pineville rd, charlotte, nc 28217, usa                 |  35.16285 |                                   -80.87750 | tyvola, 5703 old pineville rd, charlotte, nc 28217, usa                 |
+    | Woodlawn station (Charlotte)           | November 24, 2007                             | TRUE      | -80.87930 |                                    35.17590 | woodlawn station, charlotte, nc 28217, usa                              |  35.17590 |                                   -80.87930 | woodlawn station, charlotte, nc 28217, usa                              |
+    | Scaleybark station                     | November 24, 2007                             | FALSE     | -80.87501 |                                    35.19092 | scaleybark, charlotte, nc 28217, usa                                    |  35.19092 |                                   -80.87501 | scaleybark, charlotte, nc 28217, usa                                    |
+    | New Bern station                       | November 24, 2007                             | FALSE     | -80.86904 |                                    35.19985 | new bern station, charlotte, nc 28209, usa                              |  35.19985 |                                   -80.86904 | new bern station, charlotte, nc 28209, usa                              |
+    | East/West Boulevard station            | August 30, 1996 \| (rebuilt November 24, 2007 |           |           |                                             |                                                                         |           |                                             |                                                                         |
+    | )                                      | FALSE                                         | -80.85895 |  35.21212 | east/west station, charlotte, nc 28203, usa | 35.21212                                                                | -80.85895 | east/west station, charlotte, nc 28203, usa |                                                                         |
+    | Bland Street station                   | August 30, 1996 \| (rebuilt November 24, 2007 |           |           |                                             |                                                                         |           |                                             |                                                                         |
+    | )                                      | FALSE                                         | -80.85525 |  35.21582 |             bland, charlotte, nc 28203, usa | 35.21622                                                                | -80.85446 |        1511 Camden Road, charlotte, nc, usa |                                                                         |
+    | Carson light rail station (Charlotte)  | November 24, 2007                             | FALSE     | -80.84313 |                                    35.22709 | charlotte, nc, usa                                                      |  35.21944 |                                   -80.84823 | 218 East Carson Boulevard, charlotte, nc, usa                           |
+    | Brooklyn Village (Charlotte)           | August 30, 1996 \| (rebuilt November 24, 2007 |           |           |                                             |                                                                         |           |                                             |                                                                         |
+    | )                                      | FALSE                                         | -80.84299 |  35.21867 |      e brooklyn vlg ave, charlotte, nc, usa | 35.21867                                                                | -80.84299 |      e brooklyn vlg ave, charlotte, nc, usa |                                                                         |
+    | Third Street/Convention Center station | June 28, 2004 \| (rebuilt November 24, 2007)  | FALSE     | -80.84312 |                                    35.22375 | 3rd st./convention center, charlotte, nc 28244, usa                     |  35.22375 |                                   -80.84312 | 3rd st./convention center, charlotte, nc 28244, usa                     |
+    | Charlotte Transportation Center        | November 24, 2007                             | FALSE     | -80.84313 |                                    35.22709 | charlotte, nc, usa                                                      |  35.21944 |                                   -80.84823 | 310 East Trade Street, charlotte, nc, usa                               |
+    | 7th Street station (Charlotte)         | June 28, 2004 \| (rebuilt November 24, 2007)  | FALSE     | -80.83798 |                                    35.22751 | 7th st station, charlotte, nc 28202, usa                                |  35.22751 |                                   -80.83798 | 7th st station, charlotte, nc 28202, usa                                |
+    | 9th Street station (Charlotte)         | June 24, 2004 \| (rebuilt March 16, 2018)     | FALSE     | -80.83516 |                                    35.22948 | 239 e 9th st, charlotte, nc 28202, usa                                  |  35.22948 |                                   -80.83516 | 239 e 9th st, charlotte, nc 28202, usa                                  |
+    | Parkwood station                       | March 16, 2018                                | FALSE     | -80.82323 |                                    35.23689 | parkwood, charlotte, nc 28206, usa                                      |  35.23689 |                                   -80.82323 | parkwood, charlotte, nc 28206, usa                                      |
+    | 25th Street station (Charlotte)        | March 16, 2018                                | FALSE     | -80.81708 |                                    35.24174 | 25th street, charlotte, nc 28206, usa                                   |  35.24174 |                                   -80.81708 | 25th street, charlotte, nc 28206, usa                                   |
+    | 36th Street station (Charlotte)        | March 16, 2018                                | FALSE     | -80.80545 |                                    35.24854 | 36th street station, charlotte, nc 28205, usa                           |  35.24854 |                                   -80.80545 | 36th street station, charlotte, nc 28205, usa                           |
+    | Sugar Creek station (Charlotte)        | March 16, 2018                                | TRUE      | -80.79184 |                                    35.25106 | sugar creek station, bearwood ave, charlotte, nc 28205, usa             |  35.25106 |                                   -80.79184 | sugar creek station, bearwood ave, charlotte, nc 28205, usa             |
+    | Old Concord Road station               | March 16, 2018                                | TRUE      | -80.77271 |                                    35.25996 | old concord road station, charlotte, nc 28213, usa                      |  35.25996 |                                   -80.77271 | old concord road station, charlotte, nc 28213, usa                      |
+    | Tom Hunter station                     | March 16, 2018                                | FALSE     | -80.76629 |                                    35.27795 | tom hunter station, charlotte, nc 28213, usa                            |  35.27795 |                                   -80.76629 | tom hunter station, charlotte, nc 28213, usa                            |
+    | University City Blvd station           | March 16, 2018                                | TRUE      | -80.76074 |                                    35.28692 | university city blvd, 7205 n tryon st, charlotte, nc 28262, usa         |  35.28692 |                                   -80.76074 | university city blvd, 7205 n tryon st, charlotte, nc 28262, usa         |
+    | McCullough station                     | March 16, 2018                                | FALSE     | -80.75288 |                                    35.30112 | mccullough, 8312 n tryon st, charlotte, nc 28262, usa                   |  35.30112 |                                   -80.75288 | mccullough, 8312 n tryon st, charlotte, nc 28262, usa                   |
+    | JW Clay Blvd/UNC Charlotte station     | March 16, 2018                                | TRUE      | -80.74503 |                                    35.31083 | 9234-9300 n tryon st, charlotte, nc 28262, usa                          |  35.31155 |                                   -80.74547 | 9048 North Tryon Street, charlotte, nc, usa                             |
+    | UNC Charlotte–Main station             | March 16, 2018                                | FALSE     | -80.73371 |                                    35.31218 | unc charlotte main station, 9025 cameron blvd, charlotte, nc 28262, usa |  35.31218 |                                   -80.73371 | unc charlotte main station, 9025 cameron blvd, charlotte, nc 28262, usa |
 
 - Time Frame: November 2003 - November 2011
 
@@ -77,7 +80,7 @@ We hypothesize that:
       kable(factors_table)
       ```
 
-      | Type          | sources                                                 | Address                                                                | Reasons.                                                                                        |       lon |      lat | address                                                                                            |     lat2 |      lon2 | address2                                                                                           |
+      | Type          | sources                                                 | Address                                                                | Reason.s.                                                                                       |       lon |      lat | address                                                                                            |     lat2 |      lon2 | address2                                                                                           |
       |:--------------|:--------------------------------------------------------|:-----------------------------------------------------------------------|:------------------------------------------------------------------------------------------------|----------:|---------:|:---------------------------------------------------------------------------------------------------|---------:|----------:|:---------------------------------------------------------------------------------------------------|
       | Power Plant   | GG Allen steam station                                  | 253 Plant Allen Rd, Belmont, NC 28012                                  | Coal-fired power plant.                                                                         | -81.00855 | 35.18982 | 253 plant allen rd, belmont, nc 28012, usa                                                         | 35.18982 | -81.00855 | 253 plant allen rd, belmont, nc 28012, usa                                                         |
       | Neighbourhood | South End                                               | South End, Charlotte, NC 28203                                         | Once heavily industrial, still contains some light industrial facilities despite redevelopment. | -80.85878 | 35.21256 | south end, charlotte, nc 28203, usa                                                                | 35.21256 | -80.85878 | south end, charlotte, nc 28203, usa                                                                |
@@ -92,7 +95,7 @@ We hypothesize that:
       | Intersection  | Brookshire Blvd Mt Holly Huntersville Rd                | Brookshire Blvd Mt Holly Huntersville Rd, Charlotte, NC                |                                                                                                 | -80.94522 | 35.32554 | brookshire blvd & mt holly-huntersville rd, charlotte, nc 28216, usa                               | 35.32554 | -80.94522 | brookshire blvd & mt holly-huntersville rd, charlotte, nc 28216, usa                               |
       | Intersection  | Carmel Rd Colony Rd                                     | Carmel Rd Colony Rd, Charlotte, NC                                     |                                                                                                 | -80.80911 | 35.13259 | colony rd & carmel rd, charlotte, nc 28226, usa                                                    | 35.13259 | -80.80911 | colony rd & carmel rd, charlotte, nc 28226, usa                                                    |
       | Intersection  | Charlottetowne Av I-277 OL Ramp Kenilworth Av           | Charlottetowne Av I-277 OL Ramp Kenilworth Av, Charlotte, NC           |                                                                                                 |        NA |       NA | NA                                                                                                 | 35.21393 | -80.83748 | Charlottetowne Av I-277 OL Ramp Kenilworth Av, Charlotte, NC                                       |
-      | Intersection  | Colony Rd Fairview Rd                                   | Colony Rd Fairview Rd, Charlotte, NC                                   |                                                                                                 | -80.82097 | 35.14655 | fairview rd, charlotte, nc, usa                                                                    | 35.14655 | -80.82097 | fairview rd, charlotte, nc, usa                                                                    |
+      | Intersection  | Colony Rd Fairview Rd                                   | Colony Rd Fairview Rd, Charlotte, NC                                   |                                                                                                 | -80.81929 | 35.14667 | fairview rd & colony rd, charlotte, nc 28226, usa                                                  | 35.14667 | -80.81929 | fairview rd & colony rd, charlotte, nc 28226, usa                                                  |
       | Intersection  | Colville Rd Laurel Av Randolph Rd                       | Colville Rd Laurel Av Randolph Rd, Charlotte, NC                       |                                                                                                 | -80.81838 | 35.19667 | colville rd, charlotte, nc 28207, usa                                                              | 35.19667 | -80.81838 | colville rd, charlotte, nc 28207, usa                                                              |
       | Intersection  | Fairview Rd Park Road Tyvola Rd                         | Fairview Rd Park Road Tyvola Rd, Charlotte, NC                         |                                                                                                 | -80.84779 | 35.15262 | fairview rd & park rd, charlotte, nc 28210, usa                                                    | 35.15262 | -80.84779 | fairview rd & park rd, charlotte, nc 28210, usa                                                    |
       | Intersection  | Fairview Rd Providence Rd Sardis Rd                     | Fairview Rd Providence Rd Sardis Rd, Charlotte, NC                     |                                                                                                 | -80.79561 | 35.15381 | fairview rd & providence rd, charlotte, nc 28211, usa                                              | 35.15381 | -80.79561 | fairview rd & providence rd, charlotte, nc 28211, usa                                              |
@@ -121,6 +124,7 @@ We hypothesize that:
 # install.packages("maptiles")
 # install.packages("terra")
 # install.packages("leaflet")
+# install.packages("tidycensus)
 ```
 
 ### Loading Libraries
@@ -174,6 +178,7 @@ library("terra")
 ``` r
 library("maptiles")
 library("leaflet")
+library("tidycensus")
 ```
 
 ### Gathering Data using Google API
@@ -538,14 +543,14 @@ head(combinedData_table) %>%
   kable()
 ```
 
-|   X | formatted_date | station_ID | stations                     | address2                                                |     pm25 | Tair_f_tavg | Wind_f_tavg | Qair_f_tavg | holiday | month    | day_of_week | holiday_binary | PMFactor |
-|----:|:---------------|-----------:|:-----------------------------|:--------------------------------------------------------|---------:|------------:|------------:|------------:|:--------|:---------|:------------|---------------:|---------:|
-|   1 | 2003-11-24     |          1 | I-485/South Boulevard        | i-485/south boulevard station, charlotte, nc 28134, usa | 10.70957 |    288.6281 |    5.050052 |   0.0097345 | NA      | November | Monday      |              0 |        0 |
-|   2 | 2003-11-24     |          2 | Sharon Road West station     | sharon road west station, charlotte, nc 28134, usa      | 10.95833 |    288.6281 |    5.050052 |   0.0097345 | NA      | November | Monday      |              0 |        0 |
-|   3 | 2003-11-24     |          3 | Arrowood station             | arrowood, 7717 england st, charlotte, nc 28273, usa     | 10.23755 |    288.6281 |    5.050052 |   0.0097345 | NA      | November | Monday      |              0 |        0 |
-|   4 | 2003-11-24     |          4 | Archdale station             | archdale, charlotte, nc 28217, usa                      | 11.35159 |    288.6281 |    5.050052 |   0.0097345 | NA      | November | Monday      |              0 |        0 |
-|   5 | 2003-11-24     |          5 | Tyvola station               | tyvola, 5703 old pineville rd, charlotte, nc 28217, usa | 10.90818 |    288.6281 |    5.050052 |   0.0097345 | NA      | November | Monday      |              0 |        1 |
-|   6 | 2003-11-24     |          6 | Woodlawn station (Charlotte) | woodlawn station, charlotte, nc 28217, usa              | 10.76754 |    288.6281 |    5.050052 |   0.0097345 | NA      | November | Monday      |              0 |        1 |
+|   X | station_ID | formatted_date | stations                     | address2                                                |     pm25 | Swnet_tavg | Lwnet_tavg | Qle_tavg |  Qh_tavg | Snowf_tavg | Rainf_tavg | Qsm_tavg | SnowT_tavg | SWE_tavg | SnowDepth_tavg | Tair_f_tavg | Rainf_f_tavg | Wind_f_tavg | Qair_f_tavg | Psurf_f_tavg | Parking | holiday_binary | month    | day_of_week | PMFactor |
+|----:|-----------:|:---------------|:-----------------------------|:--------------------------------------------------------|---------:|-----------:|-----------:|---------:|---------:|-----------:|-----------:|---------:|-----------:|---------:|---------------:|------------:|-------------:|------------:|------------:|-------------:|--------:|---------------:|:---------|:------------|---------:|
+|   1 |          1 | 2003-11-24     | I-485/South Boulevard        | i-485/south boulevard station, charlotte, nc 28134, usa | 10.70957 |   73.23891 |  -47.87754 | 52.99106 | -29.7069 |          0 |   2.17e-05 |        0 |   288.4865 |        0 |              0 |    288.6281 |     2.17e-05 |    5.050052 |   0.0097345 |     98743.61 |       1 |              0 | November | Monday      |        0 |
+|   2 |          2 | 2003-11-24     | Sharon Road West station     | sharon road west station, charlotte, nc 28134, usa      | 10.95833 |   73.23891 |  -47.87754 | 52.99106 | -29.7069 |          0 |   2.17e-05 |        0 |   288.4865 |        0 |              0 |    288.6281 |     2.17e-05 |    5.050052 |   0.0097345 |     98743.61 |       1 |              0 | November | Monday      |        0 |
+|   3 |          3 | 2003-11-24     | Arrowood station             | arrowood, 7717 england st, charlotte, nc 28273, usa     | 10.23755 |   73.23891 |  -47.87754 | 52.99106 | -29.7069 |          0 |   2.17e-05 |        0 |   288.4865 |        0 |              0 |    288.6281 |     2.17e-05 |    5.050052 |   0.0097345 |     98743.61 |       1 |              0 | November | Monday      |        0 |
+|   4 |          4 | 2003-11-24     | Archdale station             | archdale, charlotte, nc 28217, usa                      | 11.35159 |   73.23891 |  -47.87754 | 52.99106 | -29.7069 |          0 |   2.17e-05 |        0 |   288.4865 |        0 |              0 |    288.6281 |     2.17e-05 |    5.050052 |   0.0097345 |     98743.61 |       1 |              0 | November | Monday      |        0 |
+|   5 |          5 | 2003-11-24     | Tyvola station               | tyvola, 5703 old pineville rd, charlotte, nc 28217, usa | 10.90818 |   73.23891 |  -47.87754 | 52.99106 | -29.7069 |          0 |   2.17e-05 |        0 |   288.4865 |        0 |              0 |    288.6281 |     2.17e-05 |    5.050052 |   0.0097345 |     98743.61 |       1 |              0 | November | Monday      |        1 |
+|   6 |          6 | 2003-11-24     | Woodlawn station (Charlotte) | woodlawn station, charlotte, nc 28217, usa              | 10.76754 |   73.23891 |  -47.87754 | 52.99106 | -29.7069 |          0 |   2.17e-05 |        0 |   288.4865 |        0 |              0 |    288.6281 |     2.17e-05 |    5.050052 |   0.0097345 |     98743.61 |       1 |              0 | November | Monday      |        1 |
 
 ### Regression Model Calculation
 
@@ -553,6 +558,7 @@ head(combinedData_table) %>%
 df <-read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
 
 df2 <- df %>% mutate(date = as.Date(formatted_date,format = "%Y-%m-%d"))
+
 
 startdate <- as.Date("2003-11-24",format = "%Y-%m-%d")
 
@@ -562,256 +568,1068 @@ opendate <- as.Date("2007-11-24",format = "%Y-%m-%d")
 
 constructionstart <- as.Date("2005-02-26",format = "%Y-%m-%d")
 
+CAIR <- as.Date("2005-03-10",format = "%Y-%m-%d")
+
 metroOpen_df <- df2 %>% filter(date >= startdate & date<=enddate)%>%
   mutate(MetroOpen = ifelse(date>=opendate,1,0))%>%
   mutate(construction = ifelse(date>=constructionstart & date<opendate,1,0))%>%
-  
+  mutate(duringCAIR = ifelse(date>=CAIR & date<= enddate,1,0))%>%
   group_by(station_ID)%>%
-  arrange(station_ID,date)%>%
+  arrange(date, station_ID)%>%
   mutate(lTair_f_tavg = lag(Tair_f_tavg))%>%
+  mutate(lQair_f_tavg = lag(Qair_f_tavg)) %>%
+  mutate(lPsurf_f_tavg = lag(Psurf_f_tavg)) %>%
+  mutate(lWind_f_tavg = lag(Wind_f_tavg)) %>%
   mutate(t=as.numeric(date-startdate))%>%
   mutate(t2 = t^2,t3=t^3,t4=t^4)
 
-summary(m1 <- lm(log(pm25)~MetroOpen,data = metroOpen_df))
+regression_stats <- summary(m1 <- lm(log(pm25)~MetroOpen+construction+duringCAIR+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + Rainf_tavg + Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + Tair_f_tavg + Rainf_f_tavg + Wind_f_tavg + Qair_f_tavg + Psurf_f_tavg + Parking + Parking:MetroOpen, data = metroOpen_df))
+
+df2 <- df2 %>%
+  mutate(before_after = ifelse(date < opendate, "Before", "After"))
+
+# Plotting the data
+ggplot(df2, aes(x = date, y = pm25, color = before_after)) +
+  geom_line() +
+  labs(title = "PM2.5 Levels Before and After Metro Opening",
+       x = "Date",
+       y = "PM2.5 Levels",
+       color = "Metro Opening") +
+  theme_minimal()
 ```
 
-
-    Call:
-    lm(formula = log(pm25) ~ MetroOpen, data = metroOpen_df)
-
-    Residuals:
-         Min       1Q   Median       3Q      Max 
-    -2.66092 -0.32877  0.04632  0.37015  1.28279 
-
-    Coefficients:
-                 Estimate Std. Error t value Pr(>|t|)    
-    (Intercept)  2.555221   0.002570   994.2   <2e-16 ***
-    MetroOpen   -0.257993   0.003633   -71.0   <2e-16 ***
-    ---
-    Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-    Residual standard error: 0.5009 on 76022 degrees of freedom
-    Multiple R-squared:  0.06219,   Adjusted R-squared:  0.06218 
-    F-statistic:  5042 on 1 and 76022 DF,  p-value: < 2.2e-16
+![](README_files/figure-commonmark/unnamed-chunk-18-1.png)
 
 ``` r
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month),data = metroOpen_df))
+df2 <- df2 %>%
+  mutate(before_after = ifelse(date < opendate, "Before", "After"))
+
+ggplot(df2, aes(x = date, y = pm25, color = before_after)) +
+  geom_line() +
+  facet_wrap(~ station_ID, scales = "free_y") +  # Facet by station_ID
+  labs(
+    title = "PM2.5 Levels Before and After Metro Opening",
+    x = "Date",
+    y = "PM2.5 Levels",
+    color = "Metro Opening"
+  ) +
+  theme_minimal()
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-18-2.png)
+
+``` r
+regression_stats
 ```
 
 
     Call:
-    lm(formula = log(pm25) ~ MetroOpen + construction + as.factor(day_of_week) + 
-        as.factor(month), data = metroOpen_df)
+    lm(formula = log(pm25) ~ MetroOpen + construction + duringCAIR + 
+        as.factor(day_of_week) + as.factor(month) + Tair_f_tavg + 
+        Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + 
+        Rainf_tavg + Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + 
+        Tair_f_tavg + Rainf_f_tavg + Wind_f_tavg + Qair_f_tavg + 
+        Psurf_f_tavg + Parking + Parking:MetroOpen, data = metroOpen_df)
 
     Residuals:
          Min       1Q   Median       3Q      Max 
-    -2.45738 -0.30369  0.03379  0.33541  1.40563 
+    -2.64321 -0.25854  0.01957  0.27824  1.33960 
 
     Coefficients:
                                       Estimate Std. Error t value Pr(>|t|)    
-    (Intercept)                      2.4472587  0.0082507 296.614  < 2e-16 ***
-    MetroOpen                       -0.3042744  0.0049020 -62.072  < 2e-16 ***
-    construction                    -0.0677965  0.0051966 -13.046  < 2e-16 ***
-    as.factor(day_of_week)Monday    -0.0135677  0.0063064  -2.151  0.03145 *  
-    as.factor(day_of_week)Saturday   0.0180442  0.0063096   2.860  0.00424 ** 
-    as.factor(day_of_week)Sunday    -0.0047160  0.0063061  -0.748  0.45456    
-    as.factor(day_of_week)Thursday   0.0201101  0.0063059   3.189  0.00143 ** 
-    as.factor(day_of_week)Tuesday    0.0214776  0.0063065   3.406  0.00066 ***
-    as.factor(day_of_week)Wednesday  0.0325254  0.0063062   5.158 2.51e-07 ***
-    as.factor(month)August           0.4719648  0.0082501  57.207  < 2e-16 ***
-    as.factor(month)December         0.0336898  0.0082750   4.071 4.68e-05 ***
-    as.factor(month)February         0.0527342  0.0084557   6.237 4.50e-10 ***
-    as.factor(month)January         -0.0102303  0.0082751  -1.236  0.21636    
-    as.factor(month)July             0.4706523  0.0082494  57.053  < 2e-16 ***
-    as.factor(month)June             0.3936369  0.0083170  47.329  < 2e-16 ***
-    as.factor(month)March            0.0179714  0.0082499   2.178  0.02938 *  
-    as.factor(month)May              0.1650286  0.0082499  20.004  < 2e-16 ***
-    as.factor(month)November        -0.0001373  0.0083100  -0.017  0.98682    
-    as.factor(month)October         -0.0478914  0.0082496  -5.805 6.45e-09 ***
-    as.factor(month)September        0.1703781  0.0083168  20.486  < 2e-16 ***
+    (Intercept)                      3.580e-01  4.986e-01   0.718  0.47268    
+    MetroOpen                       -2.584e-01  2.429e-02 -10.638  < 2e-16 ***
+    construction                    -2.112e-02  2.390e-02  -0.884  0.37687    
+    duringCAIR                      -4.416e-02  2.376e-02  -1.859  0.06306 .  
+    as.factor(day_of_week)Monday    -2.456e-02  5.555e-03  -4.422 9.81e-06 ***
+    as.factor(day_of_week)Saturday   4.461e-03  5.543e-03   0.805  0.42097    
+    as.factor(day_of_week)Sunday    -1.638e-02  5.550e-03  -2.951  0.00317 ** 
+    as.factor(day_of_week)Thursday   7.309e-03  5.542e-03   1.319  0.18720    
+    as.factor(day_of_week)Tuesday    2.170e-02  5.548e-03   3.912 9.15e-05 ***
+    as.factor(day_of_week)Wednesday  4.022e-02  5.543e-03   7.255 4.05e-13 ***
+    as.factor(month)August           1.163e-01  1.052e-02  11.059  < 2e-16 ***
+    as.factor(month)December         1.693e-01  1.332e-02  12.708  < 2e-16 ***
+    as.factor(month)February         1.605e-01  1.072e-02  14.969  < 2e-16 ***
+    as.factor(month)January          1.227e-01  1.265e-02   9.703  < 2e-16 ***
+    as.factor(month)July             1.362e-01  1.053e-02  12.939  < 2e-16 ***
+    as.factor(month)June             7.914e-02  9.894e-03   7.999 1.27e-15 ***
+    as.factor(month)March            5.425e-02  8.269e-03   6.561 5.39e-11 ***
+    as.factor(month)May             -6.484e-03  8.010e-03  -0.809  0.41823    
+    as.factor(month)November         1.131e-01  1.175e-02   9.625  < 2e-16 ***
+    as.factor(month)October         -4.310e-02  9.401e-03  -4.585 4.54e-06 ***
+    as.factor(month)September       -1.440e-02  9.130e-03  -1.577  0.11476    
+    Tair_f_tavg                      4.797e-01  1.275e-02  37.612  < 2e-16 ***
+    Swnet_tavg                       7.406e-03  1.908e-04  38.815  < 2e-16 ***
+    Lwnet_tavg                       7.557e-03  2.191e-04  34.488  < 2e-16 ***
+    Qle_tavg                        -6.293e-03  1.561e-04 -40.306  < 2e-16 ***
+    Qh_tavg                         -3.287e-03  1.499e-04 -21.921  < 2e-16 ***
+    Snowf_tavg                       8.046e+06  7.332e+07   0.110  0.91261    
+    Rainf_tavg                       8.045e+06  7.332e+07   0.110  0.91262    
+    Qsm_tavg                        -8.357e+03  8.196e+02 -10.197  < 2e-16 ***
+    SnowT_tavg                      -4.990e-01  1.282e-02 -38.928  < 2e-16 ***
+    SWE_tavg                        -3.964e-02  8.639e-03  -4.588 4.48e-06 ***
+    SnowDepth_tavg                   9.266e-01  7.878e-02  11.761  < 2e-16 ***
+    Rainf_f_tavg                    -8.045e+06  7.332e+07  -0.110  0.91262    
+    Wind_f_tavg                     -1.633e-01  1.671e-03 -97.677  < 2e-16 ***
+    Qair_f_tavg                      3.051e+01  1.494e+00  20.416  < 2e-16 ***
+    Psurf_f_tavg                     7.859e-05  3.896e-06  20.169  < 2e-16 ***
+    Parking                         -2.322e-03  4.299e-03  -0.540  0.58904    
+    MetroOpen:Parking                1.731e-02  6.078e-03   2.847  0.00441 ** 
     ---
     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-    Residual standard error: 0.4645 on 76004 degrees of freedom
-    Multiple R-squared:  0.1936,    Adjusted R-squared:  0.1934 
-    F-statistic: 960.6 on 19 and 76004 DF,  p-value: < 2.2e-16
+    Residual standard error: 0.4076 on 75960 degrees of freedom
+    Multiple R-squared:  0.3796,    Adjusted R-squared:  0.3793 
+    F-statistic:  1256 on 37 and 75960 DF,  p-value: < 2.2e-16
+
+### Interpreting the Regression Model results
+
+- **Intercept** = 43.02%
+
+- **MetroOpen** = -22.75%
+
+- **construction** = -2.09%
+
+- **duringCAIR** = -4.32%
+
+- **as.factor(day_of_week)Monday** = -2.43%
+
+- **as.factor(day_of_week)Saturday** = 0.45%
+
+- **as.factor(day_of_week)Sunday** = -1.63%
+
+- **as.factor(day_of_week)Thursday** = 0.73%
+
+- **as.factor(day_of_week)Tuesday** = 2.20%
+
+- **as.factor(day_of_week)Wednesday** = 4.10%
+
+- **as.factor(month)August** = 12.33%
+
+- **as.factor(month)December** = 18.44%
+
+- **as.factor(month)February** = 17.41%
+
+- **as.factor(month)January** = 13.05%
+
+- **as.factor(month)July** = 14.59%
+
+- **as.factor(month)June** = 8.25%
+
+- **as.factor(month)March** = 5.58%
+
+- **as.factor(month)May** = -0.65%
+
+- **as.factor(month)November** = 11.97%
+
+- **as.factor(month)October** = -4.22%
+
+- **as.factor(month)September** = -1.43%
+
+- **Tair_f_tavg** = 61.55%
+
+- **Swnet_tavg** = 0.74%
+
+- **Lwnet_tavg** = 0.76%
+
+- **Qle_tavg** = -0.63%
+
+- **Qh_tavg** = -0.33%
+
+- **Snowf_tavg** = ∞ (extremely large value, likely unrealistic)
+
+- **Rainf_tavg** = ∞ (extremely large value, likely unrealistic)
+
+- **Qsm_tavg** = -100% (suggests a near-total reduction in PM2.5 levels)
+
+- **SnowT_tavg** = -39.30%
+
+- **SWE_tavg** = -3.89%
+
+- **SnowDepth_tavg** = 152.61%
+
+- **Rainf_f_tavg** = ∞ (extremely large value, likely unrealistic)
+
+- **Wind_f_tavg** = -15.06%
+
+- **Qair_f_tavg** = 3026.55%
+
+- **Psurf_f_tavg** = 7.86%
+
+- **Parking** = -0.23%
+
+### Calculating Station level pollution change
+
+Station-level effect and the p-values
 
 ``` r
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg,data = metroOpen_df))
+c<- coef(m1)
+len_coef<-length(coef(m1))
+
+#get coefficients of the station-level effect
+coef<-coef(m1)[(len_coef-(26-1)): len_coef]
+
+#get p values of the station-level effect (p<0.05 is statistically significant)
+pval<-summary(m1)$coefficients[,4][(len_coef-3): len_coef]
+
+kable(cbind(coef, pval), digits=2)
+```
+
+    Warning in cbind(coef, pval): number of rows of result is not a multiple of
+    vector length (arg 2)
+
+|                           |        coef | pval |
+|:--------------------------|------------:|-----:|
+| as.factor(month)February  |        0.16 | 0.00 |
+| as.factor(month)January   |        0.12 | 0.00 |
+| as.factor(month)July      |        0.14 | 0.59 |
+| as.factor(month)June      |        0.08 | 0.00 |
+| as.factor(month)March     |        0.05 | 0.00 |
+| as.factor(month)May       |       -0.01 | 0.00 |
+| as.factor(month)November  |        0.11 | 0.59 |
+| as.factor(month)October   |       -0.04 | 0.00 |
+| as.factor(month)September |       -0.01 | 0.00 |
+| Tair_f_tavg               |        0.48 | 0.00 |
+| Swnet_tavg                |        0.01 | 0.59 |
+| Lwnet_tavg                |        0.01 | 0.00 |
+| Qle_tavg                  |       -0.01 | 0.00 |
+| Qh_tavg                   |        0.00 | 0.00 |
+| Snowf_tavg                |  8046323.01 | 0.59 |
+| Rainf_tavg                |  8045056.06 | 0.00 |
+| Qsm_tavg                  |    -8356.70 | 0.00 |
+| SnowT_tavg                |       -0.50 | 0.00 |
+| SWE_tavg                  |       -0.04 | 0.59 |
+| SnowDepth_tavg            |        0.93 | 0.00 |
+| Rainf_f_tavg              | -8045444.34 | 0.00 |
+| Wind_f_tavg               |       -0.16 | 0.00 |
+| Qair_f_tavg               |       30.51 | 0.59 |
+| Psurf_f_tavg              |        0.00 | 0.00 |
+| Parking                   |        0.00 | 0.00 |
+| MetroOpen:Parking         |        0.02 | 0.00 |
+
+### Census Data
+
+``` r
+vars<-load_variables(year=2010, dataset="acs1", cache = TRUE)
+
+
+write.csv(vars, "demographics_variable_acs.csv")
+```
+
+### Interest Variable - Income
+
+``` r
+#vars range from less than 10k to more than 200k
+
+targetvars <- c("B19001_001", "B19001_002", "B19001_003", "B19001_004", "B19001_005", 
+                "B19001_006", "B19001_007", "B19001_008", "B19001_009", "B19001_010", 
+                "B19001_011", "B19001_012", "B19001_013", "B19001_014", "B19001_015", 
+                "B19001_016", "B19001_017")
+
+income<-get_acs(geography = "tract", variables=targetvars, state="NC", county="Mecklenburg", output="wide", year = 2010) %>% select(-ends_with("M"))
+```
+
+    Getting data from the 2006-2010 5-year ACS
+
+``` r
+#the variables that end in E are the estimates while the ones that end in M tell the margin of error.
+
+income_name<-income %>%
+  rename(total = B19001_001E, 
+       less_than_10k = B19001_002E, 
+       `10k_to_15k` = B19001_003E, 
+       `15k_to_20k` = B19001_004E, 
+       `20k_to_25k` = B19001_005E, 
+       `25k_to_30k` = B19001_006E, 
+       `30k_to_35k` = B19001_007E, 
+       `35k_to_40k` = B19001_008E, 
+       `40k_to_45k` = B19001_009E, 
+       `45k_to_50k` = B19001_010E, 
+       `50k_to_60k` = B19001_011E, 
+       `60k_to_75k` = B19001_012E, 
+       `75k_to_100k` = B19001_013E, 
+       `100k_to_125k` = B19001_014E, 
+       `125k_to_150k` = B19001_015E, 
+       `150k_to_200k` = B19001_016E, 
+       `200k_or_more` = B19001_017E)
+```
+
+### Reading Buffer Files
+
+``` r
+buff<-vect("Buffer Light Rail/new_buffer_light_rail.shp")
+plot(buff)
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-22-1.png)
+
+``` r
+shape<-tigris::tracts(state="NC", county="Mecklenburg", class="sp", year=2010)
 ```
 
 
-    Call:
-    lm(formula = log(pm25) ~ MetroOpen + construction + as.factor(day_of_week) + 
-        as.factor(month) + Tair_f_tavg, data = metroOpen_df)
+      |                                                                            
+      |                                                                      |   0%
+      |                                                                            
+      |                                                                      |   1%
+      |                                                                            
+      |=                                                                     |   1%
+      |                                                                            
+      |=                                                                     |   2%
+      |                                                                            
+      |==                                                                    |   2%
+      |                                                                            
+      |==                                                                    |   3%
+      |                                                                            
+      |===                                                                   |   4%
+      |                                                                            
+      |===                                                                   |   5%
+      |                                                                            
+      |====                                                                  |   5%
+      |                                                                            
+      |====                                                                  |   6%
+      |                                                                            
+      |=====                                                                 |   6%
+      |                                                                            
+      |=====                                                                 |   7%
+      |                                                                            
+      |=====                                                                 |   8%
+      |                                                                            
+      |======                                                                |   8%
+      |                                                                            
+      |======                                                                |   9%
+      |                                                                            
+      |=======                                                               |   9%
+      |                                                                            
+      |=======                                                               |  10%
+      |                                                                            
+      |=======                                                               |  11%
+      |                                                                            
+      |========                                                              |  11%
+      |                                                                            
+      |========                                                              |  12%
+      |                                                                            
+      |=========                                                             |  12%
+      |                                                                            
+      |=========                                                             |  13%
+      |                                                                            
+      |=========                                                             |  14%
+      |                                                                            
+      |==========                                                            |  14%
+      |                                                                            
+      |==========                                                            |  15%
+      |                                                                            
+      |===========                                                           |  15%
+      |                                                                            
+      |===========                                                           |  16%
+      |                                                                            
+      |============                                                          |  16%
+      |                                                                            
+      |============                                                          |  17%
+      |                                                                            
+      |============                                                          |  18%
+      |                                                                            
+      |=============                                                         |  18%
+      |                                                                            
+      |==============                                                        |  20%
+      |                                                                            
+      |==============                                                        |  21%
+      |                                                                            
+      |===============                                                       |  21%
+      |                                                                            
+      |===============                                                       |  22%
+      |                                                                            
+      |================                                                      |  22%
+      |                                                                            
+      |================                                                      |  23%
+      |                                                                            
+      |=================                                                     |  24%
+      |                                                                            
+      |=================                                                     |  25%
+      |                                                                            
+      |==================                                                    |  25%
+      |                                                                            
+      |==================                                                    |  26%
+      |                                                                            
+      |===================                                                   |  26%
+      |                                                                            
+      |===================                                                   |  27%
+      |                                                                            
+      |===================                                                   |  28%
+      |                                                                            
+      |====================                                                  |  28%
+      |                                                                            
+      |====================                                                  |  29%
+      |                                                                            
+      |=====================                                                 |  29%
+      |                                                                            
+      |=====================                                                 |  30%
+      |                                                                            
+      |=====================                                                 |  31%
+      |                                                                            
+      |======================                                                |  31%
+      |                                                                            
+      |======================                                                |  32%
+      |                                                                            
+      |=======================                                               |  32%
+      |                                                                            
+      |=======================                                               |  33%
+      |                                                                            
+      |=======================                                               |  34%
+      |                                                                            
+      |========================                                              |  34%
+      |                                                                            
+      |========================                                              |  35%
+      |                                                                            
+      |=========================                                             |  35%
+      |                                                                            
+      |=========================                                             |  36%
+      |                                                                            
+      |==========================                                            |  36%
+      |                                                                            
+      |==========================                                            |  37%
+      |                                                                            
+      |==========================                                            |  38%
+      |                                                                            
+      |===========================                                           |  38%
+      |                                                                            
+      |===========================                                           |  39%
+      |                                                                            
+      |============================                                          |  39%
+      |                                                                            
+      |============================                                          |  40%
+      |                                                                            
+      |============================                                          |  41%
+      |                                                                            
+      |=============================                                         |  41%
+      |                                                                            
+      |=============================                                         |  42%
+      |                                                                            
+      |==============================                                        |  42%
+      |                                                                            
+      |==============================                                        |  43%
+      |                                                                            
+      |===============================                                       |  44%
+      |                                                                            
+      |===============================                                       |  45%
+      |                                                                            
+      |================================                                      |  45%
+      |                                                                            
+      |================================                                      |  46%
+      |                                                                            
+      |=================================                                     |  47%
+      |                                                                            
+      |=================================                                     |  48%
+      |                                                                            
+      |==================================                                    |  48%
+      |                                                                            
+      |==================================                                    |  49%
+      |                                                                            
+      |===================================                                   |  49%
+      |                                                                            
+      |===================================                                   |  50%
+      |                                                                            
+      |===================================                                   |  51%
+      |                                                                            
+      |====================================                                  |  51%
+      |                                                                            
+      |====================================                                  |  52%
+      |                                                                            
+      |=====================================                                 |  52%
+      |                                                                            
+      |=====================================                                 |  53%
+      |                                                                            
+      |=====================================                                 |  54%
+      |                                                                            
+      |======================================                                |  54%
+      |                                                                            
+      |======================================                                |  55%
+      |                                                                            
+      |=======================================                               |  55%
+      |                                                                            
+      |=======================================                               |  56%
+      |                                                                            
+      |========================================                              |  56%
+      |                                                                            
+      |========================================                              |  57%
+      |                                                                            
+      |========================================                              |  58%
+      |                                                                            
+      |=========================================                             |  58%
+      |                                                                            
+      |=========================================                             |  59%
+      |                                                                            
+      |==========================================                            |  59%
+      |                                                                            
+      |==========================================                            |  60%
+      |                                                                            
+      |==========================================                            |  61%
+      |                                                                            
+      |===========================================                           |  61%
+      |                                                                            
+      |===========================================                           |  62%
+      |                                                                            
+      |============================================                          |  62%
+      |                                                                            
+      |============================================                          |  63%
+      |                                                                            
+      |============================================                          |  64%
+      |                                                                            
+      |=============================================                         |  64%
+      |                                                                            
+      |=============================================                         |  65%
+      |                                                                            
+      |==============================================                        |  65%
+      |                                                                            
+      |==============================================                        |  66%
+      |                                                                            
+      |===============================================                       |  67%
+      |                                                                            
+      |===============================================                       |  68%
+      |                                                                            
+      |================================================                      |  68%
+      |                                                                            
+      |================================================                      |  69%
+      |                                                                            
+      |=================================================                     |  69%
+      |                                                                            
+      |=================================================                     |  70%
+      |                                                                            
+      |=================================================                     |  71%
+      |                                                                            
+      |==================================================                    |  71%
+      |                                                                            
+      |==================================================                    |  72%
+      |                                                                            
+      |===================================================                   |  72%
+      |                                                                            
+      |===================================================                   |  73%
+      |                                                                            
+      |===================================================                   |  74%
+      |                                                                            
+      |====================================================                  |  74%
+      |                                                                            
+      |====================================================                  |  75%
+      |                                                                            
+      |=====================================================                 |  75%
+      |                                                                            
+      |=====================================================                 |  76%
+      |                                                                            
+      |======================================================                |  77%
+      |                                                                            
+      |======================================================                |  78%
+      |                                                                            
+      |=======================================================               |  78%
+      |                                                                            
+      |=======================================================               |  79%
+      |                                                                            
+      |========================================================              |  79%
+      |                                                                            
+      |========================================================              |  80%
+      |                                                                            
+      |========================================================              |  81%
+      |                                                                            
+      |=========================================================             |  81%
+      |                                                                            
+      |=========================================================             |  82%
+      |                                                                            
+      |==========================================================            |  83%
+      |                                                                            
+      |==========================================================            |  84%
+      |                                                                            
+      |===========================================================           |  84%
+      |                                                                            
+      |===========================================================           |  85%
+      |                                                                            
+      |============================================================          |  85%
+      |                                                                            
+      |============================================================          |  86%
+      |                                                                            
+      |=============================================================         |  87%
+      |                                                                            
+      |=============================================================         |  88%
+      |                                                                            
+      |==============================================================        |  88%
+      |                                                                            
+      |==============================================================        |  89%
+      |                                                                            
+      |===============================================================       |  89%
+      |                                                                            
+      |===============================================================       |  90%
+      |                                                                            
+      |===============================================================       |  91%
+      |                                                                            
+      |================================================================      |  91%
+      |                                                                            
+      |================================================================      |  92%
+      |                                                                            
+      |=================================================================     |  92%
+      |                                                                            
+      |=================================================================     |  93%
+      |                                                                            
+      |==================================================================    |  94%
+      |                                                                            
+      |==================================================================    |  95%
+      |                                                                            
+      |===================================================================   |  95%
+      |                                                                            
+      |===================================================================   |  96%
+      |                                                                            
+      |====================================================================  |  97%
+      |                                                                            
+      |====================================================================  |  98%
+      |                                                                            
+      |===================================================================== |  98%
+      |                                                                            
+      |===================================================================== |  99%
+      |                                                                            
+      |======================================================================|  99%
+      |                                                                            
+      |======================================================================| 100%
 
-    Residuals:
-         Min       1Q   Median       3Q      Max 
-    -2.46759 -0.29451  0.03614  0.32690  1.39161 
-
-    Coefficients:
-                                      Estimate Std. Error t value Pr(>|t|)    
-    (Intercept)                     -1.3388331  0.1296629 -10.325  < 2e-16 ***
-    MetroOpen                       -0.3062187  0.0048751 -62.813  < 2e-16 ***
-    construction                    -0.0697845  0.0051681 -13.503  < 2e-16 ***
-    as.factor(day_of_week)Monday    -0.0144690  0.0062713  -2.307  0.02105 *  
-    as.factor(day_of_week)Saturday   0.0191021  0.0062745   3.044  0.00233 ** 
-    as.factor(day_of_week)Sunday    -0.0049692  0.0062709  -0.792  0.42812    
-    as.factor(day_of_week)Thursday   0.0181214  0.0062711   2.890  0.00386 ** 
-    as.factor(day_of_week)Tuesday    0.0190336  0.0062719   3.035  0.00241 ** 
-    as.factor(day_of_week)Wednesday  0.0324510  0.0062711   5.175 2.29e-07 ***
-    as.factor(month)August           0.3419152  0.0093308  36.644  < 2e-16 ***
-    as.factor(month)December         0.1651216  0.0093752  17.613  < 2e-16 ***
-    as.factor(month)February         0.1767097  0.0094159  18.767  < 2e-16 ***
-    as.factor(month)January          0.1288645  0.0095035  13.560  < 2e-16 ***
-    as.factor(month)July             0.3382664  0.0093685  36.107  < 2e-16 ***
-    as.factor(month)June             0.2761513  0.0091939  30.036  < 2e-16 ***
-    as.factor(month)March            0.0788110  0.0084634   9.312  < 2e-16 ***
-    as.factor(month)May              0.1085674  0.0084278  12.882  < 2e-16 ***
-    as.factor(month)November         0.0671734  0.0085779   7.831 4.90e-15 ***
-    as.factor(month)October         -0.0506612  0.0082042  -6.175 6.65e-10 ***
-    as.factor(month)September        0.0852651  0.0087671   9.726  < 2e-16 ***
-    Tair_f_tavg                      0.0130954  0.0004476  29.258  < 2e-16 ***
-    ---
-    Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-    Residual standard error: 0.462 on 76003 degrees of freedom
-    Multiple R-squared:  0.2026,    Adjusted R-squared:  0.2024 
-    F-statistic: 965.7 on 20 and 76003 DF,  p-value: < 2.2e-16
+    Warning: Spatial* (sp) classes are no longer formally
+    supported in tigris as of version 2.0. We strongly
+    recommend updating your workflow to use sf objects
+    (the default in tigris) instead.
 
 ``` r
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg,data = metroOpen_df))
+shapevect<-vect(shape)
+shapedf<-as.data.frame(shape)
 ```
 
-
-    Call:
-    lm(formula = log(pm25) ~ MetroOpen + construction + as.factor(day_of_week) + 
-        as.factor(month) + Tair_f_tavg + Wind_f_tavg, data = metroOpen_df)
-
-    Residuals:
-         Min       1Q   Median       3Q      Max 
-    -2.52876 -0.26850  0.02632  0.28418  1.25081 
-
-    Coefficients:
-                                      Estimate Std. Error  t value Pr(>|t|)    
-    (Intercept)                     -0.2931083  0.1185021   -2.473 0.013384 *  
-    MetroOpen                       -0.3037555  0.0044443  -68.348  < 2e-16 ***
-    construction                    -0.0741550  0.0047114  -15.739  < 2e-16 ***
-    as.factor(day_of_week)Monday    -0.0241907  0.0057176   -4.231 2.33e-05 ***
-    as.factor(day_of_week)Saturday   0.0042401  0.0057212    0.741 0.458627    
-    as.factor(day_of_week)Sunday    -0.0160511  0.0057174   -2.807 0.004995 ** 
-    as.factor(day_of_week)Thursday   0.0056676  0.0057177    0.991 0.321572    
-    as.factor(day_of_week)Tuesday    0.0203711  0.0057176    3.563 0.000367 ***
-    as.factor(day_of_week)Wednesday  0.0369449  0.0057169    6.462 1.04e-10 ***
-    as.factor(month)August           0.0708455  0.0087812    8.068 7.26e-16 ***
-    as.factor(month)December         0.2237589  0.0085596   26.141  < 2e-16 ***
-    as.factor(month)February         0.2673328  0.0086146   31.033  < 2e-16 ***
-    as.factor(month)January          0.2275303  0.0086999   26.153  < 2e-16 ***
-    as.factor(month)July             0.0859334  0.0087784    9.789  < 2e-16 ***
-    as.factor(month)June             0.0450885  0.0085850    5.252 1.51e-07 ***
-    as.factor(month)March            0.1306480  0.0077266   16.909  < 2e-16 ***
-    as.factor(month)May             -0.0149398  0.0077470   -1.928 0.053799 .  
-    as.factor(month)November         0.0469572  0.0078215    6.004 1.94e-09 ***
-    as.factor(month)October         -0.1605121  0.0075311  -21.313  < 2e-16 ***
-    as.factor(month)September       -0.1008717  0.0081313  -12.405  < 2e-16 ***
-    Tair_f_tavg                      0.0117616  0.0004082   28.816  < 2e-16 ***
-    Wind_f_tavg                     -0.1895311  0.0015247 -124.307  < 2e-16 ***
-    ---
-    Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-    Residual standard error: 0.4211 on 76002 degrees of freedom
-    Multiple R-squared:  0.3374,    Adjusted R-squared:  0.3372 
-    F-statistic:  1842 on 21 and 76002 DF,  p-value: < 2.2e-16
+### Summary Statistics of Income
 
 ``` r
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg,data = metroOpen_df))
+tract_income<-merge(shapevect, income_name, by.x="GEOID10", by.y="GEOID")
+
+tract_income$tract_area<-expanse(tract_income, unit="m")
+
+tract_income_df<-as.data.frame(tract_income)
+
+summary(tract_income_df)
 ```
 
+       GEOID10           STATEFP10          COUNTYFP10         TRACTCE10        
+     Length:233         Length:233         Length:233         Length:233        
+     Class :character   Class :character   Class :character   Class :character  
+     Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                                
+                                                                                
+                                                                                
+        NAME10           NAMELSAD10          MTFCC10           FUNCSTAT10       
+     Length:233         Length:233         Length:233         Length:233        
+     Class :character   Class :character   Class :character   Class :character  
+     Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                                
+                                                                                
+                                                                                
+        ALAND10            AWATER10         INTPTLAT10         INTPTLON10       
+     Min.   :  479017   Min.   :       0   Length:233         Length:233        
+     1st Qu.: 2609447   1st Qu.:    2373   Class :character   Class :character  
+     Median : 4251828   Median :   20172   Mode  :character   Mode  :character  
+     Mean   : 5822942   Mean   :  245293                                        
+     3rd Qu.: 6281067   3rd Qu.:   53777                                        
+     Max.   :36214554   Max.   :20442349                                        
+       COUNTYFP           STATEFP              NAME               total     
+     Length:233         Length:233         Length:233         Min.   :   0  
+     Class :character   Class :character   Class :character   1st Qu.:1093  
+     Mode  :character   Mode  :character   Mode  :character   Median :1451  
+                                                              Mean   :1504  
+                                                              3rd Qu.:1917  
+                                                              Max.   :3247  
+     less_than_10k      10k_to_15k       15k_to_20k       20k_to_25k    
+     Min.   :  0.00   Min.   :  0.00   Min.   :  0.00   Min.   :  0.00  
+     1st Qu.: 29.00   1st Qu.: 20.00   1st Qu.: 22.00   1st Qu.: 31.00  
+     Median : 68.00   Median : 55.00   Median : 52.00   Median : 64.00  
+     Mean   : 88.58   Mean   : 63.88   Mean   : 68.84   Mean   : 77.65  
+     3rd Qu.:134.00   3rd Qu.: 97.00   3rd Qu.:105.00   3rd Qu.:107.00  
+     Max.   :389.00   Max.   :302.00   Max.   :284.00   Max.   :348.00  
+       25k_to_30k       30k_to_35k       35k_to_40k       40k_to_45k   
+     Min.   :  0.00   Min.   :  0.00   Min.   :  0.00   Min.   :  0.0  
+     1st Qu.: 33.00   1st Qu.: 30.00   1st Qu.: 33.00   1st Qu.: 34.0  
+     Median : 64.00   Median : 67.00   Median : 58.00   Median : 64.0  
+     Mean   : 74.13   Mean   : 81.09   Mean   : 71.26   Mean   : 77.7  
+     3rd Qu.:109.00   3rd Qu.:108.00   3rd Qu.:102.00   3rd Qu.:108.0  
+     Max.   :307.00   Max.   :367.00   Max.   :337.00   Max.   :327.0  
+       45k_to_50k       50k_to_60k      60k_to_75k     75k_to_100k   100k_to_125k  
+     Min.   :  0.00   Min.   :  0.0   Min.   :  0.0   Min.   :  0   Min.   :  0.0  
+     1st Qu.: 30.00   1st Qu.: 71.0   1st Qu.: 84.0   1st Qu.: 86   1st Qu.: 41.0  
+     Median : 65.00   Median :118.0   Median :148.0   Median :166   Median :112.0  
+     Mean   : 72.35   Mean   :132.3   Mean   :163.7   Mean   :179   Mean   :123.2  
+     3rd Qu.:107.00   3rd Qu.:181.0   3rd Qu.:231.0   3rd Qu.:249   3rd Qu.:184.0  
+     Max.   :278.00   Max.   :516.0   Max.   :628.0   Max.   :623   Max.   :463.0  
+      125k_to_150k     150k_to_200k     200k_or_more      tract_area      
+     Min.   :  0.00   Min.   :  0.00   Min.   :  0.00   Min.   :  483120  
+     1st Qu.: 15.00   1st Qu.:  0.00   1st Qu.:  0.00   1st Qu.: 2615314  
+     Median : 57.00   Median : 48.00   Median : 22.00   Median : 4270231  
+     Mean   : 70.95   Mean   : 73.91   Mean   : 85.34   Mean   : 6068235  
+     3rd Qu.:111.00   3rd Qu.:111.00   3rd Qu.:117.00   3rd Qu.: 6378453  
+     Max.   :289.00   Max.   :442.00   Max.   :777.00   Max.   :39492388  
 
-    Call:
-    lm(formula = log(pm25) ~ MetroOpen + construction + as.factor(day_of_week) + 
-        as.factor(month) + Tair_f_tavg + Wind_f_tavg + Qair_f_tavg, 
-        data = metroOpen_df)
-
-    Residuals:
-         Min       1Q   Median       3Q      Max 
-    -2.54699 -0.26935  0.02629  0.28336  1.25333 
-
-    Coefficients:
-                                      Estimate Std. Error  t value Pr(>|t|)    
-    (Intercept)                      1.3447837  0.2301784    5.842 5.17e-09 ***
-    MetroOpen                       -0.3020947  0.0044468  -67.936  < 2e-16 ***
-    construction                    -0.0708077  0.0047266  -14.981  < 2e-16 ***
-    as.factor(day_of_week)Monday    -0.0229720  0.0057169   -4.018 5.87e-05 ***
-    as.factor(day_of_week)Saturday   0.0045141  0.0057188    0.789 0.429908    
-    as.factor(day_of_week)Sunday    -0.0156870  0.0057150   -2.745 0.006055 ** 
-    as.factor(day_of_week)Thursday   0.0049815  0.0057157    0.872 0.383462    
-    as.factor(day_of_week)Tuesday    0.0207618  0.0057152    3.633 0.000281 ***
-    as.factor(day_of_week)Wednesday  0.0379634  0.0057157    6.642 3.12e-11 ***
-    as.factor(month)August           0.0350694  0.0097788    3.586 0.000336 ***
-    as.factor(month)December         0.2078500  0.0087679   23.706  < 2e-16 ***
-    as.factor(month)February         0.2564764  0.0087095   29.448  < 2e-16 ***
-    as.factor(month)January          0.2103151  0.0089400   23.525  < 2e-16 ***
-    as.factor(month)July             0.0517139  0.0096951    5.334 9.63e-08 ***
-    as.factor(month)June             0.0178410  0.0091878    1.942 0.052163 .  
-    as.factor(month)March            0.1255178  0.0077479   16.200  < 2e-16 ***
-    as.factor(month)May             -0.0226380  0.0077989   -2.903 0.003700 ** 
-    as.factor(month)November         0.0439044  0.0078266    5.610 2.03e-08 ***
-    as.factor(month)October         -0.1593340  0.0075291  -21.163  < 2e-16 ***
-    as.factor(month)September       -0.1139335  0.0082787  -13.762  < 2e-16 ***
-    Tair_f_tavg                      0.0057686  0.0008294    6.955 3.55e-12 ***
-    Wind_f_tavg                     -0.1903962  0.0015276 -124.639  < 2e-16 ***
-    Qair_f_tavg                     10.0037770  1.2054328    8.299  < 2e-16 ***
-    ---
-    Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-    Residual standard error: 0.4209 on 76001 degrees of freedom
-    Multiple R-squared:  0.338, Adjusted R-squared:  0.3378 
-    F-statistic:  1763 on 22 and 76001 DF,  p-value: < 2.2e-16
+Inserting blocks with buffer
 
 ``` r
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg+holiday_binary,data = metroOpen_df))
+buffdf <- as.data.frame(buff)
+
+output <- c()
+
+for(i in 0:25){
+  print(i)
+
+buff2 <- subset(buff,buff$FID ==i)
+
+int<-crop(tract_income, buff2)
+
+int$intarea<-expanse(int, unit="m")
+
+
+
+intdf<-as.data.frame(int)%>%
+
+  mutate(frac_area=intarea/tract_area) %>%
+  mutate(total=total*frac_area, 
+         
+         
+         
+        `less_than_10k` = `less_than_10k` * frac_area,
+`10k_to_15k` = `10k_to_15k` * frac_area,
+`15k_to_20k` = `15k_to_20k` * frac_area,
+`20k_to_25k` = `20k_to_25k` * frac_area,
+`25k_to_30k` = `25k_to_30k` * frac_area,
+`30k_to_35k` = `30k_to_35k` * frac_area,
+`35k_to_40k` = `35k_to_40k` * frac_area,
+`40k_to_45k` = `40k_to_45k` * frac_area,
+`45k_to_50k` = `45k_to_50k` * frac_area,
+`50k_to_60k` = `50k_to_60k` * frac_area,
+`60k_to_75k` = `60k_to_75k` * frac_area,
+`75k_to_100k` = `75k_to_100k` * frac_area,
+`100k_to_125k` = `100k_to_125k` * frac_area,
+`125k_to_150k` = `125k_to_150k` * frac_area,
+`150k_to_200k` = `150k_to_200k` * frac_area,
+`200k_or_more` = `200k_or_more` * frac_area
+         
+         ) %>%
+  summarize(total=sum(total), 
+            
+            
+            `less_than_10k` = sum(`less_than_10k`),
+`10k_to_15k` = sum(`10k_to_15k`),
+`15k_to_20k` = sum(`15k_to_20k`),
+`20k_to_25k` = sum(`20k_to_25k`),
+`25k_to_30k` = sum(`25k_to_30k`),
+`30k_to_35k` = sum(`30k_to_35k`),
+`35k_to_40k` = sum(`35k_to_40k`),
+`40k_to_45k` = sum(`40k_to_45k`),
+`45k_to_50k` = sum(`45k_to_50k`),
+`50k_to_60k` = sum(`50k_to_60k`),
+`60k_to_75k` = sum(`60k_to_75k`),
+`75k_to_100k` = sum(`75k_to_100k`),
+`100k_to_125k` = sum(`100k_to_125k`),
+`125k_to_150k` = sum(`125k_to_150k`),
+`150k_to_200k` = sum(`150k_to_200k`),
+`200k_or_more` = sum(`200k_or_more`)
+            
+            
+            
+            ) %>%
+  mutate(
+    
+    
+   `pct_less_than_10k` = `less_than_10k` * 100 / `total`,
+`pct_10k_to_15k` = `10k_to_15k` * 100 / `total`,
+`pct_15k_to_20k` = `15k_to_20k` * 100 / `total`,
+`pct_20k_to_25k` = `20k_to_25k` * 100 / `total`,
+`pct_25k_to_30k` = `25k_to_30k` * 100 / `total`,
+`pct_30k_to_35k` = `30k_to_35k` * 100 / `total`,
+`pct_35k_to_40k` = `35k_to_40k` * 100 / `total`,
+`pct_40k_to_45k` = `40k_to_45k` * 100 / `total`,
+`pct_45k_to_50k` = `45k_to_50k` * 100 / `total`,
+`pct_50k_to_60k` = `50k_to_60k` * 100 / `total`,
+`pct_60k_to_75k` = `60k_to_75k` * 100 / `total`,
+`pct_75k_to_100k` = `75k_to_100k` * 100 / `total`,
+`pct_100k_to_125k` = `100k_to_125k` * 100 / `total`,
+`pct_125k_to_150k` = `125k_to_150k` * 100 / `total`,
+`pct_150k_to_200k` = `150k_to_200k` * 100 / `total`,
+`pct_200k_or_more` = `200k_or_more` * 100 / `total`
+    
+    
+    
+    )%>% mutate(FID = i)
+output <- rbind(output,intdf)
+}
 ```
 
+    [1] 0
+    [1] 1
+    [1] 2
+    [1] 3
+    [1] 4
+    [1] 5
+    [1] 6
+    [1] 7
+    [1] 8
+    [1] 9
+    [1] 10
+    [1] 11
+    [1] 12
+    [1] 13
+    [1] 14
+    [1] 15
+    [1] 16
+    [1] 17
+    [1] 18
+    [1] 19
+    [1] 20
+    [1] 21
+    [1] 22
+    [1] 23
+    [1] 24
+    [1] 25
 
-    Call:
-    lm(formula = log(pm25) ~ MetroOpen + construction + as.factor(day_of_week) + 
-        as.factor(month) + Tair_f_tavg + Wind_f_tavg + Qair_f_tavg + 
-        holiday_binary, data = metroOpen_df)
+``` r
+  output
+```
 
-    Residuals:
-         Min       1Q   Median       3Q      Max 
-    -2.54573 -0.26856  0.02682  0.28244  1.25564 
+           total less_than_10k 10k_to_15k 15k_to_20k 20k_to_25k 25k_to_30k
+    1   608.3756      20.61255   74.41855   26.48033   55.75708   34.08914
+    2  1222.1663     119.01860  113.38081   82.65478  115.97494  126.27232
+    3   861.8736      70.71944   35.65671   82.76296   78.99323   81.46999
+    4  1112.8419      77.91542   82.63364  119.52384   98.30088  117.49948
+    5   855.6544      58.20633   56.43109   81.50407   60.71510   71.76108
+    6   793.1870      48.16878   46.39846   55.36087   51.30524   53.22278
+    7   856.6025      61.65379   58.11632   58.96017   52.50670   54.33722
+    8  1082.9981     157.97969   70.18301   91.92072   63.36017   48.47695
+    9  1144.8484     157.40609   57.08982   76.66767   32.05358   45.85368
+    10 1298.1082     214.12916   71.09150   70.12355   37.03190   40.08044
+    11 1371.4431     206.81606   85.36064   44.05519   43.73127   30.98301
+    12 1118.4385     166.33326   86.32960   24.75373   45.57101   27.66984
+    13 1507.0295     120.72342   85.50171   28.51319   56.12372   38.89808
+    14 1371.4431     206.81606   85.36064   44.05519   43.73127   30.98301
+    15 1793.0881     147.14080  114.63272   59.06561   89.89054   60.79406
+    16 1697.1156     163.02619  119.57703   69.44602   95.84754   64.21680
+    17  581.4102     101.50131   68.65970   51.84826   76.56622   49.50072
+    18  650.8680      95.35403   65.46587   53.94641   84.17788   76.09564
+    19  669.5744      60.88256   48.08272   42.58526   67.46435   48.01194
+    20  791.3632      74.23235   50.10293   56.37777   67.09097   54.90454
+    21  579.7377      65.79947   46.90307   28.56821   52.91231   47.98821
+    22 1303.0691     106.50897   50.24964  123.69944  148.05571  156.06458
+    23  530.9410      34.68554   25.97385   39.55929   62.82535   39.02252
+    24  368.7763      52.36857   13.58311   32.98146   38.86866   15.26962
+    25  403.3999      48.58841   25.58411   18.57909   28.40995   22.05008
+    26  284.6497      78.34003   12.59799   37.85615   44.97878   18.98171
+       30k_to_35k 35k_to_40k 40k_to_45k 45k_to_50k 50k_to_60k 60k_to_75k
+    1    47.14051   32.25304   46.60883 122.243328   40.28864  42.245306
+    2    95.16028   78.58948   81.57847  94.413678  108.03520 111.203802
+    3    55.11168   49.60469   71.28622  37.650193   86.64107  35.339855
+    4    40.11328   45.63616   44.88858  45.038682  100.87292  93.953602
+    5    61.03152   41.97831   35.66665  43.831899   67.14698  71.798829
+    6    72.29291   55.17393   29.88185  46.322700   77.11816  89.214938
+    7    59.93706   67.87835   42.59285  32.888847   87.09547  97.118218
+    8    64.21484   44.35188   58.70476  23.882555   69.38626 101.758799
+    9    31.28533   42.03607   40.31414  31.821583   63.43882 119.572315
+    10   41.45717   51.69258   42.73319  23.112369   57.19749 131.277989
+    11   79.42249   57.00017   27.31176  22.323258   62.63318 139.229441
+    12   82.98506   48.48090   11.81555  21.202630   55.64729 102.318609
+    13  116.14109   69.56013   15.28671  26.645507   79.91882 169.038528
+    14   79.42249   57.00017   27.31176  22.323258   62.63318 139.229441
+    15  115.76184   80.19281   20.33218  32.007365  104.87375 206.680664
+    16   99.89256   71.38639   20.59954  33.258482  108.25027 191.041199
+    17   22.75402   17.64267   11.03102  19.460581   79.79926  43.614662
+    18   22.34979   31.10211   18.92107  31.105145   78.81165  45.841312
+    19   51.43221   19.61968   25.61451  30.247743   69.26589  55.187122
+    20   73.80317   23.61229   44.02661  32.176752   71.02992  63.999568
+    21   80.48440   23.21154   37.74390   3.053375   68.91760  33.778267
+    22  125.97656  103.19217   74.20172  28.652550  126.51446 141.677155
+    23   28.91298   35.08104   46.99872  14.641252   40.41132  72.734283
+    24   19.88827   12.08450   31.59464  13.502885   28.38376  48.460585
+    25   49.85510   31.69622   17.26556  18.637951   30.01973  35.053087
+    26   11.96671   13.26922   18.03712   6.945358   15.45983   9.132942
+       75k_to_100k 100k_to_125k 125k_to_150k 150k_to_200k 200k_or_more
+    1    31.923257     2.965419  24.06961444   1.47768554 5.802290e+00
+    2    49.651766    14.288824  15.10096480   0.69014520 1.615225e+01
+    3    94.852014    44.186917  15.07137300   9.00378445 1.352345e+01
+    4   124.659273    52.980646  29.02761043  29.69170027 1.010624e+01
+    5    92.085655    65.503030  13.49046657  25.71162102 8.791763e+00
+    6    80.591086    58.202601   8.87004743  13.34511440 7.717494e+00
+    7    79.902326    43.920503  22.40593539  26.78678847 1.050198e+01
+    8    72.786847    60.679023  53.37345019  69.89373911 3.204542e+01
+    9    95.442276   100.933600  61.83529731  72.40636478 1.166917e+02
+    10   89.402765   118.209715  62.44880059  99.03504118 1.490845e+02
+    11  111.725737   130.393438  81.49096585  97.74939386 1.512171e+02
+    12   98.338446    95.902398  61.32577573  73.64437855 1.161200e+02
+    13  153.116570   157.368012 111.71964759 106.26819431 1.722062e+02
+    14  111.725737   130.393438  81.49096585  97.74939386 1.512171e+02
+    15  201.914364   158.300980 111.43454181 112.72098275 1.773449e+02
+    16  194.735415   132.223957  90.34212437  95.51209110 1.477600e+02
+    17   12.489160    26.325756   0.05901191   0.06491311 9.294377e-02
+    18   20.980627    25.458190   0.62909188   0.62909188 8.194116e-05
+    19   71.924060    58.325488  10.11942699  10.11942699 6.920561e-01
+    20   88.810116    60.974132  13.45121851  11.80962526 4.961223e+00
+    21   60.927166    11.205307   3.01288813   0.00000000 1.523198e+01
+    22   88.407438    23.292842   2.49671182   0.27295439 3.806191e+00
+    23   45.446404    27.781631   6.34345499   7.00805837 3.515284e+00
+    24   31.640268    12.849870   7.49460713   9.04465810 7.607813e-01
+    25   36.130615    24.275144  11.10388384   6.13430829 1.672208e-02
+    26    5.593119     1.335708   6.53327796   3.62170461 0.000000e+00
+       pct_less_than_10k pct_10k_to_15k pct_15k_to_20k pct_20k_to_25k
+    1           3.388129      12.232338       4.352628       9.164911
+    2           9.738331       9.277036       6.762973       9.489293
+    3           8.205315       4.137116       9.602679       9.165292
+    4           7.001481       7.425461      10.740415       8.833319
+    5           6.802551       6.595079       9.525349       7.095751
+    6           6.072816       5.849625       6.979549       6.468240
+    7           7.197480       6.784514       6.883026       6.129645
+    8          14.587254       6.480437       8.487616       5.850442
+    9          13.749077       4.986671       6.696753       2.799810
+    10         16.495479       5.476547       5.401981       2.852759
+    11         15.080178       6.224148       3.212324       3.188705
+    12         14.871918       7.718761       2.213240       4.074521
+    13          8.010687       5.673526       1.892013       3.724129
+    14         15.080178       6.224148       3.212324       3.188705
+    15          8.205999       6.393033       3.294072       5.013169
+    16          9.606075       7.045898       4.092003       5.647673
+    17         17.457780      11.809167       8.917672      13.169053
+    18         14.650288      10.058241       8.288380      12.933172
+    19          9.092725       7.181086       6.360048      10.075706
+    20          9.380314       6.331218       7.124133       8.477899
+    21         11.349869       8.090395       4.927783       9.126940
+    22          8.173701       3.856253       9.492931      11.362077
+    23          6.532843       4.892041       7.450789      11.832831
+    24         14.200635       3.683292       8.943488      10.539904
+    25         12.044723       6.342120       4.605625       7.042626
+    26         27.521562       4.425787      13.299208      15.801451
+       pct_25k_to_30k pct_30k_to_35k pct_35k_to_40k pct_40k_to_45k pct_45k_to_50k
+    1        5.603305       7.748587       5.301501       7.661193     20.0933990
+    2       10.331844       7.786197       6.430342       6.674908      7.7251089
+    3        9.452661       6.394404       5.755448       8.271076      4.3684126
+    4       10.558505       3.604580       4.100866       4.033688      4.0471769
+    5        8.386690       7.132730       4.905988       4.168348      5.1226173
+    6        6.709992       9.114234       6.955980       3.767314      5.8400732
+    7        6.343341       6.997068       7.924136       4.972300      3.8394526
+    8        4.476181       5.929358       4.095287       5.420578      2.2052259
+    9        4.005219       2.732705       3.671758       3.521352      2.7795456
+    10       3.087604       3.193661       3.982148       3.291959      1.7804656
+    11       2.259154       5.791162       4.156219       1.991462      1.6277203
+    12       2.473970       7.419725       4.334695       1.056433      1.8957350
+    13       2.581110       7.706623       4.615711       1.014360      1.7680813
+    14       2.259154       5.791162       4.156219       1.991462      1.6277203
+    15       3.390467       6.456004       4.472329       1.133920      1.7850414
+    16       3.783879       5.886020       4.206336       1.213797      1.9597063
+    17       8.513907       3.913592       3.034461       1.897286      3.3471344
+    18      11.691409       3.433843       4.778558       2.907052      4.7790252
+    19       7.170516       7.681328       2.930172       3.825491      4.5174579
+    20       6.937970       9.326080       2.983749       5.563388      4.0659905
+    21       8.277572      13.882900       4.003800       6.510513      0.5266822
+    22      11.976692       9.667681       7.919164       5.694381      2.1988512
+    23       7.349691       5.445611       6.607334       8.851967      2.7576044
+    24       4.140618       5.393045       3.276920       8.567429      3.6615386
+    25       5.466058      12.358727       7.857270       4.280010      4.6202164
+    26       6.668448       4.204015       4.661597       6.336604      2.4399671
+       pct_50k_to_60k pct_60k_to_75k pct_75k_to_100k pct_100k_to_125k
+    1        6.622330       6.943952        5.247295        0.4874323
+    2        8.839648       9.098909        4.062603        1.1691391
+    3       10.052642       4.100353       11.005328        5.1268445
+    4        9.064443       8.442673       11.201885        4.7608419
+    5        7.847442       8.391102       10.762015        7.6553140
+    6        9.722571      11.247656       10.160415        7.3378161
+    7       10.167548      11.337606        9.327818        5.1272909
+    8        6.406868       9.396027        6.720866        5.6028743
+    9        5.541242      10.444380        8.336674        8.8163290
+    10       4.406219      10.113024        6.887158        9.1063070
+    11       4.566954      10.152039        8.146582        9.5077544
+    12       4.975445       9.148345        8.792477        8.5746689
+    13       5.303069      11.216670       10.160157       10.4422649
+    14       4.566954      10.152039        8.146582        9.5077544
+    15       5.848778      11.526520       11.260705        8.8283994
+    16       6.378486      11.256817       11.474493        7.7910990
+    17      13.725122       7.501530        2.148081        4.5279143
+    18      12.108700       7.043104        3.223484        3.9114214
+    19      10.344763       8.242119       10.741757        8.7108294
+    20       8.975642       8.087256       11.222422        7.7049493
+    21      11.887722       5.826474       10.509437        1.9328237
+    22       9.708960      10.872574        6.784555        1.7875370
+    23       7.611264      13.699127        8.559596        5.2325269
+    24       7.696744      13.140918        8.579801        3.4844625
+    25       7.441679       8.689413        8.956525        6.0176370
+    26       5.431178       3.208485        1.964913        0.4692464
+       pct_125k_to_150k pct_150k_to_200k pct_200k_or_more FID
+    1        3.95637435       0.24289035     9.537349e-01   0
+    2        1.23559001       0.05646901     1.321609e+00   1
+    3        1.74867564       1.04467579     1.569076e+00   2
+    4        2.60842167       2.66809679     9.081466e-01   3
+    5        1.57662567       3.00490731     1.027490e+00   4
+    6        1.11827952       1.68246768     9.729728e-01   5
+    7        2.61567472       3.12709665     1.226003e+00   6
+    8        4.92830501       6.45372677     2.958955e+00   7
+    9        5.40117784       6.32453744     1.019277e+01   8
+    10       4.81075477       7.62918250     1.148475e+01   9
+    11       5.94198680       7.12748465     1.102613e+01  10
+    12       5.48316030       6.58457113     1.038233e+01  11
+    13       7.41323562       7.05150061     1.142686e+01  12
+    14       5.94198680       7.12748465     1.102613e+01  13
+    15       6.21467180       6.28641624     9.890474e+00  14
+    16       5.32327461       5.62790717     8.706537e+00  15
+    17       0.01014979       0.01116477     1.598592e-02  16
+    18       0.09665430       0.09665430     1.258952e-05  17
+    19       1.51132217       1.51132217     1.033576e-01  18
+    20       1.69975289       1.49231422     6.269212e-01  19
+    21       0.51969852       0.00000000     2.627391e+00  20
+    22       0.19160241       0.02094704     2.920944e-01  21
+    23       1.19475704       1.31993166     6.620855e-01  22
+    24       2.03229116       2.45261404     2.062989e-01  23
+    25       2.75257446       1.52065175     4.145285e-03  24
+    26       2.29519962       1.27233758     0.000000e+00  25
 
-    Coefficients:
-                                      Estimate Std. Error  t value Pr(>|t|)    
-    (Intercept)                      1.4248212  0.2300042    6.195 5.87e-10 ***
-    MetroOpen                       -0.3017673  0.0044419  -67.937  < 2e-16 ***
-    construction                    -0.0704835  0.0047214  -14.929  < 2e-16 ***
-    as.factor(day_of_week)Monday    -0.0238175  0.0057109   -4.171 3.04e-05 ***
-    as.factor(day_of_week)Saturday   0.0038944  0.0057126    0.682 0.495418    
-    as.factor(day_of_week)Sunday    -0.0233388  0.0057387   -4.067 4.77e-05 ***
-    as.factor(day_of_week)Thursday   0.0019213  0.0057142    0.336 0.736694    
-    as.factor(day_of_week)Tuesday    0.0215676  0.0057092    3.778 0.000158 ***
-    as.factor(day_of_week)Wednesday  0.0379953  0.0057093    6.655 2.85e-11 ***
-    as.factor(month)August           0.0368219  0.0097688    3.769 0.000164 ***
-    as.factor(month)December         0.1984115  0.0087879   22.578  < 2e-16 ***
-    as.factor(month)February         0.2519430  0.0087068   28.936  < 2e-16 ***
-    as.factor(month)January          0.2069564  0.0089337   23.166  < 2e-16 ***
-    as.factor(month)July             0.0499826  0.0096852    5.161 2.47e-07 ***
-    as.factor(month)June             0.0160813  0.0091786    1.752 0.079770 .  
-    as.factor(month)March            0.1269694  0.0077400   16.404  < 2e-16 ***
-    as.factor(month)May             -0.0237068  0.0077906   -3.043 0.002343 ** 
-    as.factor(month)November         0.0417547  0.0078196    5.340 9.34e-08 ***
-    as.factor(month)October         -0.1605485  0.0075213  -21.346  < 2e-16 ***
-    as.factor(month)September       -0.1115843  0.0082714  -13.490  < 2e-16 ***
-    Tair_f_tavg                      0.0054879  0.0008288    6.622 3.57e-11 ***
-    Wind_f_tavg                     -0.1912594  0.0015273 -125.226  < 2e-16 ***
-    Qair_f_tavg                     10.2775509  1.2042746    8.534  < 2e-16 ***
-    holiday_binary                   0.1134318  0.0086905   13.052  < 2e-16 ***
-    ---
-    Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Summarize demographic groups that live near light rail stations
 
-    Residual standard error: 0.4205 on 76000 degrees of freedom
-    Multiple R-squared:  0.3394,    Adjusted R-squared:  0.3392 
-    F-statistic:  1698 on 23 and 76000 DF,  p-value: < 2.2e-16
+``` r
+sum_demog<-output %>%
+  #combinging all the station's data together
+  summarize(
+    total = sum(total),
+   `less_than_10k` = sum(`less_than_10k`),
+`10k_to_15k` = sum(`10k_to_15k`),
+`15k_to_20k` = sum(`15k_to_20k`),
+`20k_to_25k` = sum(`20k_to_25k`),
+`25k_to_30k` = sum(`25k_to_30k`),
+`30k_to_35k` = sum(`30k_to_35k`),
+`35k_to_40k` = sum(`35k_to_40k`),
+`40k_to_45k` = sum(`40k_to_45k`),
+`45k_to_50k` = sum(`45k_to_50k`),
+`50k_to_60k` = sum(`50k_to_60k`),
+`60k_to_75k` = sum(`60k_to_75k`),
+`75k_to_100k` = sum(`75k_to_100k`),
+`100k_to_125k` = sum(`100k_to_125k`),
+`125k_to_150k` = sum(`125k_to_150k`),
+`150k_to_200k` = sum(`150k_to_200k`),
+`200k_or_more` = sum(`200k_or_more`)
+            
+            
+            )%>%
+  mutate(
+    
+      `pct_less_than_10k` = `less_than_10k` * 100 / `total`,
+`pct_10k_to_15k` = `10k_to_15k` * 100 / `total`,
+`pct_15k_to_20k` = `15k_to_20k` * 100 / `total`,
+`pct_20k_to_25k` = `20k_to_25k` * 100 / `total`,
+`pct_25k_to_30k` = `25k_to_30k` * 100 / `total`,
+`pct_30k_to_35k` = `30k_to_35k` * 100 / `total`,
+`pct_35k_to_40k` = `35k_to_40k` * 100 / `total`,
+`pct_40k_to_45k` = `40k_to_45k` * 100 / `total`,
+`pct_45k_to_50k` = `45k_to_50k` * 100 / `total`,
+`pct_50k_to_60k` = `50k_to_60k` * 100 / `total`,
+`pct_60k_to_75k` = `60k_to_75k` * 100 / `total`,
+`pct_75k_to_100k` = `75k_to_100k` * 100 / `total`,
+`pct_100k_to_125k` = `100k_to_125k` * 100 / `total`,
+`pct_125k_to_150k` = `125k_to_150k` * 100 / `total`,
+`pct_150k_to_200k` = `150k_to_200k` * 100 / `total`,
+`pct_200k_or_more` = `200k_or_more` * 100 / `total`
+    
+    )
+
+kable(sum_demog, digits=2)
+```
+
+| total | less_than_10k | 10k_to_15k | 15k_to_20k | 20k_to_25k | 25k_to_30k | 30k_to_35k | 35k_to_40k | 40k_to_45k | 45k_to_50k | 50k_to_60k | 60k_to_75k | 75k_to_100k | 100k_to_125k | 125k_to_150k | 150k_to_200k | 200k_or_more | pct_less_than_10k | pct_10k_to_15k | pct_15k_to_20k | pct_20k_to_25k | pct_25k_to_30k | pct_30k_to_35k | pct_35k_to_40k | pct_40k_to_45k | pct_45k_to_50k | pct_50k_to_60k | pct_60k_to_75k | pct_75k_to_100k | pct_100k_to_125k | pct_125k_to_150k | pct_150k_to_200k | pct_200k_or_more |
+|------:|--------------:|-----------:|-----------:|-----------:|-----------:|-----------:|-----------:|-----------:|-----------:|-----------:|-----------:|------------:|-------------:|-------------:|-------------:|-------------:|------------------:|---------------:|---------------:|---------------:|---------------:|---------------:|---------------:|---------------:|---------------:|---------------:|---------------:|----------------:|-----------------:|-----------------:|-----------------:|-----------------:|
+| 24859 |       2714.93 |    1649.37 |    1501.85 |    1692.24 |     1454.5 |    1628.79 |    1203.33 |     942.35 |     857.39 |    1839.79 |     2390.5 |      2145.2 |      1638.28 |       904.74 |       980.39 |      1315.36 |             10.92 |           6.63 |           6.04 |           6.81 |           5.85 |           6.55 |           4.84 |           3.79 |           3.45 |            7.4 |           9.62 |            8.63 |             6.59 |             3.64 |             3.94 |             5.29 |

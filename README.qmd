@@ -59,6 +59,7 @@ We hypothesize that:
 # install.packages("maptiles")
 # install.packages("terra")
 # install.packages("leaflet")
+# install.packages("tidycensus)
 ```
 
 ### Loading Libraries
@@ -69,6 +70,7 @@ library("ggmap")
 library("terra")
 library("maptiles")
 library("leaflet")
+library("tidycensus")
 ```
 
 ### Gathering Data using Google API
@@ -356,6 +358,7 @@ df <-read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
 
 df2 <- df %>% mutate(date = as.Date(formatted_date,format = "%Y-%m-%d"))
 
+
 startdate <- as.Date("2003-11-24",format = "%Y-%m-%d")
 
 enddate <- as.Date("2011-11-24",format = "%Y-%m-%d")
@@ -364,28 +367,451 @@ opendate <- as.Date("2007-11-24",format = "%Y-%m-%d")
 
 constructionstart <- as.Date("2005-02-26",format = "%Y-%m-%d")
 
+CAIR <- as.Date("2005-03-10",format = "%Y-%m-%d")
+
 metroOpen_df <- df2 %>% filter(date >= startdate & date<=enddate)%>%
   mutate(MetroOpen = ifelse(date>=opendate,1,0))%>%
   mutate(construction = ifelse(date>=constructionstart & date<opendate,1,0))%>%
-  
+  mutate(duringCAIR = ifelse(date>=CAIR & date<= enddate,1,0))%>%
   group_by(station_ID)%>%
-  arrange(station_ID,date)%>%
+  arrange(date, station_ID)%>%
   mutate(lTair_f_tavg = lag(Tair_f_tavg))%>%
+  mutate(lQair_f_tavg = lag(Qair_f_tavg)) %>%
+  mutate(lPsurf_f_tavg = lag(Psurf_f_tavg)) %>%
+  mutate(lWind_f_tavg = lag(Wind_f_tavg)) %>%
   mutate(t=as.numeric(date-startdate))%>%
   mutate(t2 = t^2,t3=t^3,t4=t^4)
 
-summary(m1 <- lm(log(pm25)~MetroOpen,data = metroOpen_df))
+regression_stats <- summary(m1 <- lm(log(pm25)~MetroOpen+construction+duringCAIR+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + Rainf_tavg + Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + Tair_f_tavg + Rainf_f_tavg + Wind_f_tavg + Qair_f_tavg + Psurf_f_tavg + Parking + Parking:MetroOpen, data = metroOpen_df))
+
+df2 <- df2 %>%
+  mutate(before_after = ifelse(date < opendate, "Before", "After"))
+
+# Plotting the data
+ggplot(df2, aes(x = date, y = pm25, color = before_after)) +
+  geom_line() +
+  labs(title = "PM2.5 Levels Before and After Metro Opening",
+       x = "Date",
+       y = "PM2.5 Levels",
+       color = "Metro Opening") +
+  theme_minimal()
 
 
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month),data = metroOpen_df))
+df2 <- df2 %>%
+  mutate(before_after = ifelse(date < opendate, "Before", "After"))
 
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg,data = metroOpen_df))
+ggplot(df2, aes(x = date, y = pm25, color = before_after)) +
+  geom_line() +
+  facet_wrap(~ station_ID, scales = "free_y") +  # Facet by station_ID
+  labs(
+    title = "PM2.5 Levels Before and After Metro Opening",
+    x = "Date",
+    y = "PM2.5 Levels",
+    color = "Metro Opening"
+  ) +
+  theme_minimal()
 
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg,data = metroOpen_df))
+regression_stats
+```
 
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg,data = metroOpen_df))
+### Interpreting the Regression Model results
 
-summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg+holiday_binary,data = metroOpen_df))
+-   **Intercept** = 43.02%
+
+-   **MetroOpen** = -22.75%
+
+-   **construction** = -2.09%
+
+-   **duringCAIR** = -4.32%
+
+-   **as.factor(day_of_week)Monday** = -2.43%
+
+-   **as.factor(day_of_week)Saturday** = 0.45%
+
+-   **as.factor(day_of_week)Sunday** = -1.63%
+
+-   **as.factor(day_of_week)Thursday** = 0.73%
+
+-   **as.factor(day_of_week)Tuesday** = 2.20%
+
+-   **as.factor(day_of_week)Wednesday** = 4.10%
+
+-   **as.factor(month)August** = 12.33%
+
+-   **as.factor(month)December** = 18.44%
+
+-   **as.factor(month)February** = 17.41%
+
+-   **as.factor(month)January** = 13.05%
+
+-   **as.factor(month)July** = 14.59%
+
+-   **as.factor(month)June** = 8.25%
+
+-   **as.factor(month)March** = 5.58%
+
+-   **as.factor(month)May** = -0.65%
+
+-   **as.factor(month)November** = 11.97%
+
+-   **as.factor(month)October** = -4.22%
+
+-   **as.factor(month)September** = -1.43%
+
+-   **Tair_f_tavg** = 61.55%
+
+-   **Swnet_tavg** = 0.74%
+
+-   **Lwnet_tavg** = 0.76%
+
+-   **Qle_tavg** = -0.63%
+
+-   **Qh_tavg** = -0.33%
+
+-   **Snowf_tavg** = ∞ (extremely large value, likely unrealistic)
+
+-   **Rainf_tavg** = ∞ (extremely large value, likely unrealistic)
+
+-   **Qsm_tavg** = -100% (suggests a near-total reduction in PM2.5 levels)
+
+-   **SnowT_tavg** = -39.30%
+
+-   **SWE_tavg** = -3.89%
+
+-   **SnowDepth_tavg** = 152.61%
+
+-   **Rainf_f_tavg** = ∞ (extremely large value, likely unrealistic)
+
+-   **Wind_f_tavg** = -15.06%
+
+-   **Qair_f_tavg** = 3026.55%
+
+-   **Psurf_f_tavg** = 7.86%
+
+-   **Parking** = -0.23%
+
+### Calculating Station level pollution change
+
+Station-level effect and the p-values
+
+```{r}
+c<- coef(m1)
+len_coef<-length(coef(m1))
+
+#get coefficients of the station-level effect
+coef<-coef(m1)[(len_coef-(26-1)): len_coef]
+
+#get p values of the station-level effect (p<0.05 is statistically significant)
+pval<-summary(m1)$coefficients[,4][(len_coef-3): len_coef]
+
+kable(cbind(coef, pval), digits=2)
+```
+
+### Census Data
+
+```{r}
+vars<-load_variables(year=2010, dataset="acs1", cache = TRUE)
 
 
+write.csv(vars, "demographics_variable_acs.csv")
+```
+
+### Interest Variable - Income
+
+```{r}
+#vars range from less than 10k to more than 200k
+
+targetvars <- c("B19001_001", "B19001_002", "B19001_003", "B19001_004", "B19001_005", 
+                "B19001_006", "B19001_007", "B19001_008", "B19001_009", "B19001_010", 
+                "B19001_011", "B19001_012", "B19001_013", "B19001_014", "B19001_015", 
+                "B19001_016", "B19001_017")
+
+income<-get_acs(geography = "tract", variables=targetvars, state="NC", county="Mecklenburg", output="wide", year = 2010) %>% select(-ends_with("M"))
+
+#the variables that end in E are the estimates while the ones that end in M tell the margin of error.
+
+income_name<-income %>%
+  rename(total = B19001_001E, 
+       less_than_10k = B19001_002E, 
+       `10k_to_15k` = B19001_003E, 
+       `15k_to_20k` = B19001_004E, 
+       `20k_to_25k` = B19001_005E, 
+       `25k_to_30k` = B19001_006E, 
+       `30k_to_35k` = B19001_007E, 
+       `35k_to_40k` = B19001_008E, 
+       `40k_to_45k` = B19001_009E, 
+       `45k_to_50k` = B19001_010E, 
+       `50k_to_60k` = B19001_011E, 
+       `60k_to_75k` = B19001_012E, 
+       `75k_to_100k` = B19001_013E, 
+       `100k_to_125k` = B19001_014E, 
+       `125k_to_150k` = B19001_015E, 
+       `150k_to_200k` = B19001_016E, 
+       `200k_or_more` = B19001_017E)
+```
+
+### Reading Buffer Files
+
+```{r}
+buff<-vect("Buffer Light Rail/new_buffer_light_rail.shp")
+plot(buff)
+shape<-tigris::tracts(state="NC", county="Mecklenburg", class="sp", year=2010)
+shapevect<-vect(shape)
+shapedf<-as.data.frame(shape)
+```
+
+### Summary Statistics of Income
+
+```{r}
+tract_income<-merge(shapevect, income_name, by.x="GEOID10", by.y="GEOID")
+
+tract_income$tract_area<-expanse(tract_income, unit="m")
+
+tract_income_df<-as.data.frame(tract_income)
+
+summary(tract_income_df)
+```
+
+Inserting blocks with buffer
+
+```{r}
+buffdf <- as.data.frame(buff)
+
+output <- c()
+
+for(i in 0:25){
+  print(i)
+
+buff2 <- subset(buff,buff$FID ==i)
+
+int<-crop(tract_income, buff2)
+
+int$intarea<-expanse(int, unit="m")
+
+
+
+intdf<-as.data.frame(int)%>%
+
+  mutate(frac_area=intarea/tract_area) %>%
+  mutate(total=total*frac_area, 
+         
+         
+         
+        `less_than_10k` = `less_than_10k` * frac_area,
+`10k_to_15k` = `10k_to_15k` * frac_area,
+`15k_to_20k` = `15k_to_20k` * frac_area,
+`20k_to_25k` = `20k_to_25k` * frac_area,
+`25k_to_30k` = `25k_to_30k` * frac_area,
+`30k_to_35k` = `30k_to_35k` * frac_area,
+`35k_to_40k` = `35k_to_40k` * frac_area,
+`40k_to_45k` = `40k_to_45k` * frac_area,
+`45k_to_50k` = `45k_to_50k` * frac_area,
+`50k_to_60k` = `50k_to_60k` * frac_area,
+`60k_to_75k` = `60k_to_75k` * frac_area,
+`75k_to_100k` = `75k_to_100k` * frac_area,
+`100k_to_125k` = `100k_to_125k` * frac_area,
+`125k_to_150k` = `125k_to_150k` * frac_area,
+`150k_to_200k` = `150k_to_200k` * frac_area,
+`200k_or_more` = `200k_or_more` * frac_area
+         
+         ) %>%
+  summarize(total=sum(total), 
+            
+            
+            `less_than_10k` = sum(`less_than_10k`),
+`10k_to_15k` = sum(`10k_to_15k`),
+`15k_to_20k` = sum(`15k_to_20k`),
+`20k_to_25k` = sum(`20k_to_25k`),
+`25k_to_30k` = sum(`25k_to_30k`),
+`30k_to_35k` = sum(`30k_to_35k`),
+`35k_to_40k` = sum(`35k_to_40k`),
+`40k_to_45k` = sum(`40k_to_45k`),
+`45k_to_50k` = sum(`45k_to_50k`),
+`50k_to_60k` = sum(`50k_to_60k`),
+`60k_to_75k` = sum(`60k_to_75k`),
+`75k_to_100k` = sum(`75k_to_100k`),
+`100k_to_125k` = sum(`100k_to_125k`),
+`125k_to_150k` = sum(`125k_to_150k`),
+`150k_to_200k` = sum(`150k_to_200k`),
+`200k_or_more` = sum(`200k_or_more`)
+            
+            
+            
+            ) %>%
+  mutate(
+    
+    
+   `pct_less_than_10k` = `less_than_10k` * 100 / `total`,
+`pct_10k_to_15k` = `10k_to_15k` * 100 / `total`,
+`pct_15k_to_20k` = `15k_to_20k` * 100 / `total`,
+`pct_20k_to_25k` = `20k_to_25k` * 100 / `total`,
+`pct_25k_to_30k` = `25k_to_30k` * 100 / `total`,
+`pct_30k_to_35k` = `30k_to_35k` * 100 / `total`,
+`pct_35k_to_40k` = `35k_to_40k` * 100 / `total`,
+`pct_40k_to_45k` = `40k_to_45k` * 100 / `total`,
+`pct_45k_to_50k` = `45k_to_50k` * 100 / `total`,
+`pct_50k_to_60k` = `50k_to_60k` * 100 / `total`,
+`pct_60k_to_75k` = `60k_to_75k` * 100 / `total`,
+`pct_75k_to_100k` = `75k_to_100k` * 100 / `total`,
+`pct_100k_to_125k` = `100k_to_125k` * 100 / `total`,
+`pct_125k_to_150k` = `125k_to_150k` * 100 / `total`,
+`pct_150k_to_200k` = `150k_to_200k` * 100 / `total`,
+`pct_200k_or_more` = `200k_or_more` * 100 / `total`
+    
+    
+    
+    )%>% mutate(FID = i)
+output <- rbind(output,intdf)
+}
+  
+  output
+```
+
+Summarize demographic groups that live near light rail stations
+
+```{r}
+sum_demog<-output %>%
+  #combinging all the station's data together
+  summarize(
+    total = sum(total),
+   `less_than_10k` = sum(`less_than_10k`),
+`10k_to_15k` = sum(`10k_to_15k`),
+`15k_to_20k` = sum(`15k_to_20k`),
+`20k_to_25k` = sum(`20k_to_25k`),
+`25k_to_30k` = sum(`25k_to_30k`),
+`30k_to_35k` = sum(`30k_to_35k`),
+`35k_to_40k` = sum(`35k_to_40k`),
+`40k_to_45k` = sum(`40k_to_45k`),
+`45k_to_50k` = sum(`45k_to_50k`),
+`50k_to_60k` = sum(`50k_to_60k`),
+`60k_to_75k` = sum(`60k_to_75k`),
+`75k_to_100k` = sum(`75k_to_100k`),
+`100k_to_125k` = sum(`100k_to_125k`),
+`125k_to_150k` = sum(`125k_to_150k`),
+`150k_to_200k` = sum(`150k_to_200k`),
+`200k_or_more` = sum(`200k_or_more`)
+            
+            
+            )%>%
+  mutate(
+    
+      `pct_less_than_10k` = `less_than_10k` * 100 / `total`,
+`pct_10k_to_15k` = `10k_to_15k` * 100 / `total`,
+`pct_15k_to_20k` = `15k_to_20k` * 100 / `total`,
+`pct_20k_to_25k` = `20k_to_25k` * 100 / `total`,
+`pct_25k_to_30k` = `25k_to_30k` * 100 / `total`,
+`pct_30k_to_35k` = `30k_to_35k` * 100 / `total`,
+`pct_35k_to_40k` = `35k_to_40k` * 100 / `total`,
+`pct_40k_to_45k` = `40k_to_45k` * 100 / `total`,
+`pct_45k_to_50k` = `45k_to_50k` * 100 / `total`,
+`pct_50k_to_60k` = `50k_to_60k` * 100 / `total`,
+`pct_60k_to_75k` = `60k_to_75k` * 100 / `total`,
+`pct_75k_to_100k` = `75k_to_100k` * 100 / `total`,
+`pct_100k_to_125k` = `100k_to_125k` * 100 / `total`,
+`pct_125k_to_150k` = `125k_to_150k` * 100 / `total`,
+`pct_150k_to_200k` = `150k_to_200k` * 100 / `total`,
+`pct_200k_or_more` = `200k_or_more` * 100 / `total`
+    
+    )
+
+kable(sum_demog, digits=2)
+```
+
+```{r}
+reduction_benefit <- everything%>%
+  mutate(
+    #multiplying number of people in demographic by change in pollution caused by light rail
+    total_change = total*coef,
+    `less_than_10k_change` = `less_than_10k` * `coef`,
+`10k_to_15k_change` = `10k_to_15k` * `coef`,
+`15k_to_20k_change` = `15k_to_20k` * `coef`,
+`20k_to_25k_change` = `20k_to_25k` * `coef`,
+`25k_to_30k_change` = `25k_to_30k` * `coef`,
+`30k_to_35k_change` = `30k_to_35k` * `coef`,
+`35k_to_40k_change` = `35k_to_40k` * `coef`,
+`40k_to_45k_change` = `40k_to_45k` * `coef`,
+`45k_to_50k_change` = `45k_to_50k` * `coef`,
+`50k_to_60k_change` = `50k_to_60k` * `coef`,
+`60k_to_75k_change` = `60k_to_75k` * `coef`,
+`75k_to_100k_change` = `75k_to_100k` * `coef`,
+`100k_to_125k_change` = `100k_to_125k` * `coef`,
+`125k_to_150k_change` = `125k_to_150k` * `coef`,
+`150k_to_200k_change` = `150k_to_200k` * `coef`,
+`200k_or_more_change` = `200k_or_more` * `coef`
+    
+    )%>%
+  #summing impact across all stations
+  summarize(total_change_sum=sum(total_change),
+            total_pop = sum(total),
+            `less_than_10k_change_sum` = sum(`less_than_10k_change`),
+`10k_to_15k_change_sum` = sum(`10k_to_15k_change`),
+`15k_to_20k_change_sum` = sum(`15k_to_20k_change`),
+`20k_to_25k_change_sum` = sum(`20k_to_25k_change`),
+`25k_to_30k_change_sum` = sum(`25k_to_30k_change`),
+`30k_to_35k_change_sum` = sum(`30k_to_35k_change`),
+`35k_to_40k_change_sum` = sum(`35k_to_40k_change`),
+`40k_to_45k_change_sum` = sum(`40k_to_45k_change`),
+`45k_to_50k_change_sum` = sum(`45k_to_50k_change`),
+`50k_to_60k_change_sum` = sum(`50k_to_60k_change`),
+`60k_to_75k_change_sum` = sum(`60k_to_75k_change`),
+`75k_to_100k_change_sum` = sum(`75k_to_100k_change`),
+`100k_to_125k_change_sum` = sum(`100k_to_125k_change`),
+`125k_to_150k_change_sum` = sum(`125k_to_150k_change`),
+`150k_to_200k_change_sum` = sum(`150k_to_200k_change`),
+`200k_or_more_change_sum` = sum(`200k_or_more_change`),
+
+#sums together populations of different income brackets across the stations
+`less_than_10k` = sum(`less_than_10k`),
+`10k_to_15k` = sum(`10k_to_15k`),
+`15k_to_20k` = sum(`15k_to_20k`),
+`20k_to_25k` = sum(`20k_to_25k`),
+`25k_to_30k` = sum(`25k_to_30k`),
+`30k_to_35k` = sum(`30k_to_35k`),
+`35k_to_40k` = sum(`35k_to_40k`),
+`40k_to_45k` = sum(`40k_to_45k`),
+`45k_to_50k` = sum(`45k_to_50k`),
+`50k_to_60k` = sum(`50k_to_60k`),
+`60k_to_75k` = sum(`60k_to_75k`),
+`75k_to_100k` = sum(`75k_to_100k`),
+`100k_to_125k` = sum(`100k_to_125k`),
+`125k_to_150k` = sum(`125k_to_150k`),
+`150k_to_200k` = sum(`150k_to_200k`),
+`200k_or_more` = sum(`200k_or_more`)
+
+            
+            
+            ) %>%
+  #ave variables are the amount of change in pollution an individual of that demographic would recieve on average
+    mutate(total_change_average=total_change_sum/total_pop,
+           
+      `less_than_10k_average` = `less_than_10k_change_sum` / `less_than_10k`,
+`10k_to_15k_average` = `10k_to_15k_change_sum` / `10k_to_15k`,
+`15k_to_20k_average` = `15k_to_20k_change_sum` / `15k_to_20k`,
+`20k_to_25k_average` = `20k_to_25k_change_sum` / `20k_to_25k`,
+`25k_to_30k_average` = `25k_to_30k_change_sum` / `25k_to_30k`,
+`30k_to_35k_average` = `30k_to_35k_change_sum` / `30k_to_35k`,
+`35k_to_40k_average` = `35k_to_40k_change_sum` / `35k_to_40k`,
+`40k_to_45k_average` = `40k_to_45k_change_sum` / `40k_to_45k`,
+`45k_to_50k_average` = `45k_to_50k_change_sum` / `45k_to_50k`,
+`50k_to_60k_average` = `50k_to_60k_change_sum` / `50k_to_60k`,
+`60k_to_75k_average` = `60k_to_75k_change_sum` / `60k_to_75k`,
+`75k_to_100k_average` = `75k_to_100k_change_sum` / `75k_to_100k`,
+`100k_to_125k_average` = `100k_to_125k_change_sum` / `100k_to_125k`,
+`125k_to_150k_average` = `125k_to_150k_change_sum` / `125k_to_150k`,
+`150k_to_200k_average` = `150k_to_200k_change_sum` / `150k_to_200k`,
+`200k_or_more_average` = `200k_or_more_change_sum` / `200k_or_more`
+
+         
+         )
+
+
+
+final_result <- reduction_benefit %>%
+  select(total_change_average,`less_than_10k_average`, `10k_to_15k_average`, `15k_to_20k_average`, `20k_to_25k_average`, `25k_to_30k_average`, `30k_to_35k_average`, `35k_to_40k_average`, `40k_to_45k_average`, `45k_to_50k_average`, `50k_to_60k_average`, `60k_to_75k_average`, `75k_to_100k_average`, `100k_to_125k_average`, `125k_to_150k_average`, `150k_to_200k_average`, `200k_or_more_average`
+)
+
+
+kable(final_result,digits = 2)
+
+#all income groups seem to be getting a similar pollution reduction benefit on the individual level.
 ```
