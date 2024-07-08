@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Calculate Affected Demographics</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="calculate_demog income_files/libs/clipboard/clipboard.min.js"></script>
+<script src="calculate_demog income_files/libs/quarto-html/quarto.js"></script>
+<script src="calculate_demog income_files/libs/quarto-html/popper.min.js"></script>
+<script src="calculate_demog income_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="calculate_demog income_files/libs/quarto-html/anchor.min.js"></script>
+<link href="calculate_demog income_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="calculate_demog income_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="calculate_demog income_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="calculate_demog income_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="calculate_demog income_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Calculate Affected Demographics</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>In this document, you will calculate station-level PM2.5 changes. Afterward, you will calculate impacted demographic groups around each station.</p>
+<section id="calculating-station-level-pollution-change" class="level1">
+<h1>Calculating Station-Level Pollution Change</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"tidyverse"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.4.4     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"knitr"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Upload your team’s full data frame required to estimate the impact of light rails on PM2.5 levels surrounding all stations. Below is a simplified example.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">"station_pm_met_holiday_dataCombined_formatted.csv"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>df2 <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">as.Date</span>(formatted_date,<span class="at">format =</span> <span class="st">"%Y-%m-%d"</span>))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>startdate <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="st">"2003-11-24"</span>,<span class="at">format =</span> <span class="st">"%Y-%m-%d"</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>enddate <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="st">"2011-11-24"</span>,<span class="at">format =</span> <span class="st">"%Y-%m-%d"</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>opendate <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="st">"2007-11-24"</span>,<span class="at">format =</span> <span class="st">"%Y-%m-%d"</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>constructionstart <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="st">"2005-02-26"</span>,<span class="at">format =</span> <span class="st">"%Y-%m-%d"</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#Clean Air Interstate Rule </span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>CAIR <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="st">"2005-03-10"</span>,<span class="at">format =</span> <span class="st">"%Y-%m-%d"</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>metroOpen_df <span class="ot">&lt;-</span> df2 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(date <span class="sc">&gt;=</span> startdate <span class="sc">&amp;</span> date<span class="sc">&lt;=</span>enddate)<span class="sc">%&gt;%</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">MetroOpen =</span> <span class="fu">ifelse</span>(date<span class="sc">&gt;=</span>opendate,<span class="dv">1</span>,<span class="dv">0</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">construction =</span> <span class="fu">ifelse</span>(date<span class="sc">&gt;=</span>constructionstart <span class="sc">&amp;</span> date<span class="sc">&lt;</span>opendate,<span class="dv">1</span>,<span class="dv">0</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(station_ID)<span class="sc">%&gt;%</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(station_ID,date)<span class="sc">%&gt;%</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lTair_f_tavg =</span> <span class="fu">lag</span>(Tair_f_tavg))<span class="sc">%&gt;%</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">duringCAIR =</span> <span class="fu">ifelse</span>(date<span class="sc">&gt;=</span>CAIR <span class="sc">&amp;</span> date<span class="sc">&lt;=</span> enddate,<span class="dv">1</span>,<span class="dv">0</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lQair_f_tavg =</span> <span class="fu">lag</span>(Qair_f_tavg)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lPsurf_f_tavg =</span> <span class="fu">lag</span>(Psurf_f_tavg)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lWind_f_tavg =</span> <span class="fu">lag</span>(Wind_f_tavg)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">t=</span><span class="fu">as.numeric</span>(date<span class="sc">-</span>startdate))<span class="sc">%&gt;%</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">t2 =</span> t<span class="sc">^</span><span class="dv">2</span>,<span class="at">t3=</span>t<span class="sc">^</span><span class="dv">3</span>,<span class="at">t4=</span>t<span class="sc">^</span><span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Run stations level regressions. Use the best regression specification (in your team’s opinion) from the average effect calculation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>regression_stats <span class="ot">&lt;-</span> <span class="fu">summary</span>(m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(pm25)<span class="sc">~</span>MetroOpen<span class="sc">:</span><span class="fu">as.factor</span>(station_ID)<span class="sc">+</span>construction<span class="sc">+</span><span class="fu">as.factor</span>(day_of_week)<span class="sc">+</span><span class="fu">as.factor</span>(month) <span class="sc">+</span> duringCAIR <span class="sc">+</span> Tair_f_tavg <span class="sc">+</span> Swnet_tavg <span class="sc">+</span> Lwnet_tavg <span class="sc">+</span> Qle_tavg <span class="sc">+</span> Qh_tavg <span class="sc">+</span> Snowf_tavg <span class="sc">+</span> Rainf_tavg <span class="sc">+</span> Qsm_tavg <span class="sc">+</span> SnowT_tavg <span class="sc">+</span> SWE_tavg <span class="sc">+</span> SnowDepth_tavg <span class="sc">+</span> Tair_f_tavg <span class="sc">+</span> Rainf_f_tavg <span class="sc">+</span> Wind_f_tavg <span class="sc">+</span> Qair_f_tavg <span class="sc">+</span> Psurf_f_tavg , <span class="at">data =</span> metroOpen_df))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#not including parking as a factor because thanicha said parking will be taken into account anyways</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The code below prints out the station-level effect and the p-values</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>c<span class="ot">&lt;-</span> <span class="fu">coef</span>(m1)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>len_coef<span class="ot">&lt;-</span><span class="fu">length</span>(<span class="fu">coef</span>(m1))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#get coefficients of the station-level effect</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>coef<span class="ot">&lt;-</span><span class="fu">coef</span>(m1)[(len_coef<span class="sc">-</span>(<span class="dv">26-1</span>))<span class="sc">:</span> len_coef]</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#get p values of the station-level effect (p&lt;0.05 is statistically significant)</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>pval<span class="ot">&lt;-</span><span class="fu">summary</span>(m1)<span class="sc">$</span>coefficients[,<span class="dv">4</span>][(len_coef<span class="dv">-3</span>)<span class="sc">:</span> len_coef]</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">cbind</span>(coef, pval), <span class="at">digits=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in cbind(coef, pval): number of rows of result is not a multiple of
+vector length (arg 2)</code></pre>
+</div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">coef</th>
+<th style="text-align: right;">pval</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)1</td>
+<td style="text-align: right;">-0.24</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)2</td>
+<td style="text-align: right;">-0.24</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)3</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)4</td>
+<td style="text-align: right;">-0.24</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)5</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)6</td>
+<td style="text-align: right;">-0.24</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)7</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)8</td>
+<td style="text-align: right;">-0.24</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)9</td>
+<td style="text-align: right;">-0.24</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)10</td>
+<td style="text-align: right;">-0.24</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)11</td>
+<td style="text-align: right;">-0.26</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)12</td>
+<td style="text-align: right;">-0.28</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)13</td>
+<td style="text-align: right;">-0.30</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)14</td>
+<td style="text-align: right;">-0.26</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)15</td>
+<td style="text-align: right;">-0.30</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)16</td>
+<td style="text-align: right;">-0.28</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)17</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)18</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)19</td>
+<td style="text-align: right;">-0.23</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)20</td>
+<td style="text-align: right;">-0.23</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)21</td>
+<td style="text-align: right;">-0.24</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)22</td>
+<td style="text-align: right;">-0.24</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)23</td>
+<td style="text-align: right;">-0.24</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)24</td>
+<td style="text-align: right;">-0.26</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)25</td>
+<td style="text-align: right;">-0.26</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MetroOpen:as.factor(station_ID)26</td>
+<td style="text-align: right;">-0.26</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="query-demographic-data" class="level1">
+<h1>Query demographic data</h1>
+<p>Helpful resource: <a href="https://walker-data.com/tidycensus/articles/basic-usage.html" class="uri">https://walker-data.com/tidycensus/articles/basic-usage.html</a></p>
+<p>Get census key</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidycensus)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>api_key <span class="ot">&lt;-</span> <span class="st">"43a847b486e6474534b5e09d747e72ffd18f4ba2"</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>api_key <span class="ot">&lt;-</span> <span class="st">"a7db1db93b5e9ba83fc6029eba22232d6a44c924"</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">census_api_key</span>(api_key, <span class="at">install=</span><span class="cn">TRUE</span>, <span class="at">overwrite =</span> T)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Your original .Renviron will be backed up and stored in your R HOME directory if needed.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Your API key has been stored in your .Renviron and can be accessed by Sys.getenv("CENSUS_API_KEY"). 
+To use now, restart R or run `readRenviron("~/.Renviron")`</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "a7db1db93b5e9ba83fc6029eba22232d6a44c924"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">readRenviron</span>(<span class="st">"~/.Renviron"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Identify variables that you would like to query</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#using acs instead of decennial since decennial doesn't include income </span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>vars<span class="ot">&lt;-</span><span class="fu">load_variables</span>(<span class="at">year=</span><span class="dv">2010</span>, <span class="at">dataset=</span><span class="st">"acs1"</span>, <span class="at">cache =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(vars, <span class="st">"demographics_variable_acs.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="images/clipboard-9133593.png" class="img-fluid"></p>
+<p>Query variables</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#vars range from less than 10k to more than 200k</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>targetvars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"B19001_001"</span>, <span class="st">"B19001_002"</span>, <span class="st">"B19001_003"</span>, <span class="st">"B19001_004"</span>, <span class="st">"B19001_005"</span>, </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                <span class="st">"B19001_006"</span>, <span class="st">"B19001_007"</span>, <span class="st">"B19001_008"</span>, <span class="st">"B19001_009"</span>, <span class="st">"B19001_010"</span>, </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                <span class="st">"B19001_011"</span>, <span class="st">"B19001_012"</span>, <span class="st">"B19001_013"</span>, <span class="st">"B19001_014"</span>, <span class="st">"B19001_015"</span>, </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">"B19001_016"</span>, <span class="st">"B19001_017"</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>income<span class="ot">&lt;-</span><span class="fu">get_acs</span>(<span class="at">geography =</span> <span class="st">"tract"</span>, <span class="at">variables=</span>targetvars, <span class="at">state=</span><span class="st">"NC"</span>, <span class="at">county=</span><span class="st">"Mecklenburg"</span>, <span class="at">output=</span><span class="st">"wide"</span>, <span class="at">year =</span> <span class="dv">2010</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">ends_with</span>(<span class="st">"M"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Getting data from the 2006-2010 5-year ACS</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#the variables that end in E are the estimates while the ones that end in M tell the margin of error.</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>income</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 233 × 19
+   GEOID       NAME  B19001_001E B19001_002E B19001_003E B19001_004E B19001_005E
+   &lt;chr&gt;       &lt;chr&gt;       &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;
+ 1 37119006214 Cens…        1419          12          25          25          99
+ 2 37119006215 Cens…        1437         153          29          20          67
+ 3 37119006302 Cens…        2191          42         140          78          52
+ 4 37119006303 Cens…        1968          67          14         107          76
+ 5 37119006304 Cens…        1805           0          13          50          37
+ 6 37119006403 Cens…        1463         180          79          66          83
+ 7 37119006404 Cens…        1604          21          36           0          66
+ 8 37119006405 Cens…        1216          57          55          29          40
+ 9 37119006406 Cens…        2274          81          34          14         129
+10 37119006407 Cens…        1115          40           0          11           0
+# ℹ 223 more rows
+# ℹ 12 more variables: B19001_006E &lt;dbl&gt;, B19001_007E &lt;dbl&gt;, B19001_008E &lt;dbl&gt;,
+#   B19001_009E &lt;dbl&gt;, B19001_010E &lt;dbl&gt;, B19001_011E &lt;dbl&gt;, B19001_012E &lt;dbl&gt;,
+#   B19001_013E &lt;dbl&gt;, B19001_014E &lt;dbl&gt;, B19001_015E &lt;dbl&gt;, B19001_016E &lt;dbl&gt;,
+#   B19001_017E &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Rename columns</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>income_name<span class="ot">&lt;-</span>income <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">total =</span> B19001_001E, </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">less_than_10k =</span> B19001_002E, </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">10k_to_15k</span><span class="st">`</span> <span class="ot">=</span> B19001_003E, </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">15k_to_20k</span><span class="st">`</span> <span class="ot">=</span> B19001_004E, </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">20k_to_25k</span><span class="st">`</span> <span class="ot">=</span> B19001_005E, </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">25k_to_30k</span><span class="st">`</span> <span class="ot">=</span> B19001_006E, </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">30k_to_35k</span><span class="st">`</span> <span class="ot">=</span> B19001_007E, </span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">35k_to_40k</span><span class="st">`</span> <span class="ot">=</span> B19001_008E, </span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">40k_to_45k</span><span class="st">`</span> <span class="ot">=</span> B19001_009E, </span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">45k_to_50k</span><span class="st">`</span> <span class="ot">=</span> B19001_010E, </span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">50k_to_60k</span><span class="st">`</span> <span class="ot">=</span> B19001_011E, </span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">60k_to_75k</span><span class="st">`</span> <span class="ot">=</span> B19001_012E, </span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">75k_to_100k</span><span class="st">`</span> <span class="ot">=</span> B19001_013E, </span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">100k_to_125k</span><span class="st">`</span> <span class="ot">=</span> B19001_014E, </span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">125k_to_150k</span><span class="st">`</span> <span class="ot">=</span> B19001_015E, </span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">150k_to_200k</span><span class="st">`</span> <span class="ot">=</span> B19001_016E, </span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>       <span class="st">`</span><span class="at">200k_or_more</span><span class="st">`</span> <span class="ot">=</span> B19001_017E)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="calculate-affected-demographic-group" class="level1">
+<h1>Calculate affected demographic group</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">"terra"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'terra' was built under R version 4.3.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>terra 1.7.78</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'terra'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:knitr':
+
+    spin</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:tidyr':
+
+    extract</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>buff<span class="ot">&lt;-</span><span class="fu">vect</span>(<span class="st">"Buffer Light Rail/new_buffer_light_rail.shp"</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(buff)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="calculate_demog-income_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Download shapefiles from <a href="https://github.com/walkerke/tigris">tigris package</a></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>shape<span class="ot">&lt;-</span>tigris<span class="sc">::</span><span class="fu">tracts</span>(<span class="at">state=</span><span class="st">"NC"</span>, <span class="at">county=</span><span class="st">"Mecklenburg"</span>, <span class="at">class=</span><span class="st">"sp"</span>, <span class="at">year=</span><span class="dv">2010</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |                                                                      |   1%
+  |                                                                            
+  |=                                                                     |   1%
+  |                                                                            
+  |=                                                                     |   2%
+  |                                                                            
+  |==                                                                    |   2%
+  |                                                                            
+  |==                                                                    |   3%
+  |                                                                            
+  |===                                                                   |   4%
+  |                                                                            
+  |===                                                                   |   5%
+  |                                                                            
+  |====                                                                  |   5%
+  |                                                                            
+  |====                                                                  |   6%
+  |                                                                            
+  |=====                                                                 |   7%
+  |                                                                            
+  |=====                                                                 |   8%
+  |                                                                            
+  |======                                                                |   8%
+  |                                                                            
+  |=======                                                               |  10%
+  |                                                                            
+  |========                                                              |  11%
+  |                                                                            
+  |========                                                              |  12%
+  |                                                                            
+  |=========                                                             |  12%
+  |                                                                            
+  |=========                                                             |  13%
+  |                                                                            
+  |==========                                                            |  14%
+  |                                                                            
+  |==========                                                            |  15%
+  |                                                                            
+  |==============                                                        |  21%
+  |                                                                            
+  |===============                                                       |  21%
+  |                                                                            
+  |===============                                                       |  22%
+  |                                                                            
+  |================                                                      |  22%
+  |                                                                            
+  |=====================                                                 |  30%
+  |                                                                            
+  |============================                                          |  40%
+  |                                                                            
+  |===================================                                   |  50%
+  |                                                                            
+  |===================================                                   |  51%
+  |                                                                            
+  |========================================                              |  57%
+  |                                                                            
+  |==========================================                            |  60%
+  |                                                                            
+  |============================================                          |  62%
+  |                                                                            
+  |============================================                          |  63%
+  |                                                                            
+  |===============================================                       |  68%
+  |                                                                            
+  |====================================================                  |  74%
+  |                                                                            
+  |=======================================================               |  79%
+  |                                                                            
+  |============================================================          |  86%
+  |                                                                            
+  |===================================================================   |  95%
+  |                                                                            
+  |===================================================================   |  96%
+  |                                                                            
+  |====================================================================  |  97%
+  |                                                                            
+  |======================================================================| 100%</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Spatial* (sp) classes are no longer formally
+supported in tigris as of version 2.0. We strongly
+recommend updating your workflow to use sf objects
+(the default in tigris) instead.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>shapevect<span class="ot">&lt;-</span><span class="fu">vect</span>(shape)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>shapedf<span class="ot">&lt;-</span><span class="fu">as.data.frame</span>(shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>tract_income<span class="ot">&lt;-</span><span class="fu">merge</span>(shapevect, income_name, <span class="at">by.x=</span><span class="st">"GEOID10"</span>, <span class="at">by.y=</span><span class="st">"GEOID"</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>tract_income<span class="sc">$</span>tract_area<span class="ot">&lt;-</span><span class="fu">expanse</span>(tract_income, <span class="at">unit=</span><span class="st">"m"</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>tract_income_df<span class="ot">&lt;-</span><span class="fu">as.data.frame</span>(tract_income)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tract_income_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   GEOID10           STATEFP10          COUNTYFP10         TRACTCE10        
+ Length:233         Length:233         Length:233         Length:233        
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+    NAME10           NAMELSAD10          MTFCC10           FUNCSTAT10       
+ Length:233         Length:233         Length:233         Length:233        
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+    ALAND10            AWATER10         INTPTLAT10         INTPTLON10       
+ Min.   :  479017   Min.   :       0   Length:233         Length:233        
+ 1st Qu.: 2609447   1st Qu.:    2373   Class :character   Class :character  
+ Median : 4251828   Median :   20172   Mode  :character   Mode  :character  
+ Mean   : 5822942   Mean   :  245293                                        
+ 3rd Qu.: 6281067   3rd Qu.:   53777                                        
+ Max.   :36214554   Max.   :20442349                                        
+   COUNTYFP           STATEFP              NAME               total     
+ Length:233         Length:233         Length:233         Min.   :   0  
+ Class :character   Class :character   Class :character   1st Qu.:1093  
+ Mode  :character   Mode  :character   Mode  :character   Median :1451  
+                                                          Mean   :1504  
+                                                          3rd Qu.:1917  
+                                                          Max.   :3247  
+ less_than_10k      10k_to_15k       15k_to_20k       20k_to_25k    
+ Min.   :  0.00   Min.   :  0.00   Min.   :  0.00   Min.   :  0.00  
+ 1st Qu.: 29.00   1st Qu.: 20.00   1st Qu.: 22.00   1st Qu.: 31.00  
+ Median : 68.00   Median : 55.00   Median : 52.00   Median : 64.00  
+ Mean   : 88.58   Mean   : 63.88   Mean   : 68.84   Mean   : 77.65  
+ 3rd Qu.:134.00   3rd Qu.: 97.00   3rd Qu.:105.00   3rd Qu.:107.00  
+ Max.   :389.00   Max.   :302.00   Max.   :284.00   Max.   :348.00  
+   25k_to_30k       30k_to_35k       35k_to_40k       40k_to_45k   
+ Min.   :  0.00   Min.   :  0.00   Min.   :  0.00   Min.   :  0.0  
+ 1st Qu.: 33.00   1st Qu.: 30.00   1st Qu.: 33.00   1st Qu.: 34.0  
+ Median : 64.00   Median : 67.00   Median : 58.00   Median : 64.0  
+ Mean   : 74.13   Mean   : 81.09   Mean   : 71.26   Mean   : 77.7  
+ 3rd Qu.:109.00   3rd Qu.:108.00   3rd Qu.:102.00   3rd Qu.:108.0  
+ Max.   :307.00   Max.   :367.00   Max.   :337.00   Max.   :327.0  
+   45k_to_50k       50k_to_60k      60k_to_75k     75k_to_100k   100k_to_125k  
+ Min.   :  0.00   Min.   :  0.0   Min.   :  0.0   Min.   :  0   Min.   :  0.0  
+ 1st Qu.: 30.00   1st Qu.: 71.0   1st Qu.: 84.0   1st Qu.: 86   1st Qu.: 41.0  
+ Median : 65.00   Median :118.0   Median :148.0   Median :166   Median :112.0  
+ Mean   : 72.35   Mean   :132.3   Mean   :163.7   Mean   :179   Mean   :123.2  
+ 3rd Qu.:107.00   3rd Qu.:181.0   3rd Qu.:231.0   3rd Qu.:249   3rd Qu.:184.0  
+ Max.   :278.00   Max.   :516.0   Max.   :628.0   Max.   :623   Max.   :463.0  
+  125k_to_150k     150k_to_200k     200k_or_more      tract_area      
+ Min.   :  0.00   Min.   :  0.00   Min.   :  0.00   Min.   :  483120  
+ 1st Qu.: 15.00   1st Qu.:  0.00   1st Qu.:  0.00   1st Qu.: 2615314  
+ Median : 57.00   Median : 48.00   Median : 22.00   Median : 4270231  
+ Mean   : 70.95   Mean   : 73.91   Mean   : 85.34   Mean   : 6068235  
+ 3rd Qu.:111.00   3rd Qu.:111.00   3rd Qu.:117.00   3rd Qu.: 6378453  
+ Max.   :289.00   Max.   :442.00   Max.   :777.00   Max.   :39492388  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co">#100 percent match</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Intersect blocks with buffers</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>buffdf <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(buff)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>output <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">25</span>){</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(i)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>buff2 <span class="ot">&lt;-</span> <span class="fu">subset</span>(buff,buff<span class="sc">$</span>FID <span class="sc">==</span>i)</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>int<span class="ot">&lt;-</span><span class="fu">crop</span>(tract_income, buff2)</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>int<span class="sc">$</span>intarea<span class="ot">&lt;-</span><span class="fu">expanse</span>(int, <span class="at">unit=</span><span class="st">"m"</span>)</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>intdf<span class="ot">&lt;-</span><span class="fu">as.data.frame</span>(int)<span class="sc">%&gt;%</span></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">frac_area=</span>intarea<span class="sc">/</span>tract_area) <span class="sc">%&gt;%</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">total=</span>total<span class="sc">*</span>frac_area, </span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>         </span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>         </span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>         </span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">`</span><span class="at">less_than_10k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">less_than_10k</span><span class="st">`</span> <span class="sc">*</span> frac_area,</span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">10k_to_15k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">10k_to_15k</span><span class="st">`</span> <span class="sc">*</span> frac_area,</span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">15k_to_20k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">15k_to_20k</span><span class="st">`</span> <span class="sc">*</span> frac_area,</span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">20k_to_25k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">20k_to_25k</span><span class="st">`</span> <span class="sc">*</span> frac_area,</span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">25k_to_30k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">25k_to_30k</span><span class="st">`</span> <span class="sc">*</span> frac_area,</span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">30k_to_35k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">30k_to_35k</span><span class="st">`</span> <span class="sc">*</span> frac_area,</span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">35k_to_40k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">35k_to_40k</span><span class="st">`</span> <span class="sc">*</span> frac_area,</span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">40k_to_45k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">40k_to_45k</span><span class="st">`</span> <span class="sc">*</span> frac_area,</span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">45k_to_50k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">45k_to_50k</span><span class="st">`</span> <span class="sc">*</span> frac_area,</span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">50k_to_60k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">50k_to_60k</span><span class="st">`</span> <span class="sc">*</span> frac_area,</span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">60k_to_75k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">60k_to_75k</span><span class="st">`</span> <span class="sc">*</span> frac_area,</span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">75k_to_100k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">75k_to_100k</span><span class="st">`</span> <span class="sc">*</span> frac_area,</span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">100k_to_125k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">100k_to_125k</span><span class="st">`</span> <span class="sc">*</span> frac_area,</span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">125k_to_150k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">125k_to_150k</span><span class="st">`</span> <span class="sc">*</span> frac_area,</span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">150k_to_200k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">150k_to_200k</span><span class="st">`</span> <span class="sc">*</span> frac_area,</span>
+<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">200k_or_more</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">200k_or_more</span><span class="st">`</span> <span class="sc">*</span> frac_area</span>
+<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a>         </span>
+<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a>         ) <span class="sc">%&gt;%</span></span>
+<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total=</span><span class="fu">sum</span>(total), </span>
+<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">less_than_10k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">less_than_10k</span><span class="st">`</span>),</span>
+<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">10k_to_15k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">10k_to_15k</span><span class="st">`</span>),</span>
+<span id="cb33-46"><a href="#cb33-46" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">15k_to_20k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">15k_to_20k</span><span class="st">`</span>),</span>
+<span id="cb33-47"><a href="#cb33-47" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">20k_to_25k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">20k_to_25k</span><span class="st">`</span>),</span>
+<span id="cb33-48"><a href="#cb33-48" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">25k_to_30k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">25k_to_30k</span><span class="st">`</span>),</span>
+<span id="cb33-49"><a href="#cb33-49" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">30k_to_35k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">30k_to_35k</span><span class="st">`</span>),</span>
+<span id="cb33-50"><a href="#cb33-50" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">35k_to_40k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">35k_to_40k</span><span class="st">`</span>),</span>
+<span id="cb33-51"><a href="#cb33-51" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">40k_to_45k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">40k_to_45k</span><span class="st">`</span>),</span>
+<span id="cb33-52"><a href="#cb33-52" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">45k_to_50k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">45k_to_50k</span><span class="st">`</span>),</span>
+<span id="cb33-53"><a href="#cb33-53" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">50k_to_60k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">50k_to_60k</span><span class="st">`</span>),</span>
+<span id="cb33-54"><a href="#cb33-54" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">60k_to_75k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">60k_to_75k</span><span class="st">`</span>),</span>
+<span id="cb33-55"><a href="#cb33-55" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">75k_to_100k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">75k_to_100k</span><span class="st">`</span>),</span>
+<span id="cb33-56"><a href="#cb33-56" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">100k_to_125k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">100k_to_125k</span><span class="st">`</span>),</span>
+<span id="cb33-57"><a href="#cb33-57" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">125k_to_150k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">125k_to_150k</span><span class="st">`</span>),</span>
+<span id="cb33-58"><a href="#cb33-58" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">150k_to_200k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">150k_to_200k</span><span class="st">`</span>),</span>
+<span id="cb33-59"><a href="#cb33-59" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">200k_or_more</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">200k_or_more</span><span class="st">`</span>)</span>
+<span id="cb33-60"><a href="#cb33-60" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb33-61"><a href="#cb33-61" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb33-62"><a href="#cb33-62" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb33-63"><a href="#cb33-63" aria-hidden="true" tabindex="-1"></a>            ) <span class="sc">%&gt;%</span></span>
+<span id="cb33-64"><a href="#cb33-64" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb33-65"><a href="#cb33-65" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb33-66"><a href="#cb33-66" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb33-67"><a href="#cb33-67" aria-hidden="true" tabindex="-1"></a>   <span class="st">`</span><span class="at">pct_less_than_10k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">less_than_10k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb33-68"><a href="#cb33-68" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_10k_to_15k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">10k_to_15k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb33-69"><a href="#cb33-69" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_15k_to_20k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">15k_to_20k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb33-70"><a href="#cb33-70" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_20k_to_25k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">20k_to_25k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb33-71"><a href="#cb33-71" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_25k_to_30k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">25k_to_30k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb33-72"><a href="#cb33-72" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_30k_to_35k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">30k_to_35k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb33-73"><a href="#cb33-73" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_35k_to_40k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">35k_to_40k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb33-74"><a href="#cb33-74" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_40k_to_45k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">40k_to_45k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb33-75"><a href="#cb33-75" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_45k_to_50k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">45k_to_50k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb33-76"><a href="#cb33-76" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_50k_to_60k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">50k_to_60k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb33-77"><a href="#cb33-77" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_60k_to_75k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">60k_to_75k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb33-78"><a href="#cb33-78" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_75k_to_100k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">75k_to_100k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb33-79"><a href="#cb33-79" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_100k_to_125k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">100k_to_125k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb33-80"><a href="#cb33-80" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_125k_to_150k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">125k_to_150k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb33-81"><a href="#cb33-81" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_150k_to_200k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">150k_to_200k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb33-82"><a href="#cb33-82" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_200k_or_more</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">200k_or_more</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span></span>
+<span id="cb33-83"><a href="#cb33-83" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb33-84"><a href="#cb33-84" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb33-85"><a href="#cb33-85" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb33-86"><a href="#cb33-86" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">FID =</span> i)</span>
+<span id="cb33-87"><a href="#cb33-87" aria-hidden="true" tabindex="-1"></a>output <span class="ot">&lt;-</span> <span class="fu">rbind</span>(output,intdf)</span>
+<span id="cb33-88"><a href="#cb33-88" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0
+[1] 1
+[1] 2
+[1] 3
+[1] 4
+[1] 5
+[1] 6
+[1] 7
+[1] 8
+[1] 9
+[1] 10
+[1] 11
+[1] 12
+[1] 13
+[1] 14
+[1] 15
+[1] 16
+[1] 17
+[1] 18
+[1] 19
+[1] 20
+[1] 21
+[1] 22
+[1] 23
+[1] 24
+[1] 25</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>  output</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       total less_than_10k 10k_to_15k 15k_to_20k 20k_to_25k 25k_to_30k
+1   608.3756      20.61255   74.41855   26.48033   55.75708   34.08914
+2  1222.1663     119.01860  113.38081   82.65478  115.97494  126.27232
+3   861.8736      70.71944   35.65671   82.76296   78.99323   81.46999
+4  1112.8419      77.91542   82.63364  119.52384   98.30088  117.49948
+5   855.6544      58.20633   56.43109   81.50407   60.71510   71.76108
+6   793.1870      48.16878   46.39846   55.36087   51.30524   53.22278
+7   856.6025      61.65379   58.11632   58.96017   52.50670   54.33722
+8  1082.9981     157.97969   70.18301   91.92072   63.36017   48.47695
+9  1144.8484     157.40609   57.08982   76.66767   32.05358   45.85368
+10 1298.1082     214.12916   71.09150   70.12355   37.03190   40.08044
+11 1371.4431     206.81606   85.36064   44.05519   43.73127   30.98301
+12 1118.4385     166.33326   86.32960   24.75373   45.57101   27.66984
+13 1507.0295     120.72342   85.50171   28.51319   56.12372   38.89808
+14 1371.4431     206.81606   85.36064   44.05519   43.73127   30.98301
+15 1793.0881     147.14080  114.63272   59.06561   89.89054   60.79406
+16 1697.1156     163.02619  119.57703   69.44602   95.84754   64.21680
+17  581.4102     101.50131   68.65970   51.84826   76.56622   49.50072
+18  650.8680      95.35403   65.46587   53.94641   84.17788   76.09564
+19  669.5744      60.88256   48.08272   42.58526   67.46435   48.01194
+20  791.3632      74.23235   50.10293   56.37777   67.09097   54.90454
+21  579.7377      65.79947   46.90307   28.56821   52.91231   47.98821
+22 1303.0691     106.50897   50.24964  123.69944  148.05571  156.06458
+23  530.9410      34.68554   25.97385   39.55929   62.82535   39.02252
+24  368.7763      52.36857   13.58311   32.98146   38.86866   15.26962
+25  403.3999      48.58841   25.58411   18.57909   28.40995   22.05008
+26  284.6497      78.34003   12.59799   37.85615   44.97878   18.98171
+   30k_to_35k 35k_to_40k 40k_to_45k 45k_to_50k 50k_to_60k 60k_to_75k
+1    47.14051   32.25304   46.60883 122.243328   40.28864  42.245306
+2    95.16028   78.58948   81.57847  94.413678  108.03520 111.203802
+3    55.11168   49.60469   71.28622  37.650193   86.64107  35.339855
+4    40.11328   45.63616   44.88858  45.038682  100.87292  93.953602
+5    61.03152   41.97831   35.66665  43.831899   67.14698  71.798829
+6    72.29291   55.17393   29.88185  46.322700   77.11816  89.214938
+7    59.93706   67.87835   42.59285  32.888847   87.09547  97.118218
+8    64.21484   44.35188   58.70476  23.882555   69.38626 101.758799
+9    31.28533   42.03607   40.31414  31.821583   63.43882 119.572315
+10   41.45717   51.69258   42.73319  23.112369   57.19749 131.277989
+11   79.42249   57.00017   27.31176  22.323258   62.63318 139.229441
+12   82.98506   48.48090   11.81555  21.202630   55.64729 102.318609
+13  116.14109   69.56013   15.28671  26.645507   79.91882 169.038528
+14   79.42249   57.00017   27.31176  22.323258   62.63318 139.229441
+15  115.76184   80.19281   20.33218  32.007365  104.87375 206.680664
+16   99.89256   71.38639   20.59954  33.258482  108.25027 191.041199
+17   22.75402   17.64267   11.03102  19.460581   79.79926  43.614662
+18   22.34979   31.10211   18.92107  31.105145   78.81165  45.841312
+19   51.43221   19.61968   25.61451  30.247743   69.26589  55.187122
+20   73.80317   23.61229   44.02661  32.176752   71.02992  63.999568
+21   80.48440   23.21154   37.74390   3.053375   68.91760  33.778267
+22  125.97656  103.19217   74.20172  28.652550  126.51446 141.677155
+23   28.91298   35.08104   46.99872  14.641252   40.41132  72.734283
+24   19.88827   12.08450   31.59464  13.502885   28.38376  48.460585
+25   49.85510   31.69622   17.26556  18.637951   30.01973  35.053087
+26   11.96671   13.26922   18.03712   6.945358   15.45983   9.132942
+   75k_to_100k 100k_to_125k 125k_to_150k 150k_to_200k 200k_or_more
+1    31.923257     2.965419  24.06961444   1.47768554 5.802290e+00
+2    49.651766    14.288824  15.10096480   0.69014520 1.615225e+01
+3    94.852014    44.186917  15.07137300   9.00378445 1.352345e+01
+4   124.659273    52.980646  29.02761043  29.69170027 1.010624e+01
+5    92.085655    65.503030  13.49046657  25.71162102 8.791763e+00
+6    80.591086    58.202601   8.87004743  13.34511440 7.717494e+00
+7    79.902326    43.920503  22.40593539  26.78678847 1.050198e+01
+8    72.786847    60.679023  53.37345019  69.89373911 3.204542e+01
+9    95.442276   100.933600  61.83529731  72.40636478 1.166917e+02
+10   89.402765   118.209715  62.44880059  99.03504118 1.490845e+02
+11  111.725737   130.393438  81.49096585  97.74939386 1.512171e+02
+12   98.338446    95.902398  61.32577573  73.64437855 1.161200e+02
+13  153.116570   157.368012 111.71964759 106.26819431 1.722062e+02
+14  111.725737   130.393438  81.49096585  97.74939386 1.512171e+02
+15  201.914364   158.300980 111.43454181 112.72098275 1.773449e+02
+16  194.735415   132.223957  90.34212437  95.51209110 1.477600e+02
+17   12.489160    26.325756   0.05901191   0.06491311 9.294377e-02
+18   20.980627    25.458190   0.62909188   0.62909188 8.194116e-05
+19   71.924060    58.325488  10.11942699  10.11942699 6.920561e-01
+20   88.810116    60.974132  13.45121851  11.80962526 4.961223e+00
+21   60.927166    11.205307   3.01288813   0.00000000 1.523198e+01
+22   88.407438    23.292842   2.49671182   0.27295439 3.806191e+00
+23   45.446404    27.781631   6.34345499   7.00805837 3.515284e+00
+24   31.640268    12.849870   7.49460713   9.04465810 7.607813e-01
+25   36.130615    24.275144  11.10388384   6.13430829 1.672208e-02
+26    5.593119     1.335708   6.53327796   3.62170461 0.000000e+00
+   pct_less_than_10k pct_10k_to_15k pct_15k_to_20k pct_20k_to_25k
+1           3.388129      12.232338       4.352628       9.164911
+2           9.738331       9.277036       6.762973       9.489293
+3           8.205315       4.137116       9.602679       9.165292
+4           7.001481       7.425461      10.740415       8.833319
+5           6.802551       6.595079       9.525349       7.095751
+6           6.072816       5.849625       6.979549       6.468240
+7           7.197480       6.784514       6.883026       6.129645
+8          14.587254       6.480437       8.487616       5.850442
+9          13.749077       4.986671       6.696753       2.799810
+10         16.495479       5.476547       5.401981       2.852759
+11         15.080178       6.224148       3.212324       3.188705
+12         14.871918       7.718761       2.213240       4.074521
+13          8.010687       5.673526       1.892013       3.724129
+14         15.080178       6.224148       3.212324       3.188705
+15          8.205999       6.393033       3.294072       5.013169
+16          9.606075       7.045898       4.092003       5.647673
+17         17.457780      11.809167       8.917672      13.169053
+18         14.650288      10.058241       8.288380      12.933172
+19          9.092725       7.181086       6.360048      10.075706
+20          9.380314       6.331218       7.124133       8.477899
+21         11.349869       8.090395       4.927783       9.126940
+22          8.173701       3.856253       9.492931      11.362077
+23          6.532843       4.892041       7.450789      11.832831
+24         14.200635       3.683292       8.943488      10.539904
+25         12.044723       6.342120       4.605625       7.042626
+26         27.521562       4.425787      13.299208      15.801451
+   pct_25k_to_30k pct_30k_to_35k pct_35k_to_40k pct_40k_to_45k pct_45k_to_50k
+1        5.603305       7.748587       5.301501       7.661193     20.0933990
+2       10.331844       7.786197       6.430342       6.674908      7.7251089
+3        9.452661       6.394404       5.755448       8.271076      4.3684126
+4       10.558505       3.604580       4.100866       4.033688      4.0471769
+5        8.386690       7.132730       4.905988       4.168348      5.1226173
+6        6.709992       9.114234       6.955980       3.767314      5.8400732
+7        6.343341       6.997068       7.924136       4.972300      3.8394526
+8        4.476181       5.929358       4.095287       5.420578      2.2052259
+9        4.005219       2.732705       3.671758       3.521352      2.7795456
+10       3.087604       3.193661       3.982148       3.291959      1.7804656
+11       2.259154       5.791162       4.156219       1.991462      1.6277203
+12       2.473970       7.419725       4.334695       1.056433      1.8957350
+13       2.581110       7.706623       4.615711       1.014360      1.7680813
+14       2.259154       5.791162       4.156219       1.991462      1.6277203
+15       3.390467       6.456004       4.472329       1.133920      1.7850414
+16       3.783879       5.886020       4.206336       1.213797      1.9597063
+17       8.513907       3.913592       3.034461       1.897286      3.3471344
+18      11.691409       3.433843       4.778558       2.907052      4.7790252
+19       7.170516       7.681328       2.930172       3.825491      4.5174579
+20       6.937970       9.326080       2.983749       5.563388      4.0659905
+21       8.277572      13.882900       4.003800       6.510513      0.5266822
+22      11.976692       9.667681       7.919164       5.694381      2.1988512
+23       7.349691       5.445611       6.607334       8.851967      2.7576044
+24       4.140618       5.393045       3.276920       8.567429      3.6615386
+25       5.466058      12.358727       7.857270       4.280010      4.6202164
+26       6.668448       4.204015       4.661597       6.336604      2.4399671
+   pct_50k_to_60k pct_60k_to_75k pct_75k_to_100k pct_100k_to_125k
+1        6.622330       6.943952        5.247295        0.4874323
+2        8.839648       9.098909        4.062603        1.1691391
+3       10.052642       4.100353       11.005328        5.1268445
+4        9.064443       8.442673       11.201885        4.7608419
+5        7.847442       8.391102       10.762015        7.6553140
+6        9.722571      11.247656       10.160415        7.3378161
+7       10.167548      11.337606        9.327818        5.1272909
+8        6.406868       9.396027        6.720866        5.6028743
+9        5.541242      10.444380        8.336674        8.8163290
+10       4.406219      10.113024        6.887158        9.1063070
+11       4.566954      10.152039        8.146582        9.5077544
+12       4.975445       9.148345        8.792477        8.5746689
+13       5.303069      11.216670       10.160157       10.4422649
+14       4.566954      10.152039        8.146582        9.5077544
+15       5.848778      11.526520       11.260705        8.8283994
+16       6.378486      11.256817       11.474493        7.7910990
+17      13.725122       7.501530        2.148081        4.5279143
+18      12.108700       7.043104        3.223484        3.9114214
+19      10.344763       8.242119       10.741757        8.7108294
+20       8.975642       8.087256       11.222422        7.7049493
+21      11.887722       5.826474       10.509437        1.9328237
+22       9.708960      10.872574        6.784555        1.7875370
+23       7.611264      13.699127        8.559596        5.2325269
+24       7.696744      13.140918        8.579801        3.4844625
+25       7.441679       8.689413        8.956525        6.0176370
+26       5.431178       3.208485        1.964913        0.4692464
+   pct_125k_to_150k pct_150k_to_200k pct_200k_or_more FID
+1        3.95637435       0.24289035     9.537349e-01   0
+2        1.23559001       0.05646901     1.321609e+00   1
+3        1.74867564       1.04467579     1.569076e+00   2
+4        2.60842167       2.66809679     9.081466e-01   3
+5        1.57662567       3.00490731     1.027490e+00   4
+6        1.11827952       1.68246768     9.729728e-01   5
+7        2.61567472       3.12709665     1.226003e+00   6
+8        4.92830501       6.45372677     2.958955e+00   7
+9        5.40117784       6.32453744     1.019277e+01   8
+10       4.81075477       7.62918250     1.148475e+01   9
+11       5.94198680       7.12748465     1.102613e+01  10
+12       5.48316030       6.58457113     1.038233e+01  11
+13       7.41323562       7.05150061     1.142686e+01  12
+14       5.94198680       7.12748465     1.102613e+01  13
+15       6.21467180       6.28641624     9.890474e+00  14
+16       5.32327461       5.62790717     8.706537e+00  15
+17       0.01014979       0.01116477     1.598592e-02  16
+18       0.09665430       0.09665430     1.258952e-05  17
+19       1.51132217       1.51132217     1.033576e-01  18
+20       1.69975289       1.49231422     6.269212e-01  19
+21       0.51969852       0.00000000     2.627391e+00  20
+22       0.19160241       0.02094704     2.920944e-01  21
+23       1.19475704       1.31993166     6.620855e-01  22
+24       2.03229116       2.45261404     2.062989e-01  23
+25       2.75257446       1.52065175     4.145285e-03  24
+26       2.29519962       1.27233758     0.000000e+00  25</code></pre>
+</div>
+</div>
+<p>Summarize demographic groups that live near light rail stations</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>sum_demog<span class="ot">&lt;-</span>output <span class="sc">%&gt;%</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">#combinging all the station's data together</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">total =</span> <span class="fu">sum</span>(total),</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>   <span class="st">`</span><span class="at">less_than_10k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">less_than_10k</span><span class="st">`</span>),</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">10k_to_15k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">10k_to_15k</span><span class="st">`</span>),</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">15k_to_20k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">15k_to_20k</span><span class="st">`</span>),</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">20k_to_25k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">20k_to_25k</span><span class="st">`</span>),</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">25k_to_30k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">25k_to_30k</span><span class="st">`</span>),</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">30k_to_35k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">30k_to_35k</span><span class="st">`</span>),</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">35k_to_40k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">35k_to_40k</span><span class="st">`</span>),</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">40k_to_45k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">40k_to_45k</span><span class="st">`</span>),</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">45k_to_50k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">45k_to_50k</span><span class="st">`</span>),</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">50k_to_60k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">50k_to_60k</span><span class="st">`</span>),</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">60k_to_75k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">60k_to_75k</span><span class="st">`</span>),</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">75k_to_100k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">75k_to_100k</span><span class="st">`</span>),</span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">100k_to_125k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">100k_to_125k</span><span class="st">`</span>),</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">125k_to_150k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">125k_to_150k</span><span class="st">`</span>),</span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">150k_to_200k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">150k_to_200k</span><span class="st">`</span>),</span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">200k_or_more</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">200k_or_more</span><span class="st">`</span>)</span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>            )<span class="sc">%&gt;%</span></span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a>      <span class="st">`</span><span class="at">pct_less_than_10k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">less_than_10k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_10k_to_15k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">10k_to_15k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_15k_to_20k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">15k_to_20k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_20k_to_25k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">20k_to_25k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_25k_to_30k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">25k_to_30k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_30k_to_35k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">30k_to_35k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_35k_to_40k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">35k_to_40k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb37-33"><a href="#cb37-33" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_40k_to_45k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">40k_to_45k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb37-34"><a href="#cb37-34" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_45k_to_50k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">45k_to_50k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb37-35"><a href="#cb37-35" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_50k_to_60k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">50k_to_60k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb37-36"><a href="#cb37-36" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_60k_to_75k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">60k_to_75k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb37-37"><a href="#cb37-37" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_75k_to_100k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">75k_to_100k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb37-38"><a href="#cb37-38" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_100k_to_125k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">100k_to_125k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb37-39"><a href="#cb37-39" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_125k_to_150k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">125k_to_150k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb37-40"><a href="#cb37-40" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_150k_to_200k</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">150k_to_200k</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span>,</span>
+<span id="cb37-41"><a href="#cb37-41" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">pct_200k_or_more</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">200k_or_more</span><span class="st">`</span> <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="st">`</span><span class="at">total</span><span class="st">`</span></span>
+<span id="cb37-42"><a href="#cb37-42" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb37-43"><a href="#cb37-43" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb37-44"><a href="#cb37-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-45"><a href="#cb37-45" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(sum_demog, <span class="at">digits=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 1%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+<col style="width: 3%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">total</th>
+<th style="text-align: right;">less_than_10k</th>
+<th style="text-align: right;">10k_to_15k</th>
+<th style="text-align: right;">15k_to_20k</th>
+<th style="text-align: right;">20k_to_25k</th>
+<th style="text-align: right;">25k_to_30k</th>
+<th style="text-align: right;">30k_to_35k</th>
+<th style="text-align: right;">35k_to_40k</th>
+<th style="text-align: right;">40k_to_45k</th>
+<th style="text-align: right;">45k_to_50k</th>
+<th style="text-align: right;">50k_to_60k</th>
+<th style="text-align: right;">60k_to_75k</th>
+<th style="text-align: right;">75k_to_100k</th>
+<th style="text-align: right;">100k_to_125k</th>
+<th style="text-align: right;">125k_to_150k</th>
+<th style="text-align: right;">150k_to_200k</th>
+<th style="text-align: right;">200k_or_more</th>
+<th style="text-align: right;">pct_less_than_10k</th>
+<th style="text-align: right;">pct_10k_to_15k</th>
+<th style="text-align: right;">pct_15k_to_20k</th>
+<th style="text-align: right;">pct_20k_to_25k</th>
+<th style="text-align: right;">pct_25k_to_30k</th>
+<th style="text-align: right;">pct_30k_to_35k</th>
+<th style="text-align: right;">pct_35k_to_40k</th>
+<th style="text-align: right;">pct_40k_to_45k</th>
+<th style="text-align: right;">pct_45k_to_50k</th>
+<th style="text-align: right;">pct_50k_to_60k</th>
+<th style="text-align: right;">pct_60k_to_75k</th>
+<th style="text-align: right;">pct_75k_to_100k</th>
+<th style="text-align: right;">pct_100k_to_125k</th>
+<th style="text-align: right;">pct_125k_to_150k</th>
+<th style="text-align: right;">pct_150k_to_200k</th>
+<th style="text-align: right;">pct_200k_or_more</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">24859</td>
+<td style="text-align: right;">2714.93</td>
+<td style="text-align: right;">1649.37</td>
+<td style="text-align: right;">1501.85</td>
+<td style="text-align: right;">1692.24</td>
+<td style="text-align: right;">1454.5</td>
+<td style="text-align: right;">1628.79</td>
+<td style="text-align: right;">1203.33</td>
+<td style="text-align: right;">942.35</td>
+<td style="text-align: right;">857.39</td>
+<td style="text-align: right;">1839.79</td>
+<td style="text-align: right;">2390.5</td>
+<td style="text-align: right;">2145.2</td>
+<td style="text-align: right;">1638.28</td>
+<td style="text-align: right;">904.74</td>
+<td style="text-align: right;">980.39</td>
+<td style="text-align: right;">1315.36</td>
+<td style="text-align: right;">10.92</td>
+<td style="text-align: right;">6.63</td>
+<td style="text-align: right;">6.04</td>
+<td style="text-align: right;">6.81</td>
+<td style="text-align: right;">5.85</td>
+<td style="text-align: right;">6.55</td>
+<td style="text-align: right;">4.84</td>
+<td style="text-align: right;">3.79</td>
+<td style="text-align: right;">3.45</td>
+<td style="text-align: right;">7.4</td>
+<td style="text-align: right;">9.62</td>
+<td style="text-align: right;">8.63</td>
+<td style="text-align: right;">6.59</td>
+<td style="text-align: right;">3.64</td>
+<td style="text-align: right;">3.94</td>
+<td style="text-align: right;">5.29</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Merge station-level demographic data with station-level pollution reduction data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>everything <span class="ot">&lt;-</span> <span class="fu">cbind</span>(output,coef)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Calculate the average emissions that each demographic group sees by using the formula below:</p>
+<p><span class="math inline">\(\dfrac{Hisp_{area1} \times Reduction_{area1} + Hisp_{area2} \times Reduction_{area2}}{Hisp_{area1} + Hisp_{area2}}\)</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>reduction_benefit <span class="ot">&lt;-</span> everything<span class="sc">%&gt;%</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">#multiplying number of people in demographic by change in pollution caused by light rail</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_change =</span> total<span class="sc">*</span>coef,</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">less_than_10k_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">less_than_10k</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span>,</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">10k_to_15k_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">10k_to_15k</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span>,</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">15k_to_20k_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">15k_to_20k</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span>,</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">20k_to_25k_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">20k_to_25k</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span>,</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">25k_to_30k_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">25k_to_30k</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span>,</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">30k_to_35k_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">30k_to_35k</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span>,</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">35k_to_40k_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">35k_to_40k</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span>,</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">40k_to_45k_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">40k_to_45k</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span>,</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">45k_to_50k_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">45k_to_50k</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span>,</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">50k_to_60k_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">50k_to_60k</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span>,</span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">60k_to_75k_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">60k_to_75k</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span>,</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">75k_to_100k_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">75k_to_100k</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span>,</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">100k_to_125k_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">100k_to_125k</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span>,</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">125k_to_150k_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">125k_to_150k</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span>,</span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">150k_to_200k_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">150k_to_200k</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span>,</span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">200k_or_more_change</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">200k_or_more</span><span class="st">`</span> <span class="sc">*</span> <span class="st">`</span><span class="at">coef</span><span class="st">`</span></span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>    )<span class="sc">%&gt;%</span></span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">#summing impact across all stations</span></span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total_change_sum=</span><span class="fu">sum</span>(total_change),</span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>            <span class="at">total_pop =</span> <span class="fu">sum</span>(total),</span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">less_than_10k_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">less_than_10k_change</span><span class="st">`</span>),</span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">10k_to_15k_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">10k_to_15k_change</span><span class="st">`</span>),</span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">15k_to_20k_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">15k_to_20k_change</span><span class="st">`</span>),</span>
+<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">20k_to_25k_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">20k_to_25k_change</span><span class="st">`</span>),</span>
+<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">25k_to_30k_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">25k_to_30k_change</span><span class="st">`</span>),</span>
+<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">30k_to_35k_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">30k_to_35k_change</span><span class="st">`</span>),</span>
+<span id="cb39-32"><a href="#cb39-32" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">35k_to_40k_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">35k_to_40k_change</span><span class="st">`</span>),</span>
+<span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">40k_to_45k_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">40k_to_45k_change</span><span class="st">`</span>),</span>
+<span id="cb39-34"><a href="#cb39-34" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">45k_to_50k_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">45k_to_50k_change</span><span class="st">`</span>),</span>
+<span id="cb39-35"><a href="#cb39-35" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">50k_to_60k_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">50k_to_60k_change</span><span class="st">`</span>),</span>
+<span id="cb39-36"><a href="#cb39-36" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">60k_to_75k_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">60k_to_75k_change</span><span class="st">`</span>),</span>
+<span id="cb39-37"><a href="#cb39-37" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">75k_to_100k_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">75k_to_100k_change</span><span class="st">`</span>),</span>
+<span id="cb39-38"><a href="#cb39-38" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">100k_to_125k_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">100k_to_125k_change</span><span class="st">`</span>),</span>
+<span id="cb39-39"><a href="#cb39-39" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">125k_to_150k_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">125k_to_150k_change</span><span class="st">`</span>),</span>
+<span id="cb39-40"><a href="#cb39-40" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">150k_to_200k_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">150k_to_200k_change</span><span class="st">`</span>),</span>
+<span id="cb39-41"><a href="#cb39-41" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">200k_or_more_change_sum</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">200k_or_more_change</span><span class="st">`</span>),</span>
+<span id="cb39-42"><a href="#cb39-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-43"><a href="#cb39-43" aria-hidden="true" tabindex="-1"></a><span class="co">#sums together populations of different income brackets across the stations</span></span>
+<span id="cb39-44"><a href="#cb39-44" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">less_than_10k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">less_than_10k</span><span class="st">`</span>),</span>
+<span id="cb39-45"><a href="#cb39-45" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">10k_to_15k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">10k_to_15k</span><span class="st">`</span>),</span>
+<span id="cb39-46"><a href="#cb39-46" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">15k_to_20k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">15k_to_20k</span><span class="st">`</span>),</span>
+<span id="cb39-47"><a href="#cb39-47" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">20k_to_25k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">20k_to_25k</span><span class="st">`</span>),</span>
+<span id="cb39-48"><a href="#cb39-48" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">25k_to_30k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">25k_to_30k</span><span class="st">`</span>),</span>
+<span id="cb39-49"><a href="#cb39-49" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">30k_to_35k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">30k_to_35k</span><span class="st">`</span>),</span>
+<span id="cb39-50"><a href="#cb39-50" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">35k_to_40k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">35k_to_40k</span><span class="st">`</span>),</span>
+<span id="cb39-51"><a href="#cb39-51" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">40k_to_45k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">40k_to_45k</span><span class="st">`</span>),</span>
+<span id="cb39-52"><a href="#cb39-52" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">45k_to_50k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">45k_to_50k</span><span class="st">`</span>),</span>
+<span id="cb39-53"><a href="#cb39-53" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">50k_to_60k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">50k_to_60k</span><span class="st">`</span>),</span>
+<span id="cb39-54"><a href="#cb39-54" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">60k_to_75k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">60k_to_75k</span><span class="st">`</span>),</span>
+<span id="cb39-55"><a href="#cb39-55" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">75k_to_100k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">75k_to_100k</span><span class="st">`</span>),</span>
+<span id="cb39-56"><a href="#cb39-56" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">100k_to_125k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">100k_to_125k</span><span class="st">`</span>),</span>
+<span id="cb39-57"><a href="#cb39-57" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">125k_to_150k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">125k_to_150k</span><span class="st">`</span>),</span>
+<span id="cb39-58"><a href="#cb39-58" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">150k_to_200k</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">150k_to_200k</span><span class="st">`</span>),</span>
+<span id="cb39-59"><a href="#cb39-59" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">200k_or_more</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="st">`</span><span class="at">200k_or_more</span><span class="st">`</span>)</span>
+<span id="cb39-60"><a href="#cb39-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-61"><a href="#cb39-61" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb39-62"><a href="#cb39-62" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb39-63"><a href="#cb39-63" aria-hidden="true" tabindex="-1"></a>            ) <span class="sc">%&gt;%</span></span>
+<span id="cb39-64"><a href="#cb39-64" aria-hidden="true" tabindex="-1"></a>  <span class="co">#ave variables are the amount of change in pollution an individual of that demographic would recieve on average</span></span>
+<span id="cb39-65"><a href="#cb39-65" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">total_change_average=</span>total_change_sum<span class="sc">/</span>total_pop,</span>
+<span id="cb39-66"><a href="#cb39-66" aria-hidden="true" tabindex="-1"></a>           </span>
+<span id="cb39-67"><a href="#cb39-67" aria-hidden="true" tabindex="-1"></a>      <span class="st">`</span><span class="at">less_than_10k_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">less_than_10k_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">less_than_10k</span><span class="st">`</span>,</span>
+<span id="cb39-68"><a href="#cb39-68" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">10k_to_15k_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">10k_to_15k_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">10k_to_15k</span><span class="st">`</span>,</span>
+<span id="cb39-69"><a href="#cb39-69" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">15k_to_20k_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">15k_to_20k_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">15k_to_20k</span><span class="st">`</span>,</span>
+<span id="cb39-70"><a href="#cb39-70" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">20k_to_25k_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">20k_to_25k_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">20k_to_25k</span><span class="st">`</span>,</span>
+<span id="cb39-71"><a href="#cb39-71" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">25k_to_30k_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">25k_to_30k_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">25k_to_30k</span><span class="st">`</span>,</span>
+<span id="cb39-72"><a href="#cb39-72" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">30k_to_35k_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">30k_to_35k_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">30k_to_35k</span><span class="st">`</span>,</span>
+<span id="cb39-73"><a href="#cb39-73" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">35k_to_40k_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">35k_to_40k_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">35k_to_40k</span><span class="st">`</span>,</span>
+<span id="cb39-74"><a href="#cb39-74" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">40k_to_45k_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">40k_to_45k_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">40k_to_45k</span><span class="st">`</span>,</span>
+<span id="cb39-75"><a href="#cb39-75" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">45k_to_50k_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">45k_to_50k_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">45k_to_50k</span><span class="st">`</span>,</span>
+<span id="cb39-76"><a href="#cb39-76" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">50k_to_60k_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">50k_to_60k_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">50k_to_60k</span><span class="st">`</span>,</span>
+<span id="cb39-77"><a href="#cb39-77" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">60k_to_75k_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">60k_to_75k_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">60k_to_75k</span><span class="st">`</span>,</span>
+<span id="cb39-78"><a href="#cb39-78" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">75k_to_100k_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">75k_to_100k_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">75k_to_100k</span><span class="st">`</span>,</span>
+<span id="cb39-79"><a href="#cb39-79" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">100k_to_125k_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">100k_to_125k_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">100k_to_125k</span><span class="st">`</span>,</span>
+<span id="cb39-80"><a href="#cb39-80" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">125k_to_150k_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">125k_to_150k_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">125k_to_150k</span><span class="st">`</span>,</span>
+<span id="cb39-81"><a href="#cb39-81" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">150k_to_200k_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">150k_to_200k_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">150k_to_200k</span><span class="st">`</span>,</span>
+<span id="cb39-82"><a href="#cb39-82" aria-hidden="true" tabindex="-1"></a><span class="st">`</span><span class="at">200k_or_more_average</span><span class="st">`</span> <span class="ot">=</span> <span class="st">`</span><span class="at">200k_or_more_change_sum</span><span class="st">`</span> <span class="sc">/</span> <span class="st">`</span><span class="at">200k_or_more</span><span class="st">`</span></span>
+<span id="cb39-83"><a href="#cb39-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-84"><a href="#cb39-84" aria-hidden="true" tabindex="-1"></a>         </span>
+<span id="cb39-85"><a href="#cb39-85" aria-hidden="true" tabindex="-1"></a>         )</span>
+<span id="cb39-86"><a href="#cb39-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-87"><a href="#cb39-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-88"><a href="#cb39-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-89"><a href="#cb39-89" aria-hidden="true" tabindex="-1"></a>final_result <span class="ot">&lt;-</span> reduction_benefit <span class="sc">%&gt;%</span></span>
+<span id="cb39-90"><a href="#cb39-90" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(total_change_average,<span class="st">`</span><span class="at">less_than_10k_average</span><span class="st">`</span>, <span class="st">`</span><span class="at">10k_to_15k_average</span><span class="st">`</span>, <span class="st">`</span><span class="at">15k_to_20k_average</span><span class="st">`</span>, <span class="st">`</span><span class="at">20k_to_25k_average</span><span class="st">`</span>, <span class="st">`</span><span class="at">25k_to_30k_average</span><span class="st">`</span>, <span class="st">`</span><span class="at">30k_to_35k_average</span><span class="st">`</span>, <span class="st">`</span><span class="at">35k_to_40k_average</span><span class="st">`</span>, <span class="st">`</span><span class="at">40k_to_45k_average</span><span class="st">`</span>, <span class="st">`</span><span class="at">45k_to_50k_average</span><span class="st">`</span>, <span class="st">`</span><span class="at">50k_to_60k_average</span><span class="st">`</span>, <span class="st">`</span><span class="at">60k_to_75k_average</span><span class="st">`</span>, <span class="st">`</span><span class="at">75k_to_100k_average</span><span class="st">`</span>, <span class="st">`</span><span class="at">100k_to_125k_average</span><span class="st">`</span>, <span class="st">`</span><span class="at">125k_to_150k_average</span><span class="st">`</span>, <span class="st">`</span><span class="at">150k_to_200k_average</span><span class="st">`</span>, <span class="st">`</span><span class="at">200k_or_more_average</span><span class="st">`</span></span>
+<span id="cb39-91"><a href="#cb39-91" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb39-92"><a href="#cb39-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-93"><a href="#cb39-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-94"><a href="#cb39-94" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(final_result,<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">total_change_average</th>
+<th style="text-align: right;">less_than_10k_average</th>
+<th style="text-align: right;">10k_to_15k_average</th>
+<th style="text-align: right;">15k_to_20k_average</th>
+<th style="text-align: right;">20k_to_25k_average</th>
+<th style="text-align: right;">25k_to_30k_average</th>
+<th style="text-align: right;">30k_to_35k_average</th>
+<th style="text-align: right;">35k_to_40k_average</th>
+<th style="text-align: right;">40k_to_45k_average</th>
+<th style="text-align: right;">45k_to_50k_average</th>
+<th style="text-align: right;">50k_to_60k_average</th>
+<th style="text-align: right;">60k_to_75k_average</th>
+<th style="text-align: right;">75k_to_100k_average</th>
+<th style="text-align: right;">100k_to_125k_average</th>
+<th style="text-align: right;">125k_to_150k_average</th>
+<th style="text-align: right;">150k_to_200k_average</th>
+<th style="text-align: right;">200k_or_more_average</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">-0.26</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">-0.26</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">-0.25</td>
+<td style="text-align: right;">-0.26</td>
+<td style="text-align: right;">-0.26</td>
+<td style="text-align: right;">-0.26</td>
+<td style="text-align: right;">-0.26</td>
+<td style="text-align: right;">-0.26</td>
+<td style="text-align: right;">-0.27</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co">#all income groups seem to be getting a similar pollution reduction benefit on the individual level.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
