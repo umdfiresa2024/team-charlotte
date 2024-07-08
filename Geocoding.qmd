@@ -447,19 +447,28 @@ regression_stats <- summary(
   )
 )
 
-df2 <- df2 %>%
-  mutate(before_after = ifelse(date < opendate, "Before", "After"))
 
-ggplot(df2, aes(x = date, y = pm25, color = before_after)) +
-  geom_line() +
-  facet_wrap(~ station_ID, scales = "free_y") +  # Facet by station_ID
+df3 <- df2 %>% 
+  group_by(date) %>% summarize(mean_pm25 = mean(pm25)) %>%
+mutate(before_after = ifelse(date < opendate, "Before", "After"))
+
+ggplot(df3, aes(x = date, y = mean_pm25, color = before_after))+
+  
+  geom_rect(aes(xmin = constructionstart,xmax = opendate, ymin = -Inf, ymax = Inf), alpha = 0.0025, fill = "yellow") +
+  
+  
+  geom_point() +
+  geom_smooth(method=lm, color = "blue")+
+  # facet_wrap(~ station_ID, scales = "free_y") +  # Facet by station_ID
   labs(
     title = "PM2.5 Levels Before and After Metro Opening",
     x = "Date",
-    y = "PM2.5 Levels",
+    y = "Average PM2.5 Levels across stations",
     color = "Metro Opening"
   ) +
-  theme_minimal()
+  
+  theme_minimal()+geom_vline(xintercept = opendate, linetype = "dashed")+geom_vline(xintercept = CAIR, linetype = "dashed")
+
 
 regression_stats
 
@@ -467,7 +476,7 @@ regression_stats
 
 ```
 
-### Interpreting the Regression Model results 
+### Interpreting the Regression Model results
 
 -   **Intercept** = 43.02%
 
