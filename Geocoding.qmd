@@ -400,26 +400,147 @@ ggplot(df2, aes(x = date, y = pm25, color = before_after)) +
        y = "PM2.5 Levels",
        color = "Metro Opening") +
   theme_minimal()
+```
+
+```{r}
+df <- read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
+
+df2 <- df %>% 
+  mutate(date = as.Date(formatted_date, format = "%Y-%m-%d"))
+
+# Define dates
+startdate <- as.Date("2003-11-24", format = "%Y-%m-%d")
+enddate <- as.Date("2011-11-24", format = "%Y-%m-%d")
+opendate <- as.Date("2007-11-24", format = "%Y-%m-%d")
+constructionstart <- as.Date("2005-02-26", format = "%Y-%m-%d")
+CAIR <- as.Date("2005-03-10", format = "%Y-%m-%d")
+
+# Filter and mutate the data
+metroOpen_df <- df2 %>% 
+  filter(date >= startdate & date <= enddate) %>%
+  mutate(
+    MetroOpen = ifelse(date >= opendate, 1, 0),
+    construction = ifelse(date >= constructionstart & date < opendate, 1, 0),
+    duringCAIR = ifelse(date >= CAIR & date <= enddate, 1, 0)
+  ) %>%
+  group_by(station_ID) %>%
+  arrange(date, station_ID) %>%
+  mutate(
+    lTair_f_tavg = lag(Tair_f_tavg),
+    lQair_f_tavg = lag(Qair_f_tavg),
+    lPsurf_f_tavg = lag(Psurf_f_tavg),
+    lWind_f_tavg = lag(Wind_f_tavg),
+    t = as.numeric(date - startdate),
+    t2 = t^2,
+    t3 = t^3,
+    t4 = t^4
+  )
+
+# Perform regression
+regression_stats <- summary(
+  m1 <- lm(
+    log(pm25) ~ MetroOpen + construction + duringCAIR + as.factor(day_of_week) + as.factor(month) +
+    Tair_f_tavg + Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + Rainf_tavg + 
+    Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + Tair_f_tavg + Rainf_f_tavg + 
+    Wind_f_tavg + Qair_f_tavg + Psurf_f_tavg + Parking + Parking:MetroOpen,
+    data = metroOpen_df
+  )
+)
+
+df2 <- df2 %>%
+  mutate(before_after = ifelse(date < opendate, "Before", "After"))
+
+ggplot(df2, aes(x = date, y = pm25, color = before_after)) +
+  geom_line() +
+  facet_wrap(~ station_ID, scales = "free_y") +  # Facet by station_ID
+  labs(
+    title = "PM2.5 Levels Before and After Metro Opening",
+    x = "Date",
+    y = "PM2.5 Levels",
+    color = "Metro Opening"
+  ) +
+  theme_minimal()
 
 regression_stats
 
-metroOpen_df
-
-# 
-# summary(m1 <- lm(log(pm25)~MetroOpen,data = metroOpen_df))
-# 
-# 
-# summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month),data = metroOpen_df))
-# 
-# summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg,data = metroOpen_df))
-# 
-# summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg,data = metroOpen_df))
-# 
-# summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg,data = metroOpen_df))
-# 
-# summary(m1 <- lm(log(pm25)~MetroOpen+construction+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Wind_f_tavg+Qair_f_tavg+holiday_binary,data = metroOpen_df))
-# 
-# 
 
 
 ```
+
+### Interpreting the Regression Model results 
+
+-   **Intercept** = 43.02%
+
+-   **MetroOpen** = -22.75%
+
+-   **construction** = -2.09%
+
+-   **duringCAIR** = -4.32%
+
+-   **as.factor(day_of_week)Monday** = -2.43%
+
+-   **as.factor(day_of_week)Saturday** = 0.45%
+
+-   **as.factor(day_of_week)Sunday** = -1.63%
+
+-   **as.factor(day_of_week)Thursday** = 0.73%
+
+-   **as.factor(day_of_week)Tuesday** = 2.20%
+
+-   **as.factor(day_of_week)Wednesday** = 4.10%
+
+-   **as.factor(month)August** = 12.33%
+
+-   **as.factor(month)December** = 18.44%
+
+-   **as.factor(month)February** = 17.41%
+
+-   **as.factor(month)January** = 13.05%
+
+-   **as.factor(month)July** = 14.59%
+
+-   **as.factor(month)June** = 8.25%
+
+-   **as.factor(month)March** = 5.58%
+
+-   **as.factor(month)May** = -0.65%
+
+-   **as.factor(month)November** = 11.97%
+
+-   **as.factor(month)October** = -4.22%
+
+-   **as.factor(month)September** = -1.43%
+
+-   **Tair_f_tavg** = 61.55%
+
+-   **Swnet_tavg** = 0.74%
+
+-   **Lwnet_tavg** = 0.76%
+
+-   **Qle_tavg** = -0.63%
+
+-   **Qh_tavg** = -0.33%
+
+-   **Snowf_tavg** = ∞ (extremely large value, likely unrealistic)
+
+-   **Rainf_tavg** = ∞ (extremely large value, likely unrealistic)
+
+-   **Qsm_tavg** = -100% (suggests a near-total reduction in PM2.5 levels)
+
+-   **SnowT_tavg** = -39.30%
+
+-   **SWE_tavg** = -3.89%
+
+-   **SnowDepth_tavg** = 152.61%
+
+-   **Rainf_f_tavg** = ∞ (extremely large value, likely unrealistic)
+
+-   **Wind_f_tavg** = -15.06%
+
+-   **Qair_f_tavg** = 3026.55%
+
+-   **Psurf_f_tavg** = 7.86%
+
+-   **Parking** = -0.23%
+
+-   
