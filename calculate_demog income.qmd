@@ -416,11 +416,7 @@ reduction_benefit <- everything%>%
 `125k_to_150k_average` = `125k_to_150k_change_sum` / `125k_to_150k`,
 `150k_to_200k_average` = `150k_to_200k_change_sum` / `150k_to_200k`,
 `200k_or_more_average` = `200k_or_more_change_sum` / `200k_or_more`
-
-         
-         )
-
-
+)
 
 final_result <- reduction_benefit %>%
   select(total_change_average,`less_than_10k_average`, `10k_to_15k_average`, `15k_to_20k_average`, `20k_to_25k_average`, `25k_to_30k_average`, `30k_to_35k_average`, `35k_to_40k_average`, `40k_to_45k_average`, `45k_to_50k_average`, `50k_to_60k_average`, `60k_to_75k_average`, `75k_to_100k_average`, `100k_to_125k_average`, `125k_to_150k_average`, `150k_to_200k_average`, `200k_or_more_average`
@@ -428,6 +424,53 @@ final_result <- reduction_benefit %>%
 
 
 kable(final_result,digits = 2)
+final_result <- reduction_benefit %>%
+  select(`less_than_10k_average`, `10k_to_15k_average`, `15k_to_20k_average`, `20k_to_25k_average`, `25k_to_30k_average`, `30k_to_35k_average`, `35k_to_40k_average`, `40k_to_45k_average`, `45k_to_50k_average`, `50k_to_60k_average`, `60k_to_75k_average`, `75k_to_100k_average`, `100k_to_125k_average`, `125k_to_150k_average`, `150k_to_200k_average`, `200k_or_more_average`
+)
+income_groups <-  c(
+  "<10k",
+  "10k-15k",
+  "15k-20k",
+  "20k-25k",
+  "25k-30k",
+  "30k-35k",
+  "35k-40k",
+  "40k-45k",
+  "45k-50k",
+  "50k-60k",
+  "60k-75k",
+  "75k-100k",
+  "100k-125k",
+  "125k-150k",
+  "150k-200k",
+  ">200k"
+)
 
+
+
+
+plot_table <- t(final_result)
+# colnames(plot_table) = "pollution reduction per person (as a result of metro opening )"
+
+plot_table <- cbind(income_groups, t(final_result))
+
+plot_table = as.data.frame(plot_table)
+
+plot_table$V2 <- as.numeric(plot_table$V2)
+
+# plot_table$income_groups <- as.factor(plot_table$income_groups)
+
+plot_table$income_groups <- factor(plot_table$income_groups, levels = income_groups)
+
+
+ggplot(data = plot_table, aes( x = income_groups, y = V2)) + 
+  geom_bar(stat = "identity", position = "dodge")+
+  expand_limits(y=c(-0.3,0))+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+  labs(
+    x = "Income Groups",
+    y = "Average Pollution Change",  # Add y-axis label
+    title = "Average Pollution Change by Income Groups"
+  )
 #all income groups seem to be getting a similar pollution reduction benefit on the individual level.
 ```
