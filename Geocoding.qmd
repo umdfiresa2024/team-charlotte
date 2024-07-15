@@ -461,7 +461,6 @@ ggplot(df3, aes(x = date, y = mean_pm25, color = before_after))+
   geom_smooth(method=lm, color = "blue")+
   # facet_wrap(~ station_ID, scales = "free_y") +  # Facet by station_ID
   labs(
-    title = "PM2.5 Levels Before and After Metro Opening",
     x = "Date",
     y = "Average PM2.5 Levels across stations",
     color = "Metro Opening"
@@ -552,4 +551,80 @@ regression_stats
 
 -   **Parking** = -0.23%
 
--   
+```{r}
+regression_stats <- summary(m1 <- lm(log(pm25) ~ MetroOpen:as.factor(station_ID) + construction + as.factor(day_of_week) + as.factor(month) + duringCAIR + Tair_f_tavg + Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + Rainf_tavg + Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + Tair_f_tavg + Rainf_f_tavg + Wind_f_tavg + Qair_f_tavg + Psurf_f_tavg, data = metroOpen_df))
+
+c <- coef(m1)
+len_coef <- length(coef(m1))
+
+# Get coefficients of the station-level effect
+station_coef <- coef(m1)[(len_coef-(26-1)):len_coef]
+
+# Convert coefficients to percentage change
+station_coef_perc <- station_coef * 100
+
+# Get p-values of the station-level effect (p < 0.05 is statistically significant)
+pval <- summary(m1)$coefficients[,4][(len_coef-(26-1)):len_coef]
+
+# Combine coefficients and p-values into a dataframe
+station_data <- data.frame(coef = station_coef_perc, pval = pval)
+
+# Load station coordinates
+x <- vect(sample_latlon, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+pm_sources <- vect("/Users/paditya9/teamCharlotte/PM2.5 ShapeFiles/new_pm_coords_sources.shp")
+
+# Add coefficients to the spatial data
+x$coef <- station_coef_perc
+x$pval <- pval
+
+# Define the breaks for the coefficients
+breaks_interval <- c(-30.1, -29.4, -28.7, -28.1, -27.4, -26.7, -26.1, -25.4, -24.7, -24.0, -23.4)
+
+# Create color palette with different shades of green (adjust green range as desired)
+color_palette <- colorRampPalette(c("lightgreen", "darkgreen"))
+colors <- color_palette(length(breaks_interval) - 1)
+
+
+osmpos <- create_provider(name = "Thunderforest.Landscape",
+                          url = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+                          sub = c("a", "b", "c", "d"),
+                          citation = "© OpenStreetMap contributors © CARTO ")
+
+# Creating Buffer around stations
+# Used Buffer Radius is 800 meters
+pts_buffer <- buffer(x, width = 800)
+
+# Creating Buffer for Map
+extent <- buffer(x, width = 500)
+
+bg <- get_tiles(ext(extent), zoom = 11, provider = osmpos)
+
+png("final_pmchange_station.png", width = 1500, height = 1000, units = "px")
+
+plot(bg)
+
+plot(pts_buffer, 
+     "coef",
+     type = "interval",
+     breaks = breaks_interval, 
+     col = colors,
+     cex.main = 2.125,
+     plg = list( # parameters for drawing legend
+       title = "Change in PM2.5 \n (in Percents)",
+       title.cex = 1.5, # Legend title size
+       cex = 1.5, # Legend text size
+       inset = c(0.02, 0.02), # Legend inset (spacing from the plot)
+       ncol = 1), # Number of columns in the legend
+     add = TRUE)
+
+# pch=19 gives filled circles
+points(x, col = "blue", pch = 19, cex = 2)
+
+# pch=17 gives filled triangles
+points(pm_sources, col = "purple", pch = 17, cex = 2)
+
+# Plot the buffer around the stations
+lines(pts_buffer, col = "red")
+
+dev.off()
+```
