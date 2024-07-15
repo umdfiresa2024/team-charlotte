@@ -389,22 +389,6 @@ metroOpen_df <- df2 %>% filter(date >= startdate & date<=enddate)%>%
 
 regression_stats <- summary(m1 <- lm(log(pm25)~MetroOpen+construction+duringCAIR+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + Rainf_tavg + Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + Tair_f_tavg + Rainf_f_tavg + Wind_f_tavg + Qair_f_tavg + Psurf_f_tavg + Parking + Parking:MetroOpen, data = metroOpen_df))
 
-df2 <- df2 %>%
-  mutate(before_after = ifelse(date < opendate, "Before", "After"))
-
-# Plotting the data
-ggplot(df2, aes(x = date, y = pm25, color = before_after)) +
-  geom_line() +
-  labs(title = "PM2.5 Levels Before and After Metro Opening",
-       x = "Date",
-       y = "PM2.5 Levels",
-       color = "Metro Opening") +
-  theme_minimal()
-```
-
-```{r}
-df <- read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
-
 df2 <- df %>% 
   mutate(date = as.Date(formatted_date, format = "%Y-%m-%d"))
 
@@ -469,6 +453,10 @@ ggplot(df3, aes(x = date, y = mean_pm25, color = before_after))+
   
   theme_minimal()+geom_vline(xintercept = opendate, linetype = "dashed")+geom_vline(xintercept = CAIR, linetype = "dashed")
 
+
+```
+
+```{r}
 
 regression_stats
 
