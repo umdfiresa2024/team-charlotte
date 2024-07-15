@@ -20,6 +20,7 @@ install.packages("maptiles")
 install.packages("terra")
 install.packages("leaflet")
 install.packages("lubridate")
+install.packages("RColorBrewer")
 ```
 
 ### Loading Libraries
@@ -33,6 +34,7 @@ library("maptiles")
 library("leaflet")
 library("lubridate")
 library("dplyr")
+library("RColorBrewer")
 ```
 
 ### Fetching the Coordinates
@@ -431,22 +433,22 @@ regression_stats <- summary(
   )
 )
 
-
+pal <- brewer.pal(n=4,name = "RdBu")
 df3 <- df2 %>% 
   group_by(date) %>% summarize(mean_pm25 = mean(pm25)) %>%
 mutate(before_after = ifelse(date < opendate, "Before", "After"))
 
 ggplot(df3, aes(x = date, y = mean_pm25, color = before_after))+
   
-  geom_rect(aes(xmin = constructionstart,xmax = opendate, ymin = -Inf, ymax = Inf), alpha = 0.0025, fill = "yellow") +
+  geom_rect(aes(xmin = constructionstart,xmax = opendate, ymin = -Inf, ymax = Inf), alpha = 1, fill = "gray") +scale_color_manual(values = pal[3:4])+
   
   
   geom_point() +
-  geom_smooth(method=lm, color = "blue")+
+  geom_smooth( color = "blue")+
   # facet_wrap(~ station_ID, scales = "free_y") +  # Facet by station_ID
   labs(
     x = "Date",
-    y = "Average PM2.5 Levels across stations",
+    y = "Average PM2.5 levels across stations",
     color = "Metro Opening"
   ) +
   
