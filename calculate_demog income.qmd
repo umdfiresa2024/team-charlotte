@@ -462,15 +462,25 @@ plot_table$V2 <- as.numeric(plot_table$V2)
 
 plot_table$income_groups <- factor(plot_table$income_groups, levels = income_groups)
 
-
-ggplot(data = plot_table, aes( x = income_groups, y = V2)) + 
-  geom_bar(stat = "identity", position = "dodge")+
-  expand_limits(y=c(-0.3,0))+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
+png("average_income_change.png", width = 1000, height = 600, units = "px" )
+plot <- ggplot(data = plot_table, aes(x = income_groups, y = V2)) + 
+  geom_bar(stat = "identity", position = "dodge", fill = "#88a6ff", color = "#9e9e9e") +
+  expand_limits(y = c(-0.3, 0)) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 10),  # Adjust x-axis text size
+    axis.text.y = element_text(size = 10),  # Adjust y-axis text size
+    axis.title.x = element_text(size = 12),  # Adjust x-axis title size
+    axis.title.y = element_text(size = 12),  # Adjust y-axis title size
+    plot.title = element_text(size = 14)  # Adjust plot title size
+  )+
   labs(
     x = "Income Groups",
     y = "Average Pollution Change",  # Add y-axis label
-    title = "Average Pollution Change by Income Groups"
   )
+
+# Print the plot
+print(plot)
+dev.off()
+
 #all income groups seem to be getting a similar pollution reduction benefit on the individual level.
 ```
