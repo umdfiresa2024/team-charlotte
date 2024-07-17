@@ -568,26 +568,24 @@ x$coef <- station_coef_perc
 x$pval <- pval
 
 # Define the breaks for the coefficients
-breaks_interval <- c(-30.1, -29.4, -28.7, -28.1, -27.4, -26.7, -26.1, -25.4, -24.7, -24.0, -23.4)
+
+breaks_interval <- c(-32, -30, -28, -26, -24, -22, -20)
 
 # Create color palette with different shades of green (adjust green range as desired)
-color_palette <- colorRampPalette(c("lightgreen", "darkgreen"))
+color_palette <- colorRampPalette(c("#2166AC", "#D1E5F0"))
 colors <- color_palette(length(breaks_interval) - 1)
 
 
-osmpos <- create_provider(name = "Thunderforest.Landscape",
-                          url = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
-                          sub = c("a", "b", "c", "d"),
-                          citation = "© OpenStreetMap contributors © CARTO ")
+
 
 # Creating Buffer around stations
 # Used Buffer Radius is 800 meters
 pts_buffer <- buffer(x, width = 800)
 
 # Creating Buffer for Map
-extent <- buffer(x, width = 500)
+extent <- buffer(aggregate(pts_buffer), width = 3000)
 
-bg <- get_tiles(ext(extent), zoom = 11, provider = osmpos)
+bg <- get_tiles(ext(extent), zoom = 11, provider = "Esri.WorldStreetMap")
 
 png("final_pmchange_station.png", width = 1500, height = 1000, units = "px")
 
@@ -608,13 +606,13 @@ plot(pts_buffer,
      add = TRUE)
 
 # pch=19 gives filled circles
-points(x, col = "blue", pch = 19, cex = 2)
+points(x, col = "black", pch = 19, cex = 2)
 
 # pch=17 gives filled triangles
-points(pm_sources, col = "purple", pch = 17, cex = 2)
+points(pm_sources, col = "#B2182B", pch = 17, cex = 2)
 
 # Plot the buffer around the stations
-lines(pts_buffer, col = "red")
+# lines(pts_buffer, col = "red")
 
 dev.off()
 ```
