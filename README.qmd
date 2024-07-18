@@ -12,11 +12,11 @@ editor: visual
 
 ## Hypothesis
 
-1.  Light Rail opening:
+1.  **Light Rail opening:**
     -   Null Hypothesis (H₀): The introduction of light rails has no effect on particulate matter (PM2.5) levels in Charlotte, North Carolina.​
 
     -   Alternative Hypothesis (H~A~): The introduction of light rails has an effect on particulate matter (PM2.5) levels in Charlotte, North Carolina.
-2.  Income:
+2.  **Income:**
     -   Null Hypothesis (H₀): There is no difference in the levels of PM2.5 reduction across different income brackets after introducing light rails.
 
     -   Alternative Hypothesis (H~A~): There is a difference in the levels of PM2.5 reduction across different income brackets after introducing light rails.
@@ -186,6 +186,10 @@ pts <- vect(sample_latlon, crs=crdref)
 plot(pts)
 ```
 
+### Finding PM2.5 Data
+
+Due to the large size of the data files, the code execution was not included in the README file. For detailed information on how PM2.5 levels were extracted, please refer to the file "station_buffer_pm2.5.R".
+
 ### Overlaying Stations with PM2.5
 
 ```{r}
@@ -193,7 +197,7 @@ plot(pts)
 x <- vect(sample_latlon, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
 
 # Plot Factors
-pm_sources <- vect("/Users/paditya9/teamCharlotte/PM2.5 ShapeFiles/new_pm_coords_sources.shp")
+pm_sources <- vect("PM2.5 ShapeFiles/new_pm_coords_sources.shp")
 plot(pm_sources)
 
 # Plot Buffer around stations
@@ -259,7 +263,7 @@ PM_25_with_date <- PM_25_with_date %>%
 Creating Station ID
 
 ```{r}
-stations_coords <- read.csv("/Users/paditya9/teamCharlotte/new_station_coords_data.csv")
+stations_coords <- read.csv("new_station_coords_data.csv")
 
 stations_coords <- stations_coords %>% mutate(station_ID = row_number())
 
@@ -270,7 +274,7 @@ stations_coords <- stations_coords %>% mutate(station_ID = row_number())
 Creating Holiday Data
 
 ```{r}
-holidays_data <- read.csv("/Users/paditya9/teamCharlotte/major_holidays_2000_2025.csv", header = TRUE, stringsAsFactors = FALSE)
+holidays_data <- read.csv("major_holidays_2000_2025.csv", header = TRUE, stringsAsFactors = FALSE)
 
 holidays_data <- holidays_data %>% filter(date >= as.Date("2003-11-24") & date <= as.Date("2011-11-24")) %>% mutate(formatted_date = date)
 
@@ -299,7 +303,7 @@ pm_25_data <- read.csv("refined_date_PM25_daily_data.csv", header = TRUE, string
 met_data <- read.csv("met_data_charlotte/combinedMeteorologyDataCharlotte.csv", header = TRUE, stringsAsFactors = FALSE)[, c("Tair_f_tavg", "Wind_f_tavg", "Qair_f_tavg", "formatted_date")]
 
 #Reading Holiday Data
-holidays_data <- read.csv("/Users/paditya9/teamCharlotte/refined_holidays_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("holiday", "formatted_date")]
+holidays_data <- read.csv("refined_holidays_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("holiday", "formatted_date")]
 
 station_pm_met_dataCombined <- merge(stationID_data,pm_25_data, by="station_ID", all = F )
 
@@ -702,14 +706,12 @@ intdf<-as.data.frame(int)%>%
 output <- rbind(output,intdf)
 }
   
-```
-
-Summarize demographic groups that live near light rail stations
-
-```{r}
+  output
+  
 sum_demog<-output %>%
   #combinging all the station's data together
-  summarize(total = sum(total),
+  summarize(
+    total = sum(total),
    `less_than_10k` = sum(`less_than_10k`),
 `10k_to_15k` = sum(`10k_to_15k`),
 `15k_to_20k` = sum(`15k_to_20k`),
@@ -725,8 +727,13 @@ sum_demog<-output %>%
 `100k_to_125k` = sum(`100k_to_125k`),
 `125k_to_150k` = sum(`125k_to_150k`),
 `150k_to_200k` = sum(`150k_to_200k`),
-`200k_or_more` = sum(`200k_or_more`))%>%
-  mutate(`pct_less_than_10k` = `less_than_10k` * 100 / `total`,
+`200k_or_more` = sum(`200k_or_more`)
+            
+            
+            )%>%
+  mutate(
+    
+      `pct_less_than_10k` = `less_than_10k` * 100 / `total`,
 `pct_10k_to_15k` = `10k_to_15k` * 100 / `total`,
 `pct_15k_to_20k` = `15k_to_20k` * 100 / `total`,
 `pct_20k_to_25k` = `20k_to_25k` * 100 / `total`,
@@ -741,126 +748,109 @@ sum_demog<-output %>%
 `pct_100k_to_125k` = `100k_to_125k` * 100 / `total`,
 `pct_125k_to_150k` = `125k_to_150k` * 100 / `total`,
 `pct_150k_to_200k` = `150k_to_200k` * 100 / `total`,
-`pct_200k_or_more` = `200k_or_more` * 100 / `total`)
+`pct_200k_or_more` = `200k_or_more` * 100 / `total`
+    
+    )
 
 kable(sum_demog, digits=2)
 
-# Calculate the reduction benefit
-# Multiplying the number of people in each demographic by the change in pollution caused by light rail
-reduction_benefit <- everything %>%mutate(total_change = total * coef,
-    `less_than_10k_change` = `less_than_10k` * coef,
-    `10k_to_15k_change` = `10k_to_15k` * coef,
-    `15k_to_20k_change` = `15k_to_20k` * coef,
-    `20k_to_25k_change` = `20k_to_25k` * coef,
-    `25k_to_30k_change` = `25k_to_30k` * coef,
-    `30k_to_35k_change` = `30k_to_35k` * coef,
-    `35k_to_40k_change` = `35k_to_40k` * coef,
-    `40k_to_45k_change` = `40k_to_45k` * coef,
-    `45k_to_50k_change` = `45k_to_50k` * coef,
-    `50k_to_60k_change` = `50k_to_60k` * coef,
-    `60k_to_75k_change` = `60k_to_75k` * coef,
-    `75k_to_100k_change` = `75k_to_100k` * coef,
-    `100k_to_125k_change` = `100k_to_125k` * coef,
-    `125k_to_150k_change` = `125k_to_150k` * coef,
-    `150k_to_200k_change` = `150k_to_200k` * coef,
-    `200k_or_more_change` = `200k_or_more` * coef) %>%
-  # Summarizing the impact across all stations
-  summarize(total_change_sum = sum(total_change),
-    total_pop = sum(total),
-    `less_than_10k_change_sum` = sum(`less_than_10k_change`),
-    `10k_to_15k_change_sum` = sum(`10k_to_15k_change`),
-    `15k_to_20k_change_sum` = sum(`15k_to_20k_change`),
-    `20k_to_25k_change_sum` = sum(`20k_to_25k_change`),
-    `25k_to_30k_change_sum` = sum(`25k_to_30k_change`),
-    `30k_to_35k_change_sum` = sum(`30k_to_35k_change`),
-    `35k_to_40k_change_sum` = sum(`35k_to_40k_change`),
-    `40k_to_45k_change_sum` = sum(`40k_to_45k_change`),
-    `45k_to_50k_change_sum` = sum(`45k_to_50k_change`),
-    `50k_to_60k_change_sum` = sum(`50k_to_60k_change`),
-    `60k_to_75k_change_sum` = sum(`60k_to_75k_change`),
-    `75k_to_100k_change_sum` = sum(`75k_to_100k_change`),
-    `100k_to_125k_change_sum` = sum(`100k_to_125k_change`),
-    `125k_to_150k_change_sum` = sum(`125k_to_150k_change`),
-    `150k_to_200k_change_sum` = sum(`150k_to_200k_change`),
-    `200k_or_more_change_sum` = sum(`200k_or_more_change`),
-    `less_than_10k` = sum(`less_than_10k`),
-    `10k_to_15k` = sum(`10k_to_15k`),
-    `15k_to_20k` = sum(`15k_to_20k`),
-    `20k_to_25k` = sum(`20k_to_25k`),
-    `25k_to_30k` = sum(`25k_to_30k`),
-    `30k_to_35k` = sum(`30k_to_35k`),
-    `35k_to_40k` = sum(`35k_to_40k`),
-    `40k_to_45k` = sum(`40k_to_45k`),
-    `45k_to_50k` = sum(`45k_to_50k`),
-    `50k_to_60k` = sum(`50k_to_60k`),
-    `60k_to_75k` = sum(`60k_to_75k`),
-    `75k_to_100k` = sum(`75k_to_100k`),
-    `100k_to_125k` = sum(`100k_to_125k`),
-    `125k_to_150k` = sum(`125k_to_150k`),
-    `150k_to_200k` = sum(`150k_to_200k`),
-    `200k_or_more` = sum(`200k_or_more`)) %>%
-  # Calculating the average change in pollution per individual in each demographic
-  mutate(total_change_average = total_change_sum / total_pop,
-    `less_than_10k_average` = `less_than_10k_change_sum` / `less_than_10k`,
-    `10k_to_15k_average` = `10k_to_15k_change_sum` / `10k_to_15k`,
-    `15k_to_20k_average` = `15k_to_20k_change_sum` / `15k_to_20k`,
-    `20k_to_25k_average` = `20k_to_25k_change_sum` / `20k_to_25k`,
-    `25k_to_30k_average` = `25k_to_30k_change_sum` / `25k_to_30k`,
-    `30k_to_35k_average` = `30k_to_35k_change_sum` / `30k_to_35k`,
-    `35k_to_40k_average` = `35k_to_40k_change_sum` / `35k_to_40k`,
-    `40k_to_45k_average` = `40k_to_45k_change_sum` / `40k_to_45k`,
-    `45k_to_50k_average` = `45k_to_50k_change_sum` / `45k_to_50k`,
-    `50k_to_60k_average` = `50k_to_60k_change_sum` / `50k_to_60k`,
-    `60k_to_75k_average` = `60k_to_75k_change_sum` / `60k_to_75k`,
-    `75k_to_100k_average` = `75k_to_100k_change_sum` / `75k_to_100k`,
-    `100k_to_125k_average` = `100k_to_125k_change_sum` / `100k_to_125k`,
-    `125k_to_150k_average` = `125k_to_150k_change_sum` / `125k_to_150k`,
-    `150k_to_200k_average` = `150k_to_200k_change_sum` / `150k_to_200k`,
-    `200k_or_more_average` = `200k_or_more_change_sum` / `200k_or_more`)
+everything <- cbind(output,coef)
 
-# Create the final result table
+reduction_benefit <- everything%>%
+  mutate(
+    #multiplying number of people in demographic by change in pollution caused by light rail
+    total_change = total*coef,
+    `less_than_10k_change` = `less_than_10k` * `coef`,
+`10k_to_15k_change` = `10k_to_15k` * `coef`,
+`15k_to_20k_change` = `15k_to_20k` * `coef`,
+`20k_to_25k_change` = `20k_to_25k` * `coef`,
+`25k_to_30k_change` = `25k_to_30k` * `coef`,
+`30k_to_35k_change` = `30k_to_35k` * `coef`,
+`35k_to_40k_change` = `35k_to_40k` * `coef`,
+`40k_to_45k_change` = `40k_to_45k` * `coef`,
+`45k_to_50k_change` = `45k_to_50k` * `coef`,
+`50k_to_60k_change` = `50k_to_60k` * `coef`,
+`60k_to_75k_change` = `60k_to_75k` * `coef`,
+`75k_to_100k_change` = `75k_to_100k` * `coef`,
+`100k_to_125k_change` = `100k_to_125k` * `coef`,
+`125k_to_150k_change` = `125k_to_150k` * `coef`,
+`150k_to_200k_change` = `150k_to_200k` * `coef`,
+`200k_or_more_change` = `200k_or_more` * `coef`
+    
+    )%>%
+  #summing impact across all stations
+  summarize(total_change_sum=sum(total_change),
+            total_pop = sum(total),
+            `less_than_10k_change_sum` = sum(`less_than_10k_change`),
+`10k_to_15k_change_sum` = sum(`10k_to_15k_change`),
+`15k_to_20k_change_sum` = sum(`15k_to_20k_change`),
+`20k_to_25k_change_sum` = sum(`20k_to_25k_change`),
+`25k_to_30k_change_sum` = sum(`25k_to_30k_change`),
+`30k_to_35k_change_sum` = sum(`30k_to_35k_change`),
+`35k_to_40k_change_sum` = sum(`35k_to_40k_change`),
+`40k_to_45k_change_sum` = sum(`40k_to_45k_change`),
+`45k_to_50k_change_sum` = sum(`45k_to_50k_change`),
+`50k_to_60k_change_sum` = sum(`50k_to_60k_change`),
+`60k_to_75k_change_sum` = sum(`60k_to_75k_change`),
+`75k_to_100k_change_sum` = sum(`75k_to_100k_change`),
+`100k_to_125k_change_sum` = sum(`100k_to_125k_change`),
+`125k_to_150k_change_sum` = sum(`125k_to_150k_change`),
+`150k_to_200k_change_sum` = sum(`150k_to_200k_change`),
+`200k_or_more_change_sum` = sum(`200k_or_more_change`),
+
+#sums together populations of different income brackets across the stations
+`less_than_10k` = sum(`less_than_10k`),
+`10k_to_15k` = sum(`10k_to_15k`),
+`15k_to_20k` = sum(`15k_to_20k`),
+`20k_to_25k` = sum(`20k_to_25k`),
+`25k_to_30k` = sum(`25k_to_30k`),
+`30k_to_35k` = sum(`30k_to_35k`),
+`35k_to_40k` = sum(`35k_to_40k`),
+`40k_to_45k` = sum(`40k_to_45k`),
+`45k_to_50k` = sum(`45k_to_50k`),
+`50k_to_60k` = sum(`50k_to_60k`),
+`60k_to_75k` = sum(`60k_to_75k`),
+`75k_to_100k` = sum(`75k_to_100k`),
+`100k_to_125k` = sum(`100k_to_125k`),
+`125k_to_150k` = sum(`125k_to_150k`),
+`150k_to_200k` = sum(`150k_to_200k`),
+`200k_or_more` = sum(`200k_or_more`)
+
+            
+            
+            ) %>%
+  #ave variables are the amount of change in pollution an individual of that demographic would recieve on average
+    mutate(total_change_average=total_change_sum/total_pop,
+           
+      `less_than_10k_average` = `less_than_10k_change_sum` / `less_than_10k`,
+`10k_to_15k_average` = `10k_to_15k_change_sum` / `10k_to_15k`,
+`15k_to_20k_average` = `15k_to_20k_change_sum` / `15k_to_20k`,
+`20k_to_25k_average` = `20k_to_25k_change_sum` / `20k_to_25k`,
+`25k_to_30k_average` = `25k_to_30k_change_sum` / `25k_to_30k`,
+`30k_to_35k_average` = `30k_to_35k_change_sum` / `30k_to_35k`,
+`35k_to_40k_average` = `35k_to_40k_change_sum` / `35k_to_40k`,
+`40k_to_45k_average` = `40k_to_45k_change_sum` / `40k_to_45k`,
+`45k_to_50k_average` = `45k_to_50k_change_sum` / `45k_to_50k`,
+`50k_to_60k_average` = `50k_to_60k_change_sum` / `50k_to_60k`,
+`60k_to_75k_average` = `60k_to_75k_change_sum` / `60k_to_75k`,
+`75k_to_100k_average` = `75k_to_100k_change_sum` / `75k_to_100k`,
+`100k_to_125k_average` = `100k_to_125k_change_sum` / `100k_to_125k`,
+`125k_to_150k_average` = `125k_to_150k_change_sum` / `125k_to_150k`,
+`150k_to_200k_average` = `150k_to_200k_change_sum` / `150k_to_200k`,
+`200k_or_more_average` = `200k_or_more_change_sum` / `200k_or_more`
+)
+
 final_result <- reduction_benefit %>%
-  select(total_change_average,
-    `less_than_10k_average`,
-    `10k_to_15k_average`,
-    `15k_to_20k_average`,
-    `20k_to_25k_average`,
-    `25k_to_30k_average`,
-    `30k_to_35k_average`,
-    `35k_to_40k_average`,
-    `40k_to_45k_average`,
-    `45k_to_50k_average`,
-    `50k_to_60k_average`,
-    `60k_to_75k_average`,
-    `75k_to_100k_average`,
-    `100k_to_125k_average`,
-    `125k_to_150k_average`,
-    `150k_to_200k_average`,
-    `200k_or_more_average`)
+  select(total_change_average,`less_than_10k_average`, `10k_to_15k_average`, `15k_to_20k_average`, `20k_to_25k_average`, `25k_to_30k_average`, `30k_to_35k_average`, `35k_to_40k_average`, `40k_to_45k_average`, `45k_to_50k_average`, `50k_to_60k_average`, `60k_to_75k_average`, `75k_to_100k_average`, `100k_to_125k_average`, `125k_to_150k_average`, `150k_to_200k_average`, `200k_or_more_average`
+)
 
-# Display the table using kable
-kable(final_result, digits = 2)
 
-# Prepare data for plotting
+kable(final_result,digits = 2)
 final_result <- reduction_benefit %>%
-  select(`less_than_10k_average`,
-    `10k_to_15k_average`,
-    `15k_to_20k_average`,
-    `20k_to_25k_average`,
-    `25k_to_30k_average`,
-    `30k_to_35k_average`,
-    `35k_to_40k_average`,
-    `40k_to_45k_average`,
-    `45k_to_50k_average`,
-    `50k_to_60k_average`,
-    `60k_to_75k_average`,
-    `75k_to_100k_average`,
-    `100k_to_125k_average`,
-    `125k_to_150k_average`,
-    `150k_to_200k_average`,
-    `200k_or_more_average`)
-
-income_groups <- c("<10k",
+  select(`less_than_10k_average`, `10k_to_15k_average`, `15k_to_20k_average`, `20k_to_25k_average`, `25k_to_30k_average`, `30k_to_35k_average`, `35k_to_40k_average`, `40k_to_45k_average`, `45k_to_50k_average`, `50k_to_60k_average`, `60k_to_75k_average`, `75k_to_100k_average`, `100k_to_125k_average`, `125k_to_150k_average`, `150k_to_200k_average`, `200k_or_more_average`
+)
+income_groups <-  c(
+  "<10k",
   "10k-15k",
   "15k-20k",
   "20k-25k",
@@ -875,35 +865,50 @@ income_groups <- c("<10k",
   "100k-125k",
   "125k-150k",
   "150k-200k",
-  ">200k")
+  ">200k"
+)
 
-# Transform data for plotting
+
+
+
 plot_table <- t(final_result)
-plot_table <- cbind(income_groups, plot_table)
-plot_table <- as.data.frame(plot_table)
+# colnames(plot_table) = "pollution reduction per person (as a result of metro opening )"
+
+plot_table <- cbind(income_groups, t(final_result))
+
+plot_table = as.data.frame(plot_table)
+
 plot_table$V2 <- as.numeric(plot_table$V2)
+
+# plot_table$income_groups <- as.factor(plot_table$income_groups)
+
 plot_table$income_groups <- factor(plot_table$income_groups, levels = income_groups)
 
-# Plot the data
-png("average_income_change.png", width = 1000, height = 600, units = "px")
-plot <- ggplot(data = plot_table, aes(x = income_groups, y = V2)) +
+# png("average_income_change.png", width = 1000, height = 600, units = "px" )
+plot <- ggplot(data = plot_table, aes(x = income_groups, y = V2)) + 
   geom_bar(stat = "identity", position = "dodge", fill = "#88a6ff", color = "#9e9e9e") +
   expand_limits(y = c(-0.3, 0)) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
-    axis.text.y = element_text(size = 10),
-    axis.title.x = element_text(size = 12),
-    axis.title.y = element_text(size = 12),
-    plot.title = element_text(size = 14)) + labs(x = "Income Groups", y = "Average Pollution Change")
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 10),  # Adjust x-axis text size
+    axis.text.y = element_text(size = 10),  # Adjust y-axis text size
+    axis.title.x = element_text(size = 12),  # Adjust x-axis title size
+    axis.title.y = element_text(size = 12),  # Adjust y-axis title size
+    plot.title = element_text(size = 14)  # Adjust plot title size
+  )+
+  labs(
+    x = "Income Groups",
+    y = "Average Pollution Change",  # Add y-axis label
+  )
 
 # Print the plot
-
-dev.off()
 print(plot)
-# all income groups seem to be getting a similar pollution reduction benefit on the individual level.
+# dev.off()
 
+#all income groups seem to be getting a similar pollution reduction benefit on the individual level.
+  
 ```
 
-### PM2.5 Trends
+### **Reduction Benefit in PM2.5 with Factors**
 
 ```{r}
 regression_stats <- summary(m1 <- lm(log(pm25) ~ MetroOpen:as.factor(station_ID) + construction + as.factor(day_of_week) + as.factor(month) + duringCAIR + Tair_f_tavg + Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + Rainf_tavg + Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + Tair_f_tavg + Rainf_f_tavg + Wind_f_tavg + Qair_f_tavg + Psurf_f_tavg, data = metroOpen_df))
@@ -925,7 +930,7 @@ station_data <- data.frame(coef = station_coef_perc, pval = pval)
 
 # Load station coordinates
 x <- vect(sample_latlon, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
-pm_sources <- vect("/Users/paditya9/teamCharlotte/PM2.5 ShapeFiles/new_pm_coords_sources.shp")
+pm_sources <- vect("PM2.5 ShapeFiles/new_pm_coords_sources.shp")
 
 # Add coefficients to the spatial data
 x$coef <- station_coef_perc
@@ -951,8 +956,6 @@ extent <- buffer(aggregate(pts_buffer), width = 3000)
 
 bg <- get_tiles(ext(extent), zoom = 11, provider = "Esri.WorldStreetMap")
 
-png("final_pmchange_station.png", width = 1500, height = 1000, units = "px")
-
 plot(bg)
 
 plot(pts_buffer, 
@@ -975,5 +978,20 @@ points(x, col = "black", pch = 19, cex = 2)
 # pch=17 gives filled triangles
 points(pm_sources, col = "#B2182B", pch = 17, cex = 2)
 
-dev.off() 
+# Plot the buffer around the stations
+# lines(pts_buffer, col = "red")
+
+# dev.off() 
 ```
+
+## Conclusions
+
+1.  **Effect of Light Rails on PM2.5 Levels**: The introduction of light rails in Charlotte is associated with a 26.5% reduction in PM2.5 levels. This confirms that the light rail system has a significant positive impact on air quality.
+
+2.  **Effect Across Income Groups**: The reduction in PM2.5 levels benefits all income groups nearly equally, with minimal variation, indicating that the improvements in air quality are broadly distributed across different income brackets.
+
+## Future Areas of Exploration
+
+1.  Has the introduction of the light rail improved the quality of human health? 
+
+2.  Does including other pollution control policies, like the Diesel Emission Reduction Act, affect our estimates?

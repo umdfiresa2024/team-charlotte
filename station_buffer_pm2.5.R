@@ -8,7 +8,7 @@ library("tidyverse")
 
 
 
-circles <- vect("buffer_light_rail.shp")
+circles <- vect("Buffer Light Rail/new_buffer_light_rail.shp")
 
 
 # get pm2.5 data for one month

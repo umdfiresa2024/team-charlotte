@@ -1,20 +1,31 @@
 # Team Charlotte Weekly Report
-Adi & David
+Adityaraj Padmanabhna & David Guan
 
 ## Research Question
 
-What is the impact of particulate matter (PM2.5) and other environmental
-factors on human health for individuals living in proximity to the Blue
-Line light rail in Charlotte, North Carolina.
+1.  Does the introduction of light rails affect the particulate matter
+    (PM2.5) levels in Charlotte, North Carolina?
+2.  Do different income brackets have different levels of reduction
+    after introducing light rails?
 
 ## Hypothesis
 
-We hypothesize that:
+1.  **Light Rail opening:**
+    - Null Hypothesis (H₀): The introduction of light rails has no
+      effect on particulate matter (PM2.5) levels in Charlotte, North
+      Carolina.​
 
-1.  The concentration of PM2.5 is higher near the Blue Line light rail
-    stations compared to areas further away.
-2.  Proximity to major traffic intersections, industrial areas, power
-    plants, and airports exacerbates the level of PM
+    - Alternative Hypothesis (H<sub>A</sub>): The introduction of light
+      rails has an effect on particulate matter (PM2.5) levels in
+      Charlotte, North Carolina.
+2.  **Income:**
+    - Null Hypothesis (H₀): There is no difference in the levels of
+      PM2.5 reduction across different income brackets after introducing
+      light rails.
+
+    - Alternative Hypothesis (H<sub>A</sub>): There is a difference in
+      the levels of PM2.5 reduction across different income brackets
+      after introducing light rails.
 
 ## Context
 
@@ -114,7 +125,7 @@ We hypothesize that:
       | Intersection  | South Blvd Tyvola Rd                                    | South Blvd Tyvola Rd, Charlotte, NC                                    |                                                                                                 | -80.87604 | 35.16482 | tyvola rd & south blvd, charlotte, nc 28210, usa                                                   | 35.16482 | -80.87604 | tyvola rd & south blvd, charlotte, nc 28210, usa                                                   |
       | Intersection  | South Blvd Woodlawn Rd                                  | South Blvd Woodlawn Rd, Charlotte, NC                                  |                                                                                                 | -80.87582 | 35.17653 | e woodlawn rd & south blvd, charlotte, nc 28209, usa                                               | 35.17653 | -80.87582 | e woodlawn rd & south blvd, charlotte, nc 28209, usa                                               |
 
-## Running Code
+## Cleaning & Combining Data
 
 ### Installing Packages
 
@@ -125,71 +136,37 @@ We hypothesize that:
 # install.packages("terra")
 # install.packages("leaflet")
 # install.packages("tidycensus)
+# install.packages("RColorBrewer")
 ```
 
 ### Loading Libraries
 
 ``` r
 library("tidyverse")
-```
-
-    ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-    ✔ dplyr     1.1.4     ✔ readr     2.1.5
-    ✔ forcats   1.0.0     ✔ stringr   1.5.1
-    ✔ ggplot2   3.4.4     ✔ tibble    3.2.1
-    ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
-    ✔ purrr     1.0.2     
-    ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-    ✖ dplyr::filter() masks stats::filter()
-    ✖ dplyr::lag()    masks stats::lag()
-    ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
-
-``` r
 library("ggmap")
-```
-
-    ℹ Google's Terms of Service: <https://mapsplatform.google.com>
-      Stadia Maps' Terms of Service: <https://stadiamaps.com/terms-of-service/>
-      OpenStreetMap's Tile Usage Policy: <https://operations.osmfoundation.org/policies/tiles/>
-    ℹ Please cite ggmap if you use it! Use `citation("ggmap")` for details.
-
-``` r
 library("terra")
-```
-
-    Warning: package 'terra' was built under R version 4.3.3
-
-    terra 1.7.78
-
-    Attaching package: 'terra'
-
-    The following object is masked from 'package:ggmap':
-
-        inset
-
-    The following object is masked from 'package:tidyr':
-
-        extract
-
-    The following object is masked from 'package:knitr':
-
-        spin
-
-``` r
 library("maptiles")
 library("leaflet")
 library("tidycensus")
+library("RColorBrewer")
 ```
 
-### Gathering Data using Google API
+Gathered Data using Google API
 
-GitHub doesn’t allow to publicly release the API into README. Use the
-“geocoded_data.csv” to refer the data requested from API
+We utilized the Google Maps API to obtain the coordinates (latitude and
+longitude) and the exact addresses of all the stations mentioned in our
+dataset. This process involved sending requests to the Google Maps API
+with station names and receiving detailed geolocation data in response.
 
-### Cleaning Data
+However, due to GitHub’s policies on not publicly sharing API keys, we
+have not included the API key directly in our repository. Instead, we
+have preprocessed the data and saved the geocoded results in a CSV file
+named “new_station_coords_data.csv”
+
+Cleaning Data
 
 ``` r
-addrs.geo <- read.csv("geocoded_data.csv")
+addrs.geo <- read.csv("new_station_coords_data.csv")
 new_addr <- addrs.geo %>% 
   mutate(
     lat2 = ifelse(
@@ -261,49 +238,20 @@ new_addr <- addrs.geo %>%
   )
 ```
 
-### Storing Data into new CSV File
+Storing Data into new CSV File
 
 ``` r
 # First time users - do NOT over-wrrite CSV file
 # write.csv(new_addr, "new_station_coords_data.csv", row.names = FALSE)
 ```
 
-### Storing Latitude and Longtitude
+Storing Latitude and Longtitude
 
 ``` r
 sample_latlon <- cbind(new_addr$lon2, new_addr$lat2)
-sample_latlon
 ```
 
-               [,1]     [,2]
-     [1,] -80.88292 35.10708
-     [2,] -80.88219 35.11927
-     [3,] -80.87637 35.13569
-     [4,] -80.87748 35.15290
-     [5,] -80.87750 35.16285
-     [6,] -80.87930 35.17590
-     [7,] -80.87501 35.19092
-     [8,] -80.86904 35.19985
-     [9,] -80.85895 35.21212
-    [10,] -80.85446 35.21622
-    [11,] -80.84823 35.21944
-    [12,] -80.84299 35.21867
-    [13,] -80.84312 35.22375
-    [14,] -80.84823 35.21944
-    [15,] -80.83798 35.22751
-    [16,] -80.83516 35.22948
-    [17,] -80.82323 35.23689
-    [18,] -80.81708 35.24174
-    [19,] -80.80545 35.24854
-    [20,] -80.79184 35.25106
-    [21,] -80.77271 35.25996
-    [22,] -80.76629 35.27795
-    [23,] -80.76074 35.28692
-    [24,] -80.75288 35.30112
-    [25,] -80.74547 35.31155
-    [26,] -80.73371 35.31218
-
-### Storing into Vector Data
+Storing into Vector Data
 
 ``` r
 pts <-  vect(sample_latlon)
@@ -314,90 +262,37 @@ plot(pts)
 
 ![](README_files/figure-commonmark/unnamed-chunk-8-1.png)
 
-``` r
-crs(pts)
-```
+### Finding PM2.5 Data
 
-    [1] "GEOGCRS[\"unknown\",\n    DATUM[\"World Geodetic System 1984\",\n        ELLIPSOID[\"WGS 84\",6378137,298.257223563,\n            LENGTHUNIT[\"metre\",1]],\n        ID[\"EPSG\",6326]],\n    PRIMEM[\"Greenwich\",0,\n        ANGLEUNIT[\"degree\",0.0174532925199433],\n        ID[\"EPSG\",8901]],\n    CS[ellipsoidal,2],\n        AXIS[\"longitude\",east,\n            ORDER[1],\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]],\n        AXIS[\"latitude\",north,\n            ORDER[2],\n            ANGLEUNIT[\"degree\",0.0174532925199433,\n                ID[\"EPSG\",9122]]]]"
-
-### Plotting Station Coordinates
-
-``` r
-point_map <- vect(sample_latlon, type="points", crs = crdref)
-point_map
-```
-
-     class       : SpatVector 
-     geometry    : points 
-     dimensions  : 26, 0  (geometries, attributes)
-     extent      : -80.88292, -80.73371, 35.10708, 35.31218  (xmin, xmax, ymin, ymax)
-     coord. ref. : +proj=longlat +datum=WGS84 +no_defs 
-
-``` r
-plot(point_map)
-```
-
-![](README_files/figure-commonmark/unnamed-chunk-9-1.png)
-
-``` r
-pols <- vect(sample_latlon, type="polygons", crs = crdref)
-pols
-```
-
-     class       : SpatVector 
-     geometry    : polygons 
-     dimensions  : 1, 0  (geometries, attributes)
-     extent      : -80.88292, -80.73371, 35.10708, 35.31218  (xmin, xmax, ymin, ymax)
-     coord. ref. : +proj=longlat +datum=WGS84 +no_defs 
-
-``` r
-plot(pols)
-```
-
-![](README_files/figure-commonmark/unnamed-chunk-9-2.png)
-
-``` r
-plot(pols, border="blue", col="yellow", lwd=2)
-# pch = plot charater = 20 - circle 
-# cex = charater expansion
-points(x = pts, col="red", pch = 20, cex = 1)
-```
-
-![](README_files/figure-commonmark/unnamed-chunk-9-3.png)
+Due to the large size of the data files, the code execution was not
+included in the README file. For detailed information on how PM2.5
+levels were extracted, please refer to the file
+“station_buffer_pm2.5.R”.
 
 ### Overlaying Stations with PM2.5
 
 ``` r
 # Plot Stations
 x <- vect(sample_latlon, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
-plot(x)
-```
 
-![](README_files/figure-commonmark/unnamed-chunk-10-1.png)
-
-``` r
 # Plot Factors
-pm_sources <- vect("/Users/paditya9/teamCharlotte/PM2.5 ShapeFiles/new_pm_coords_sources.shp")
+pm_sources <- vect("PM2.5 ShapeFiles/new_pm_coords_sources.shp")
 plot(pm_sources)
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-10-2.png)
+![](README_files/figure-commonmark/unnamed-chunk-9-1.png)
 
 ``` r
 # Plot Buffer around stations
 # Target Buffer Radius =  800 meters
 pts_buffer <- buffer(x, width = 800)
-plot(pts_buffer)
-```
 
-![](README_files/figure-commonmark/unnamed-chunk-10-3.png)
-
-``` r
 # Creating Buffer for Map
 extent<-buffer(x, width = 200)
 
 bg <- get_tiles(ext(extent), zoom = 11)
 
+# Plots the background
 plot(bg)
 
 # pch=19 gives filled circles
@@ -410,9 +305,9 @@ points(pm_sources, col="purple", pch=17, cex=1)
 lines(pts_buffer, col="red")
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-10-4.png)
+![](README_files/figure-commonmark/unnamed-chunk-9-2.png)
 
-### Saving the Buffer’s into ShapeFile
+Saving the Buffer’s into ShapeFile
 
 ``` r
 # First time users - do NOT over-wrrite CSV file
@@ -449,10 +344,10 @@ PM_25_with_date <- PM_25_with_date %>%
 # write.csv(PM_25_with_date, "refined_date_PM25_daily_data.csv")
 ```
 
-### Creating Station ID
+Creating Station ID
 
 ``` r
-stations_coords <- read.csv("/Users/paditya9/teamCharlotte/new_station_coords_data.csv")
+stations_coords <- read.csv("new_station_coords_data.csv")
 
 stations_coords <- stations_coords %>% mutate(station_ID = row_number())
 
@@ -460,10 +355,10 @@ stations_coords <- stations_coords %>% mutate(station_ID = row_number())
 # write.csv(stations_coords, "station_coords_with_stationID_data.csv", row.names = F)
 ```
 
-### Creating Holiday Data
+Creating Holiday Data
 
 ``` r
-holidays_data <- read.csv("/Users/paditya9/teamCharlotte/major_holidays_2000_2025.csv", header = TRUE, stringsAsFactors = FALSE)
+holidays_data <- read.csv("major_holidays_2000_2025.csv", header = TRUE, stringsAsFactors = FALSE)
 
 holidays_data <- holidays_data %>% filter(date >= as.Date("2003-11-24") & date <= as.Date("2011-11-24")) %>% mutate(formatted_date = date)
 
@@ -471,7 +366,7 @@ holidays_data <- holidays_data %>% filter(date >= as.Date("2003-11-24") & date <
 # write.csv(holidays_data, "refined_holidays_data.csv", row.names = F)
 ```
 
-### Cumulative Data
+Cumulative Data
 
 This code chunk combines various data frames into a single data frame,
 emphasizing code re usability and avoiding complexity. It integrates
@@ -493,7 +388,7 @@ pm_25_data <- read.csv("refined_date_PM25_daily_data.csv", header = TRUE, string
 met_data <- read.csv("met_data_charlotte/combinedMeteorologyDataCharlotte.csv", header = TRUE, stringsAsFactors = FALSE)[, c("Tair_f_tavg", "Wind_f_tavg", "Qair_f_tavg", "formatted_date")]
 
 #Reading Holiday Data
-holidays_data <- read.csv("/Users/paditya9/teamCharlotte/refined_holidays_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("holiday", "formatted_date")]
+holidays_data <- read.csv("refined_holidays_data.csv", header = TRUE, stringsAsFactors = FALSE)[, c("holiday", "formatted_date")]
 
 station_pm_met_dataCombined <- merge(stationID_data,pm_25_data, by="station_ID", all = F )
 
@@ -528,14 +423,77 @@ combinedData <- read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
 
 # No PM sources = 0; PM Source near Station = 1
 binaryPMFactor <- combinedData %>% 
-  mutate(PMFactor = ifelse(
+  mutate(control_variables = ifelse(
     station_ID %in% c(5, 6, 9, 10), 1, 0
   ))
 
 # write.csv(binaryPMFactor, "station_pm_met_holiday_dataCombined_formatted.csv" )
 ```
 
-### Adding Binary Column for PM Factor’s
+Adding Binary Column for PM Factor’s The
+
+- Total Observations = 76,000
+
+- Total Variables = 25
+
+- Variable Description
+
+  - 1\. Station ID = Unique identifier for each light rail station
+    (Range: 1-26)
+
+  - 2\. formatted_date = The date when the measurement was recorded,
+    formatted as YYYY-MM-DD.
+
+  - 3\. stations = Name of the light rail station.
+
+  - 4\. address2 = Full address of the light rail station.
+
+  - 5\. pm25 = Measured particulate matter (PM2.5) concentration in the
+    air.
+
+  - 6\. Swnet_tavg = Net short wave radiation flux.
+
+  - 7\. Lwnet_tavg = Net long-wave radiation flux.
+
+  - 8\. Qle_tavg = Latent heat net flux.
+
+  - 9\. Qh_tavg = Sensible heat net flux.
+
+  - 10\. Snowf_tavg = Snow precipitation rate.
+
+  - 11\. Rainf_tavg = Rain precipitation rate.
+
+  - 12\. Qsm_tavg = Snow melt.
+
+  - 13\. SnowT_tavg = Snow Surface temperature.
+
+  - 14\. SWE_tavg = Snow depth water equivalent.
+
+  - 15\. SnowDepth_tavg = Snow depth.
+
+  - 16\. Tair_f_tavg = Temperature.
+
+  - 17\. Rainf_f_tavg = Total precipitation rate.
+
+  - 18\. Wind_f_tavg = Wind speed.
+
+  - 19\. Qair_f_tavg = Specific humidity.
+
+  - 20\. Psurf_f_tavg = Pressure.
+
+  - 21\. Parking = Binary indicator for the presence of parking
+    facilities at the station (1 for presence, 0 for absence).
+
+  - 22\. holiday_binary = Binary indicator for whether the date is a
+    holiday (1 for holiday, 0 for non-holiday).
+
+  - 23\. month = Month of the year when the measurement was recorded.
+
+  - 24\. day_of_week = Day of the week when the measurement was
+    recorded.
+
+  - 25\. PMFactor = Factor variable for PM2.5 levels, possibly
+    indicating an adjusted or categorized value.
 
 ``` r
 combinedData_table <- read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
@@ -585,178 +543,92 @@ metroOpen_df <- df2 %>% filter(date >= startdate & date<=enddate)%>%
 
 regression_stats <- summary(m1 <- lm(log(pm25)~MetroOpen+construction+duringCAIR+as.factor(day_of_week)+as.factor(month) + Tair_f_tavg + Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + Rainf_tavg + Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + Tair_f_tavg + Rainf_f_tavg + Wind_f_tavg + Qair_f_tavg + Psurf_f_tavg + Parking + Parking:MetroOpen, data = metroOpen_df))
 
-df2 <- df2 %>%
-  mutate(before_after = ifelse(date < opendate, "Before", "After"))
+df2 <- df %>% 
+  mutate(date = as.Date(formatted_date, format = "%Y-%m-%d"))
 
-# Plotting the data
-ggplot(df2, aes(x = date, y = pm25, color = before_after)) +
-  geom_line() +
-  labs(title = "PM2.5 Levels Before and After Metro Opening",
-       x = "Date",
-       y = "PM2.5 Levels",
-       color = "Metro Opening") +
-  theme_minimal()
-```
+# Define dates
+startdate <- as.Date("2003-11-24", format = "%Y-%m-%d")
+enddate <- as.Date("2011-11-24", format = "%Y-%m-%d")
+opendate <- as.Date("2007-11-24", format = "%Y-%m-%d")
+constructionstart <- as.Date("2005-02-26", format = "%Y-%m-%d")
+CAIR <- as.Date("2005-03-10", format = "%Y-%m-%d")
 
-![](README_files/figure-commonmark/unnamed-chunk-18-1.png)
+# Filter and mutate the data
+metroOpen_df <- df2 %>% 
+  filter(date >= startdate & date <= enddate) %>%
+  mutate(
+    MetroOpen = ifelse(date >= opendate, 1, 0),
+    construction = ifelse(date >= constructionstart & date < opendate, 1, 0),
+    duringCAIR = ifelse(date >= CAIR & date <= enddate, 1, 0)
+  ) %>%
+  group_by(station_ID) %>%
+  arrange(date, station_ID) %>%
+  mutate(
+    lTair_f_tavg = lag(Tair_f_tavg),
+    lQair_f_tavg = lag(Qair_f_tavg),
+    lPsurf_f_tavg = lag(Psurf_f_tavg),
+    lWind_f_tavg = lag(Wind_f_tavg),
+    t = as.numeric(date - startdate),
+    t2 = t^2,
+    t3 = t^3,
+    t4 = t^4
+  )
 
-``` r
-df2 <- df2 %>%
-  mutate(before_after = ifelse(date < opendate, "Before", "After"))
+# Perform regression
+regression_stats <- summary(
+  m1 <- lm(
+    log(pm25) ~ MetroOpen + construction + duringCAIR + as.factor(day_of_week) + as.factor(month) +
+    Tair_f_tavg + Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + Rainf_tavg + 
+    Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + Tair_f_tavg + Rainf_f_tavg + 
+    Wind_f_tavg + Qair_f_tavg + Psurf_f_tavg + Parking + Parking:MetroOpen,
+    data = metroOpen_df
+  )
+)
 
-ggplot(df2, aes(x = date, y = pm25, color = before_after)) +
-  geom_line() +
-  facet_wrap(~ station_ID, scales = "free_y") +  # Facet by station_ID
+pal <- brewer.pal(n=4,name = "RdBu")
+df3 <- df2 %>% 
+  group_by(date) %>% summarize(mean_pm25 = mean(pm25)) %>%
+mutate(before_after = ifelse(date < opendate, "Before", "After"))
+
+ggplot(df3, aes(x = date, y = mean_pm25, color = before_after))+
+  
+  geom_rect(aes(xmin = constructionstart,xmax = opendate, ymin = -Inf, ymax = Inf), alpha = 1, fill = "gray") +scale_color_manual(values = pal[3:4])+
+  
+  
+  geom_point() +
+  geom_smooth( color = "blue")+
+  # facet_wrap(~ station_ID, scales = "free_y") +  # Facet by station_ID
   labs(
-    title = "PM2.5 Levels Before and After Metro Opening",
     x = "Date",
-    y = "PM2.5 Levels",
+    y = "Average PM2.5 levels across stations",
     color = "Metro Opening"
   ) +
-  theme_minimal()
+  
+  theme_minimal()+geom_vline(xintercept = opendate, linetype = "dashed")+geom_vline(xintercept = CAIR, linetype = "dashed")
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-18-2.png)
+    `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
 
-``` r
-regression_stats
-```
+![](README_files/figure-commonmark/unnamed-chunk-17-1.png)
 
+### Regression Testing
 
-    Call:
-    lm(formula = log(pm25) ~ MetroOpen + construction + duringCAIR + 
-        as.factor(day_of_week) + as.factor(month) + Tair_f_tavg + 
-        Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + 
-        Rainf_tavg + Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + 
-        Tair_f_tavg + Rainf_f_tavg + Wind_f_tavg + Qair_f_tavg + 
-        Psurf_f_tavg + Parking + Parking:MetroOpen, data = metroOpen_df)
+DB-OLS Regression Table
 
-    Residuals:
-         Min       1Q   Median       3Q      Max 
-    -2.64321 -0.25854  0.01957  0.27824  1.33960 
+ 
 
-    Coefficients:
-                                      Estimate Std. Error t value Pr(>|t|)    
-    (Intercept)                      3.580e-01  4.986e-01   0.718  0.47268    
-    MetroOpen                       -2.584e-01  2.429e-02 -10.638  < 2e-16 ***
-    construction                    -2.112e-02  2.390e-02  -0.884  0.37687    
-    duringCAIR                      -4.416e-02  2.376e-02  -1.859  0.06306 .  
-    as.factor(day_of_week)Monday    -2.456e-02  5.555e-03  -4.422 9.81e-06 ***
-    as.factor(day_of_week)Saturday   4.461e-03  5.543e-03   0.805  0.42097    
-    as.factor(day_of_week)Sunday    -1.638e-02  5.550e-03  -2.951  0.00317 ** 
-    as.factor(day_of_week)Thursday   7.309e-03  5.542e-03   1.319  0.18720    
-    as.factor(day_of_week)Tuesday    2.170e-02  5.548e-03   3.912 9.15e-05 ***
-    as.factor(day_of_week)Wednesday  4.022e-02  5.543e-03   7.255 4.05e-13 ***
-    as.factor(month)August           1.163e-01  1.052e-02  11.059  < 2e-16 ***
-    as.factor(month)December         1.693e-01  1.332e-02  12.708  < 2e-16 ***
-    as.factor(month)February         1.605e-01  1.072e-02  14.969  < 2e-16 ***
-    as.factor(month)January          1.227e-01  1.265e-02   9.703  < 2e-16 ***
-    as.factor(month)July             1.362e-01  1.053e-02  12.939  < 2e-16 ***
-    as.factor(month)June             7.914e-02  9.894e-03   7.999 1.27e-15 ***
-    as.factor(month)March            5.425e-02  8.269e-03   6.561 5.39e-11 ***
-    as.factor(month)May             -6.484e-03  8.010e-03  -0.809  0.41823    
-    as.factor(month)November         1.131e-01  1.175e-02   9.625  < 2e-16 ***
-    as.factor(month)October         -4.310e-02  9.401e-03  -4.585 4.54e-06 ***
-    as.factor(month)September       -1.440e-02  9.130e-03  -1.577  0.11476    
-    Tair_f_tavg                      4.797e-01  1.275e-02  37.612  < 2e-16 ***
-    Swnet_tavg                       7.406e-03  1.908e-04  38.815  < 2e-16 ***
-    Lwnet_tavg                       7.557e-03  2.191e-04  34.488  < 2e-16 ***
-    Qle_tavg                        -6.293e-03  1.561e-04 -40.306  < 2e-16 ***
-    Qh_tavg                         -3.287e-03  1.499e-04 -21.921  < 2e-16 ***
-    Snowf_tavg                       8.046e+06  7.332e+07   0.110  0.91261    
-    Rainf_tavg                       8.045e+06  7.332e+07   0.110  0.91262    
-    Qsm_tavg                        -8.357e+03  8.196e+02 -10.197  < 2e-16 ***
-    SnowT_tavg                      -4.990e-01  1.282e-02 -38.928  < 2e-16 ***
-    SWE_tavg                        -3.964e-02  8.639e-03  -4.588 4.48e-06 ***
-    SnowDepth_tavg                   9.266e-01  7.878e-02  11.761  < 2e-16 ***
-    Rainf_f_tavg                    -8.045e+06  7.332e+07  -0.110  0.91262    
-    Wind_f_tavg                     -1.633e-01  1.671e-03 -97.677  < 2e-16 ***
-    Qair_f_tavg                      3.051e+01  1.494e+00  20.416  < 2e-16 ***
-    Psurf_f_tavg                     7.859e-05  3.896e-06  20.169  < 2e-16 ***
-    Parking                         -2.322e-03  4.299e-03  -0.540  0.58904    
-    MetroOpen:Parking                1.731e-02  6.078e-03   2.847  0.00441 ** 
-    ---
-    Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-    Residual standard error: 0.4076 on 75960 degrees of freedom
-    Multiple R-squared:  0.3796,    Adjusted R-squared:  0.3793 
-    F-statistic:  1256 on 37 and 75960 DF,  p-value: < 2.2e-16
-
-### Interpreting the Regression Model results
-
-- **Intercept** = 43.02%
-
-- **MetroOpen** = -22.75%
-
-- **construction** = -2.09%
-
-- **duringCAIR** = -4.32%
-
-- **as.factor(day_of_week)Monday** = -2.43%
-
-- **as.factor(day_of_week)Saturday** = 0.45%
-
-- **as.factor(day_of_week)Sunday** = -1.63%
-
-- **as.factor(day_of_week)Thursday** = 0.73%
-
-- **as.factor(day_of_week)Tuesday** = 2.20%
-
-- **as.factor(day_of_week)Wednesday** = 4.10%
-
-- **as.factor(month)August** = 12.33%
-
-- **as.factor(month)December** = 18.44%
-
-- **as.factor(month)February** = 17.41%
-
-- **as.factor(month)January** = 13.05%
-
-- **as.factor(month)July** = 14.59%
-
-- **as.factor(month)June** = 8.25%
-
-- **as.factor(month)March** = 5.58%
-
-- **as.factor(month)May** = -0.65%
-
-- **as.factor(month)November** = 11.97%
-
-- **as.factor(month)October** = -4.22%
-
-- **as.factor(month)September** = -1.43%
-
-- **Tair_f_tavg** = 61.55%
-
-- **Swnet_tavg** = 0.74%
-
-- **Lwnet_tavg** = 0.76%
-
-- **Qle_tavg** = -0.63%
-
-- **Qh_tavg** = -0.33%
-
-- **Snowf_tavg** = ∞ (extremely large value, likely unrealistic)
-
-- **Rainf_tavg** = ∞ (extremely large value, likely unrealistic)
-
-- **Qsm_tavg** = -100% (suggests a near-total reduction in PM2.5 levels)
-
-- **SnowT_tavg** = -39.30%
-
-- **SWE_tavg** = -3.89%
-
-- **SnowDepth_tavg** = 152.61%
-
-- **Rainf_f_tavg** = ∞ (extremely large value, likely unrealistic)
-
-- **Wind_f_tavg** = -15.06%
-
-- **Qair_f_tavg** = 3026.55%
-
-- **Psurf_f_tavg** = 7.86%
-
-- **Parking** = -0.23%
+|                                  |             |
+|----------------------------------|-------------|
+|                                  | Log(PM2.5)  |
+| Factors                          | \(1\)       |
+| MetroOpen                        | -0.26\*\*\* |
+| Construction Dummy               |             |
+| Day of Week Fixed Effects        |             |
+| Month Fixed Effects              |             |
+| Temperature, Wind, Humidity      |             |
+| Holiday Binary                   |             |
+| All Other Weather Controls       |             |
+| Clean Air Interstate Rule Binary |             |
 
 ### Calculating Station level pollution change
 
@@ -809,6 +681,8 @@ kable(cbind(coef, pval), digits=2)
 
 ### Census Data
 
+Using American Census Survey (ACS) Data
+
 ``` r
 vars<-load_variables(year=2010, dataset="acs1", cache = TRUE)
 
@@ -817,6 +691,14 @@ write.csv(vars, "demographics_variable_acs.csv")
 ```
 
 ### Interest Variable - Income
+
+We hypothesize that lower-income individuals live closer to metro rail
+lines and high-density urban areas, leading to higher PM2.5 exposure.
+Conversely, higher-income individuals likely reside in suburban areas,
+using private transportation and experiencing lower PM2.5 exposure.
+
+The variable “targetvars” stores all the different income brackets from
+the demographics file that was retreieved.
 
 ``` r
 #vars range from less than 10k to more than 200k
@@ -858,341 +740,7 @@ income_name<-income %>%
 
 ``` r
 buff<-vect("Buffer Light Rail/new_buffer_light_rail.shp")
-plot(buff)
-```
-
-![](README_files/figure-commonmark/unnamed-chunk-22-1.png)
-
-``` r
 shape<-tigris::tracts(state="NC", county="Mecklenburg", class="sp", year=2010)
-```
-
-
-      |                                                                            
-      |                                                                      |   0%
-      |                                                                            
-      |                                                                      |   1%
-      |                                                                            
-      |=                                                                     |   1%
-      |                                                                            
-      |=                                                                     |   2%
-      |                                                                            
-      |==                                                                    |   2%
-      |                                                                            
-      |==                                                                    |   3%
-      |                                                                            
-      |===                                                                   |   4%
-      |                                                                            
-      |===                                                                   |   5%
-      |                                                                            
-      |====                                                                  |   5%
-      |                                                                            
-      |====                                                                  |   6%
-      |                                                                            
-      |=====                                                                 |   6%
-      |                                                                            
-      |=====                                                                 |   7%
-      |                                                                            
-      |=====                                                                 |   8%
-      |                                                                            
-      |======                                                                |   8%
-      |                                                                            
-      |======                                                                |   9%
-      |                                                                            
-      |=======                                                               |   9%
-      |                                                                            
-      |=======                                                               |  10%
-      |                                                                            
-      |=======                                                               |  11%
-      |                                                                            
-      |========                                                              |  11%
-      |                                                                            
-      |========                                                              |  12%
-      |                                                                            
-      |=========                                                             |  12%
-      |                                                                            
-      |=========                                                             |  13%
-      |                                                                            
-      |=========                                                             |  14%
-      |                                                                            
-      |==========                                                            |  14%
-      |                                                                            
-      |==========                                                            |  15%
-      |                                                                            
-      |===========                                                           |  15%
-      |                                                                            
-      |===========                                                           |  16%
-      |                                                                            
-      |============                                                          |  16%
-      |                                                                            
-      |============                                                          |  17%
-      |                                                                            
-      |============                                                          |  18%
-      |                                                                            
-      |=============                                                         |  18%
-      |                                                                            
-      |==============                                                        |  20%
-      |                                                                            
-      |==============                                                        |  21%
-      |                                                                            
-      |===============                                                       |  21%
-      |                                                                            
-      |===============                                                       |  22%
-      |                                                                            
-      |================                                                      |  22%
-      |                                                                            
-      |================                                                      |  23%
-      |                                                                            
-      |=================                                                     |  24%
-      |                                                                            
-      |=================                                                     |  25%
-      |                                                                            
-      |==================                                                    |  25%
-      |                                                                            
-      |==================                                                    |  26%
-      |                                                                            
-      |===================                                                   |  26%
-      |                                                                            
-      |===================                                                   |  27%
-      |                                                                            
-      |===================                                                   |  28%
-      |                                                                            
-      |====================                                                  |  28%
-      |                                                                            
-      |====================                                                  |  29%
-      |                                                                            
-      |=====================                                                 |  29%
-      |                                                                            
-      |=====================                                                 |  30%
-      |                                                                            
-      |=====================                                                 |  31%
-      |                                                                            
-      |======================                                                |  31%
-      |                                                                            
-      |======================                                                |  32%
-      |                                                                            
-      |=======================                                               |  32%
-      |                                                                            
-      |=======================                                               |  33%
-      |                                                                            
-      |=======================                                               |  34%
-      |                                                                            
-      |========================                                              |  34%
-      |                                                                            
-      |========================                                              |  35%
-      |                                                                            
-      |=========================                                             |  35%
-      |                                                                            
-      |=========================                                             |  36%
-      |                                                                            
-      |==========================                                            |  36%
-      |                                                                            
-      |==========================                                            |  37%
-      |                                                                            
-      |==========================                                            |  38%
-      |                                                                            
-      |===========================                                           |  38%
-      |                                                                            
-      |===========================                                           |  39%
-      |                                                                            
-      |============================                                          |  39%
-      |                                                                            
-      |============================                                          |  40%
-      |                                                                            
-      |============================                                          |  41%
-      |                                                                            
-      |=============================                                         |  41%
-      |                                                                            
-      |=============================                                         |  42%
-      |                                                                            
-      |==============================                                        |  42%
-      |                                                                            
-      |==============================                                        |  43%
-      |                                                                            
-      |===============================                                       |  44%
-      |                                                                            
-      |===============================                                       |  45%
-      |                                                                            
-      |================================                                      |  45%
-      |                                                                            
-      |================================                                      |  46%
-      |                                                                            
-      |=================================                                     |  47%
-      |                                                                            
-      |=================================                                     |  48%
-      |                                                                            
-      |==================================                                    |  48%
-      |                                                                            
-      |==================================                                    |  49%
-      |                                                                            
-      |===================================                                   |  49%
-      |                                                                            
-      |===================================                                   |  50%
-      |                                                                            
-      |===================================                                   |  51%
-      |                                                                            
-      |====================================                                  |  51%
-      |                                                                            
-      |====================================                                  |  52%
-      |                                                                            
-      |=====================================                                 |  52%
-      |                                                                            
-      |=====================================                                 |  53%
-      |                                                                            
-      |=====================================                                 |  54%
-      |                                                                            
-      |======================================                                |  54%
-      |                                                                            
-      |======================================                                |  55%
-      |                                                                            
-      |=======================================                               |  55%
-      |                                                                            
-      |=======================================                               |  56%
-      |                                                                            
-      |========================================                              |  56%
-      |                                                                            
-      |========================================                              |  57%
-      |                                                                            
-      |========================================                              |  58%
-      |                                                                            
-      |=========================================                             |  58%
-      |                                                                            
-      |=========================================                             |  59%
-      |                                                                            
-      |==========================================                            |  59%
-      |                                                                            
-      |==========================================                            |  60%
-      |                                                                            
-      |==========================================                            |  61%
-      |                                                                            
-      |===========================================                           |  61%
-      |                                                                            
-      |===========================================                           |  62%
-      |                                                                            
-      |============================================                          |  62%
-      |                                                                            
-      |============================================                          |  63%
-      |                                                                            
-      |============================================                          |  64%
-      |                                                                            
-      |=============================================                         |  64%
-      |                                                                            
-      |=============================================                         |  65%
-      |                                                                            
-      |==============================================                        |  65%
-      |                                                                            
-      |==============================================                        |  66%
-      |                                                                            
-      |===============================================                       |  67%
-      |                                                                            
-      |===============================================                       |  68%
-      |                                                                            
-      |================================================                      |  68%
-      |                                                                            
-      |================================================                      |  69%
-      |                                                                            
-      |=================================================                     |  69%
-      |                                                                            
-      |=================================================                     |  70%
-      |                                                                            
-      |=================================================                     |  71%
-      |                                                                            
-      |==================================================                    |  71%
-      |                                                                            
-      |==================================================                    |  72%
-      |                                                                            
-      |===================================================                   |  72%
-      |                                                                            
-      |===================================================                   |  73%
-      |                                                                            
-      |===================================================                   |  74%
-      |                                                                            
-      |====================================================                  |  74%
-      |                                                                            
-      |====================================================                  |  75%
-      |                                                                            
-      |=====================================================                 |  75%
-      |                                                                            
-      |=====================================================                 |  76%
-      |                                                                            
-      |======================================================                |  77%
-      |                                                                            
-      |======================================================                |  78%
-      |                                                                            
-      |=======================================================               |  78%
-      |                                                                            
-      |=======================================================               |  79%
-      |                                                                            
-      |========================================================              |  79%
-      |                                                                            
-      |========================================================              |  80%
-      |                                                                            
-      |========================================================              |  81%
-      |                                                                            
-      |=========================================================             |  81%
-      |                                                                            
-      |=========================================================             |  82%
-      |                                                                            
-      |==========================================================            |  83%
-      |                                                                            
-      |==========================================================            |  84%
-      |                                                                            
-      |===========================================================           |  84%
-      |                                                                            
-      |===========================================================           |  85%
-      |                                                                            
-      |============================================================          |  85%
-      |                                                                            
-      |============================================================          |  86%
-      |                                                                            
-      |=============================================================         |  87%
-      |                                                                            
-      |=============================================================         |  88%
-      |                                                                            
-      |==============================================================        |  88%
-      |                                                                            
-      |==============================================================        |  89%
-      |                                                                            
-      |===============================================================       |  89%
-      |                                                                            
-      |===============================================================       |  90%
-      |                                                                            
-      |===============================================================       |  91%
-      |                                                                            
-      |================================================================      |  91%
-      |                                                                            
-      |================================================================      |  92%
-      |                                                                            
-      |=================================================================     |  92%
-      |                                                                            
-      |=================================================================     |  93%
-      |                                                                            
-      |==================================================================    |  94%
-      |                                                                            
-      |==================================================================    |  95%
-      |                                                                            
-      |===================================================================   |  95%
-      |                                                                            
-      |===================================================================   |  96%
-      |                                                                            
-      |====================================================================  |  97%
-      |                                                                            
-      |====================================================================  |  98%
-      |                                                                            
-      |===================================================================== |  98%
-      |                                                                            
-      |===================================================================== |  99%
-      |                                                                            
-      |======================================================================|  99%
-      |                                                                            
-      |======================================================================| 100%
-
-    Warning: Spatial* (sp) classes are no longer formally
-    supported in tigris as of version 2.0. We strongly
-    recommend updating your workflow to use sf objects
-    (the default in tigris) instead.
-
-``` r
 shapevect<-vect(shape)
 shapedf<-as.data.frame(shape)
 ```
@@ -1267,6 +815,21 @@ summary(tract_income_df)
      Max.   :289.00   Max.   :442.00   Max.   :777.00   Max.   :39492388  
 
 Inserting blocks with buffer
+
+This code chunk examines the demographic distribution and environmental
+benefits of light rail stations in Charlotte, NC. The code processes
+spatial data to:
+
+1.  Calculate the fraction of each income bracket within buffer zones
+    around light rail stations, scaling population data based on the
+    area of overlap between census tracts and buffers.
+2.  Compute changes in pollution levels due to light rail stations,
+    estimating the total impact across all stations. The average
+    pollution reduction for each income bracket is calculated,
+    highlighting the benefits for different demographic groups.
+3.  Present the results in a summary table, showing the average
+    pollution reduction experienced by individuals in each income
+    bracket.
 
 ``` r
 buffdf <- as.data.frame(buff)
@@ -1580,8 +1143,6 @@ output <- rbind(output,intdf)
     25       2.75257446       1.52065175     4.145285e-03  24
     26       2.29519962       1.27233758     0.000000e+00  25
 
-Summarize demographic groups that live near light rail stations
-
 ``` r
 sum_demog<-output %>%
   #combinging all the station's data together
@@ -1633,3 +1194,269 @@ kable(sum_demog, digits=2)
 | total | less_than_10k | 10k_to_15k | 15k_to_20k | 20k_to_25k | 25k_to_30k | 30k_to_35k | 35k_to_40k | 40k_to_45k | 45k_to_50k | 50k_to_60k | 60k_to_75k | 75k_to_100k | 100k_to_125k | 125k_to_150k | 150k_to_200k | 200k_or_more | pct_less_than_10k | pct_10k_to_15k | pct_15k_to_20k | pct_20k_to_25k | pct_25k_to_30k | pct_30k_to_35k | pct_35k_to_40k | pct_40k_to_45k | pct_45k_to_50k | pct_50k_to_60k | pct_60k_to_75k | pct_75k_to_100k | pct_100k_to_125k | pct_125k_to_150k | pct_150k_to_200k | pct_200k_or_more |
 |------:|--------------:|-----------:|-----------:|-----------:|-----------:|-----------:|-----------:|-----------:|-----------:|-----------:|-----------:|------------:|-------------:|-------------:|-------------:|-------------:|------------------:|---------------:|---------------:|---------------:|---------------:|---------------:|---------------:|---------------:|---------------:|---------------:|---------------:|----------------:|-----------------:|-----------------:|-----------------:|-----------------:|
 | 24859 |       2714.93 |    1649.37 |    1501.85 |    1692.24 |     1454.5 |    1628.79 |    1203.33 |     942.35 |     857.39 |    1839.79 |     2390.5 |      2145.2 |      1638.28 |       904.74 |       980.39 |      1315.36 |             10.92 |           6.63 |           6.04 |           6.81 |           5.85 |           6.55 |           4.84 |           3.79 |           3.45 |            7.4 |           9.62 |            8.63 |             6.59 |             3.64 |             3.94 |             5.29 |
+
+``` r
+everything <- cbind(output,coef)
+
+reduction_benefit <- everything%>%
+  mutate(
+    #multiplying number of people in demographic by change in pollution caused by light rail
+    total_change = total*coef,
+    `less_than_10k_change` = `less_than_10k` * `coef`,
+`10k_to_15k_change` = `10k_to_15k` * `coef`,
+`15k_to_20k_change` = `15k_to_20k` * `coef`,
+`20k_to_25k_change` = `20k_to_25k` * `coef`,
+`25k_to_30k_change` = `25k_to_30k` * `coef`,
+`30k_to_35k_change` = `30k_to_35k` * `coef`,
+`35k_to_40k_change` = `35k_to_40k` * `coef`,
+`40k_to_45k_change` = `40k_to_45k` * `coef`,
+`45k_to_50k_change` = `45k_to_50k` * `coef`,
+`50k_to_60k_change` = `50k_to_60k` * `coef`,
+`60k_to_75k_change` = `60k_to_75k` * `coef`,
+`75k_to_100k_change` = `75k_to_100k` * `coef`,
+`100k_to_125k_change` = `100k_to_125k` * `coef`,
+`125k_to_150k_change` = `125k_to_150k` * `coef`,
+`150k_to_200k_change` = `150k_to_200k` * `coef`,
+`200k_or_more_change` = `200k_or_more` * `coef`
+    
+    )%>%
+  #summing impact across all stations
+  summarize(total_change_sum=sum(total_change),
+            total_pop = sum(total),
+            `less_than_10k_change_sum` = sum(`less_than_10k_change`),
+`10k_to_15k_change_sum` = sum(`10k_to_15k_change`),
+`15k_to_20k_change_sum` = sum(`15k_to_20k_change`),
+`20k_to_25k_change_sum` = sum(`20k_to_25k_change`),
+`25k_to_30k_change_sum` = sum(`25k_to_30k_change`),
+`30k_to_35k_change_sum` = sum(`30k_to_35k_change`),
+`35k_to_40k_change_sum` = sum(`35k_to_40k_change`),
+`40k_to_45k_change_sum` = sum(`40k_to_45k_change`),
+`45k_to_50k_change_sum` = sum(`45k_to_50k_change`),
+`50k_to_60k_change_sum` = sum(`50k_to_60k_change`),
+`60k_to_75k_change_sum` = sum(`60k_to_75k_change`),
+`75k_to_100k_change_sum` = sum(`75k_to_100k_change`),
+`100k_to_125k_change_sum` = sum(`100k_to_125k_change`),
+`125k_to_150k_change_sum` = sum(`125k_to_150k_change`),
+`150k_to_200k_change_sum` = sum(`150k_to_200k_change`),
+`200k_or_more_change_sum` = sum(`200k_or_more_change`),
+
+#sums together populations of different income brackets across the stations
+`less_than_10k` = sum(`less_than_10k`),
+`10k_to_15k` = sum(`10k_to_15k`),
+`15k_to_20k` = sum(`15k_to_20k`),
+`20k_to_25k` = sum(`20k_to_25k`),
+`25k_to_30k` = sum(`25k_to_30k`),
+`30k_to_35k` = sum(`30k_to_35k`),
+`35k_to_40k` = sum(`35k_to_40k`),
+`40k_to_45k` = sum(`40k_to_45k`),
+`45k_to_50k` = sum(`45k_to_50k`),
+`50k_to_60k` = sum(`50k_to_60k`),
+`60k_to_75k` = sum(`60k_to_75k`),
+`75k_to_100k` = sum(`75k_to_100k`),
+`100k_to_125k` = sum(`100k_to_125k`),
+`125k_to_150k` = sum(`125k_to_150k`),
+`150k_to_200k` = sum(`150k_to_200k`),
+`200k_or_more` = sum(`200k_or_more`)
+
+            
+            
+            ) %>%
+  #ave variables are the amount of change in pollution an individual of that demographic would recieve on average
+    mutate(total_change_average=total_change_sum/total_pop,
+           
+      `less_than_10k_average` = `less_than_10k_change_sum` / `less_than_10k`,
+`10k_to_15k_average` = `10k_to_15k_change_sum` / `10k_to_15k`,
+`15k_to_20k_average` = `15k_to_20k_change_sum` / `15k_to_20k`,
+`20k_to_25k_average` = `20k_to_25k_change_sum` / `20k_to_25k`,
+`25k_to_30k_average` = `25k_to_30k_change_sum` / `25k_to_30k`,
+`30k_to_35k_average` = `30k_to_35k_change_sum` / `30k_to_35k`,
+`35k_to_40k_average` = `35k_to_40k_change_sum` / `35k_to_40k`,
+`40k_to_45k_average` = `40k_to_45k_change_sum` / `40k_to_45k`,
+`45k_to_50k_average` = `45k_to_50k_change_sum` / `45k_to_50k`,
+`50k_to_60k_average` = `50k_to_60k_change_sum` / `50k_to_60k`,
+`60k_to_75k_average` = `60k_to_75k_change_sum` / `60k_to_75k`,
+`75k_to_100k_average` = `75k_to_100k_change_sum` / `75k_to_100k`,
+`100k_to_125k_average` = `100k_to_125k_change_sum` / `100k_to_125k`,
+`125k_to_150k_average` = `125k_to_150k_change_sum` / `125k_to_150k`,
+`150k_to_200k_average` = `150k_to_200k_change_sum` / `150k_to_200k`,
+`200k_or_more_average` = `200k_or_more_change_sum` / `200k_or_more`
+)
+
+final_result <- reduction_benefit %>%
+  select(total_change_average,`less_than_10k_average`, `10k_to_15k_average`, `15k_to_20k_average`, `20k_to_25k_average`, `25k_to_30k_average`, `30k_to_35k_average`, `35k_to_40k_average`, `40k_to_45k_average`, `45k_to_50k_average`, `50k_to_60k_average`, `60k_to_75k_average`, `75k_to_100k_average`, `100k_to_125k_average`, `125k_to_150k_average`, `150k_to_200k_average`, `200k_or_more_average`
+)
+
+
+kable(final_result,digits = 2)
+```
+
+| total_change_average | less_than_10k_average | 10k_to_15k_average | 15k_to_20k_average | 20k_to_25k_average | 25k_to_30k_average | 30k_to_35k_average | 35k_to_40k_average | 40k_to_45k_average | 45k_to_50k_average | 50k_to_60k_average | 60k_to_75k_average | 75k_to_100k_average | 100k_to_125k_average | 125k_to_150k_average | 150k_to_200k_average | 200k_or_more_average |
+|---------------------:|----------------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|--------------------:|---------------------:|---------------------:|---------------------:|---------------------:|
+|             941794.3 |              723873.7 |           913349.5 |           535128.4 |           631141.9 |           425781.1 |           667596.3 |           858180.4 |           27130.75 |           583608.5 |           630283.2 |            1224778 |             1259106 |              1371636 |              1767583 |              1708899 |              1895423 |
+
+``` r
+final_result <- reduction_benefit %>%
+  select(`less_than_10k_average`, `10k_to_15k_average`, `15k_to_20k_average`, `20k_to_25k_average`, `25k_to_30k_average`, `30k_to_35k_average`, `35k_to_40k_average`, `40k_to_45k_average`, `45k_to_50k_average`, `50k_to_60k_average`, `60k_to_75k_average`, `75k_to_100k_average`, `100k_to_125k_average`, `125k_to_150k_average`, `150k_to_200k_average`, `200k_or_more_average`
+)
+income_groups <-  c(
+  "<10k",
+  "10k-15k",
+  "15k-20k",
+  "20k-25k",
+  "25k-30k",
+  "30k-35k",
+  "35k-40k",
+  "40k-45k",
+  "45k-50k",
+  "50k-60k",
+  "60k-75k",
+  "75k-100k",
+  "100k-125k",
+  "125k-150k",
+  "150k-200k",
+  ">200k"
+)
+
+
+
+
+plot_table <- t(final_result)
+# colnames(plot_table) = "pollution reduction per person (as a result of metro opening )"
+
+plot_table <- cbind(income_groups, t(final_result))
+
+plot_table = as.data.frame(plot_table)
+
+plot_table$V2 <- as.numeric(plot_table$V2)
+
+# plot_table$income_groups <- as.factor(plot_table$income_groups)
+
+plot_table$income_groups <- factor(plot_table$income_groups, levels = income_groups)
+
+# png("average_income_change.png", width = 1000, height = 600, units = "px" )
+plot <- ggplot(data = plot_table, aes(x = income_groups, y = V2)) + 
+  geom_bar(stat = "identity", position = "dodge", fill = "#88a6ff", color = "#9e9e9e") +
+  expand_limits(y = c(-0.3, 0)) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 10),  # Adjust x-axis text size
+    axis.text.y = element_text(size = 10),  # Adjust y-axis text size
+    axis.title.x = element_text(size = 12),  # Adjust x-axis title size
+    axis.title.y = element_text(size = 12),  # Adjust y-axis title size
+    plot.title = element_text(size = 14)  # Adjust plot title size
+  )+
+  labs(
+    x = "Income Groups",
+    y = "Average Pollution Change",  # Add y-axis label
+  )
+
+# Print the plot
+print(plot)
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-23-1.png)
+
+``` r
+# dev.off()
+
+#all income groups seem to be getting a similar pollution reduction benefit on the individual level.
+```
+
+### **Reduction Benefit in PM2.5 with Factors**
+
+``` r
+regression_stats <- summary(m1 <- lm(log(pm25) ~ MetroOpen:as.factor(station_ID) + construction + as.factor(day_of_week) + as.factor(month) + duringCAIR + Tair_f_tavg + Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + Rainf_tavg + Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + Tair_f_tavg + Rainf_f_tavg + Wind_f_tavg + Qair_f_tavg + Psurf_f_tavg, data = metroOpen_df))
+
+c <- coef(m1)
+len_coef <- length(coef(m1))
+
+# Get coefficients of the station-level effect
+station_coef <- coef(m1)[(len_coef-(26-1)):len_coef]
+
+# Convert coefficients to percentage change
+station_coef_perc <- station_coef * 100
+
+# Get p-values of the station-level effect (p < 0.05 is statistically significant)
+pval <- summary(m1)$coefficients[,4][(len_coef-(26-1)):len_coef]
+
+# Combine coefficients and p-values into a dataframe
+station_data <- data.frame(coef = station_coef_perc, pval = pval)
+
+# Load station coordinates
+x <- vect(sample_latlon, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+pm_sources <- vect("PM2.5 ShapeFiles/new_pm_coords_sources.shp")
+
+# Add coefficients to the spatial data
+x$coef <- station_coef_perc
+x$pval <- pval
+
+# Define the breaks for the coefficients
+
+breaks_interval <- c(-32, -30, -28, -26, -24, -22, -20)
+
+# Create color palette with different shades of green (adjust green range as desired)
+color_palette <- colorRampPalette(c("#2166AC", "#D1E5F0"))
+colors <- color_palette(length(breaks_interval) - 1)
+
+
+
+
+# Creating Buffer around stations
+# Used Buffer Radius is 800 meters
+pts_buffer <- buffer(x, width = 800)
+
+# Creating Buffer for Map
+extent <- buffer(aggregate(pts_buffer), width = 3000)
+
+bg <- get_tiles(ext(extent), zoom = 11, provider = "Esri.WorldStreetMap")
+
+plot(bg)
+
+plot(pts_buffer, 
+     "coef",
+     type = "interval",
+     breaks = breaks_interval, 
+     col = colors,
+     cex.main = 2.125,
+     plg = list( # parameters for drawing legend
+       title = "Change in PM2.5 \n (in Percents)",
+       title.cex = 1.5, # Legend title size
+       cex = 1.5, # Legend text size
+       inset = c(0.02, 0.02), # Legend inset (spacing from the plot)
+       ncol = 1), # Number of columns in the legend
+     add = TRUE)
+
+# pch=19 gives filled circles
+points(x, col = "black", pch = 19, cex = 2)
+
+# pch=17 gives filled triangles
+points(pm_sources, col = "#B2182B", pch = 17, cex = 2)
+```
+
+![](README_files/figure-commonmark/unnamed-chunk-24-1.png)
+
+``` r
+# Plot the buffer around the stations
+# lines(pts_buffer, col = "red")
+
+# dev.off() 
+```
+
+## Conclusions
+
+1.  **Effect of Light Rails on PM2.5 Levels**: The introduction of light
+    rails in Charlotte is associated with a 26.5% reduction in PM2.5
+    levels. This confirms that the light rail system has a significant
+    positive impact on air quality.
+
+2.  **Effect Across Income Groups**: The reduction in PM2.5 levels
+    benefits all income groups nearly equally, with minimal variation,
+    indicating that the improvements in air quality are broadly
+    distributed across different income brackets.
+
+## Future Areas of Exploration
+
+1.  Has the introduction of the light rail improved the quality of human
+    health? 
+
+2.  Does including other pollution control policies, like the Diesel
+    Emission Reduction Act, affect our estimates?

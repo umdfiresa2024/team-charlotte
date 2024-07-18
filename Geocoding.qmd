@@ -14,13 +14,13 @@ This script leverages the Google Maps Geocoding API to retrieve the latitude and
 
 ```{r}
 #| echo: false
-install.packages("tidyverse")
-install.packages("ggmap")
-install.packages("maptiles")
-install.packages("terra")
-install.packages("leaflet")
-install.packages("lubridate")
-install.packages("RColorBrewer")
+# install.packages("tidyverse")
+# install.packages("ggmap")
+# install.packages("maptiles")
+# install.packages("terra")
+# install.packages("leaflet")
+# install.packages("lubridate")
+# install.packages("RColorBrewer")
 ```
 
 ### Loading Libraries
