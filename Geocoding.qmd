@@ -351,9 +351,10 @@ combinedData <- read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
 
 # No PM sources = 0; PM Source near Station = 1
 binaryPMFactor <- combinedData %>% 
-  mutate(PMFactor = ifelse(
+  mutate(control_variables = ifelse(
     station_ID %in% c(5, 6, 9, 10), 1, 0
   ))
+
 write.csv(binaryPMFactor, "station_pm_met_holiday_dataCombined_formatted.csv" )
 
 ```
