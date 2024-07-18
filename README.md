@@ -615,26 +615,81 @@ ggplot(df3, aes(x = date, y = mean_pm25, color = before_after))+
 
 DB-OLS Regression Table
 
- 
+**Log(PM2.5)**
 
-|                                  |             |
-|----------------------------------|-------------|
-|                                  | Log(PM2.5)  |
-| Factors                          | \(1\)       |
-| MetroOpen                        | -0.26\*\*\* |
-| Construction Dummy               |             |
-| Day of Week Fixed Effects        |             |
-| Month Fixed Effects              |             |
-| Temperature, Wind, Humidity      |             |
-| Holiday Binary                   |             |
-| All Other Weather Controls       |             |
-| Clean Air Interstate Rule Binary |             |
+| Factors                          | \(1\)       | \(2\)       | \(3\)       | \(4\)       | \(5\)       |
+|----------------------------------|-------------|-------------|-------------|-------------|-------------|
+| MetroOpen                        | -0.26\*\*\* | -0.31\*\*\* | -0.30\*\*\* | -0.30\*\*\* | -0.26\*\*\* |
+| Construction Dummy               |             | X           | X           | X           | X           |
+| Days of Week Fixed Effects       |             | X           | X           | X           | X           |
+| Month Fixed Effects              |             | X           | X           | X           | X           |
+| Temperature, Wind, Humidity      |             |             | X           | X           | X           |
+| Holiday Binary                   |             |             |             | X           | X           |
+| All Other Weather Controls       |             |             |             |             | X           |
+| Clean Air Interstate Rule Binary |             |             |             |             | X           |
 
-### Calculating Station level pollution change
+### Interest Variable - Income
 
-Station-level effect and the p-values
+We hypothesize that lower-income individuals live closer to metro rail
+lines and high-density urban areas, leading to higher PM2.5 exposure.
+Conversely, higher-income individuals likely reside in suburban areas,
+using private transportation and experiencing lower PM2.5 exposure.
+
+The variable “targetvars” stores all the different income brackets from
+the demographics file that was retreieved.
+
+Inserting blocks with buffer
+
+This code chunk examines the demographic distribution and environmental
+benefits of light rail stations in Charlotte, NC. The code processes
+spatial data to:
+
+1.  Calculate the fraction of each income bracket within buffer zones
+    around light rail stations, scaling population data based on the
+    area of overlap between census tracts and buffers.
+2.  Compute changes in pollution levels due to light rail stations,
+    estimating the total impact across all stations. The average
+    pollution reduction for each income bracket is calculated,
+    highlighting the benefits for different demographic groups.
+3.  Present the results in a summary table, showing the average
+    pollution reduction experienced by individuals in each income
+    bracket.
 
 ``` r
+library("tidyverse")
+library("knitr")
+
+df <-read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
+
+df2 <- df %>% mutate(date = as.Date(formatted_date,format = "%Y-%m-%d"))
+
+
+startdate <- as.Date("2003-11-24",format = "%Y-%m-%d")
+
+enddate <- as.Date("2011-11-24",format = "%Y-%m-%d")
+
+opendate <- as.Date("2007-11-24",format = "%Y-%m-%d")
+
+constructionstart <- as.Date("2005-02-26",format = "%Y-%m-%d")
+
+#Clean Air Interstate Rule 
+CAIR <- as.Date("2005-03-10",format = "%Y-%m-%d")
+
+metroOpen_df <- df2 %>% filter(date >= startdate & date<=enddate)%>%
+  mutate(MetroOpen = ifelse(date>=opendate,1,0))%>%
+  mutate(construction = ifelse(date>=constructionstart & date<opendate,1,0))%>%
+  group_by(station_ID)%>%
+  arrange(station_ID,date)%>%
+  mutate(lTair_f_tavg = lag(Tair_f_tavg))%>%
+  mutate(duringCAIR = ifelse(date>=CAIR & date<= enddate,1,0))%>%
+  mutate(lQair_f_tavg = lag(Qair_f_tavg)) %>%
+  mutate(lPsurf_f_tavg = lag(Psurf_f_tavg)) %>%
+  mutate(lWind_f_tavg = lag(Wind_f_tavg)) %>%
+  mutate(t=as.numeric(date-startdate))%>%
+  mutate(t2 = t^2,t3=t^3,t4=t^4)
+
+regression_stats <- summary(m1 <- lm(log(pm25)~MetroOpen:as.factor(station_ID)+construction+as.factor(day_of_week)+as.factor(month) + duringCAIR + Tair_f_tavg + Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + Rainf_tavg + Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + Tair_f_tavg + Rainf_f_tavg + Wind_f_tavg + Qair_f_tavg + Psurf_f_tavg , data = metroOpen_df))
+
 c<- coef(m1)
 len_coef<-length(coef(m1))
 
@@ -650,57 +705,41 @@ kable(cbind(coef, pval), digits=2)
     Warning in cbind(coef, pval): number of rows of result is not a multiple of
     vector length (arg 2)
 
-|                           |        coef | pval |
-|:--------------------------|------------:|-----:|
-| as.factor(month)February  |        0.16 | 0.00 |
-| as.factor(month)January   |        0.12 | 0.00 |
-| as.factor(month)July      |        0.14 | 0.59 |
-| as.factor(month)June      |        0.08 | 0.00 |
-| as.factor(month)March     |        0.05 | 0.00 |
-| as.factor(month)May       |       -0.01 | 0.00 |
-| as.factor(month)November  |        0.11 | 0.59 |
-| as.factor(month)October   |       -0.04 | 0.00 |
-| as.factor(month)September |       -0.01 | 0.00 |
-| Tair_f_tavg               |        0.48 | 0.00 |
-| Swnet_tavg                |        0.01 | 0.59 |
-| Lwnet_tavg                |        0.01 | 0.00 |
-| Qle_tavg                  |       -0.01 | 0.00 |
-| Qh_tavg                   |        0.00 | 0.00 |
-| Snowf_tavg                |  8046323.01 | 0.59 |
-| Rainf_tavg                |  8045056.06 | 0.00 |
-| Qsm_tavg                  |    -8356.70 | 0.00 |
-| SnowT_tavg                |       -0.50 | 0.00 |
-| SWE_tavg                  |       -0.04 | 0.59 |
-| SnowDepth_tavg            |        0.93 | 0.00 |
-| Rainf_f_tavg              | -8045444.34 | 0.00 |
-| Wind_f_tavg               |       -0.16 | 0.00 |
-| Qair_f_tavg               |       30.51 | 0.59 |
-| Psurf_f_tavg              |        0.00 | 0.00 |
-| Parking                   |        0.00 | 0.00 |
-| MetroOpen:Parking         |        0.02 | 0.00 |
-
-### Census Data
-
-Using American Census Survey (ACS) Data
+|                                   |  coef | pval |
+|:----------------------------------|------:|-----:|
+| MetroOpen:as.factor(station_ID)1  | -0.24 |    0 |
+| MetroOpen:as.factor(station_ID)2  | -0.24 |    0 |
+| MetroOpen:as.factor(station_ID)3  | -0.25 |    0 |
+| MetroOpen:as.factor(station_ID)4  | -0.24 |    0 |
+| MetroOpen:as.factor(station_ID)5  | -0.25 |    0 |
+| MetroOpen:as.factor(station_ID)6  | -0.24 |    0 |
+| MetroOpen:as.factor(station_ID)7  | -0.25 |    0 |
+| MetroOpen:as.factor(station_ID)8  | -0.24 |    0 |
+| MetroOpen:as.factor(station_ID)9  | -0.24 |    0 |
+| MetroOpen:as.factor(station_ID)10 | -0.24 |    0 |
+| MetroOpen:as.factor(station_ID)11 | -0.26 |    0 |
+| MetroOpen:as.factor(station_ID)12 | -0.28 |    0 |
+| MetroOpen:as.factor(station_ID)13 | -0.30 |    0 |
+| MetroOpen:as.factor(station_ID)14 | -0.26 |    0 |
+| MetroOpen:as.factor(station_ID)15 | -0.30 |    0 |
+| MetroOpen:as.factor(station_ID)16 | -0.28 |    0 |
+| MetroOpen:as.factor(station_ID)17 | -0.25 |    0 |
+| MetroOpen:as.factor(station_ID)18 | -0.25 |    0 |
+| MetroOpen:as.factor(station_ID)19 | -0.23 |    0 |
+| MetroOpen:as.factor(station_ID)20 | -0.23 |    0 |
+| MetroOpen:as.factor(station_ID)21 | -0.24 |    0 |
+| MetroOpen:as.factor(station_ID)22 | -0.24 |    0 |
+| MetroOpen:as.factor(station_ID)23 | -0.24 |    0 |
+| MetroOpen:as.factor(station_ID)24 | -0.26 |    0 |
+| MetroOpen:as.factor(station_ID)25 | -0.26 |    0 |
+| MetroOpen:as.factor(station_ID)26 | -0.26 |    0 |
 
 ``` r
 vars<-load_variables(year=2010, dataset="acs1", cache = TRUE)
 
 
 write.csv(vars, "demographics_variable_acs.csv")
-```
 
-### Interest Variable - Income
-
-We hypothesize that lower-income individuals live closer to metro rail
-lines and high-density urban areas, leading to higher PM2.5 exposure.
-Conversely, higher-income individuals likely reside in suburban areas,
-using private transportation and experiencing lower PM2.5 exposure.
-
-The variable “targetvars” stores all the different income brackets from
-the demographics file that was retreieved.
-
-``` r
 #vars range from less than 10k to more than 200k
 
 targetvars <- c("B19001_001", "B19001_002", "B19001_003", "B19001_004", "B19001_005", 
@@ -714,8 +753,6 @@ income<-get_acs(geography = "tract", variables=targetvars, state="NC", county="M
     Getting data from the 2006-2010 5-year ACS
 
 ``` r
-#the variables that end in E are the estimates while the ones that end in M tell the margin of error.
-
 income_name<-income %>%
   rename(total = B19001_001E, 
        less_than_10k = B19001_002E, 
@@ -734,20 +771,335 @@ income_name<-income %>%
        `125k_to_150k` = B19001_015E, 
        `150k_to_200k` = B19001_016E, 
        `200k_or_more` = B19001_017E)
-```
 
-### Reading Buffer Files
-
-``` r
 buff<-vect("Buffer Light Rail/new_buffer_light_rail.shp")
 shape<-tigris::tracts(state="NC", county="Mecklenburg", class="sp", year=2010)
-shapevect<-vect(shape)
-shapedf<-as.data.frame(shape)
 ```
 
-### Summary Statistics of Income
+
+      |                                                                            
+      |                                                                      |   0%
+      |                                                                            
+      |                                                                      |   1%
+      |                                                                            
+      |=                                                                     |   1%
+      |                                                                            
+      |=                                                                     |   2%
+      |                                                                            
+      |==                                                                    |   2%
+      |                                                                            
+      |==                                                                    |   3%
+      |                                                                            
+      |===                                                                   |   4%
+      |                                                                            
+      |===                                                                   |   5%
+      |                                                                            
+      |====                                                                  |   5%
+      |                                                                            
+      |====                                                                  |   6%
+      |                                                                            
+      |=====                                                                 |   6%
+      |                                                                            
+      |=====                                                                 |   7%
+      |                                                                            
+      |=====                                                                 |   8%
+      |                                                                            
+      |======                                                                |   8%
+      |                                                                            
+      |======                                                                |   9%
+      |                                                                            
+      |=======                                                               |   9%
+      |                                                                            
+      |=======                                                               |  10%
+      |                                                                            
+      |=======                                                               |  11%
+      |                                                                            
+      |========                                                              |  11%
+      |                                                                            
+      |========                                                              |  12%
+      |                                                                            
+      |=========                                                             |  12%
+      |                                                                            
+      |=========                                                             |  13%
+      |                                                                            
+      |=========                                                             |  14%
+      |                                                                            
+      |==========                                                            |  14%
+      |                                                                            
+      |==========                                                            |  15%
+      |                                                                            
+      |===========                                                           |  15%
+      |                                                                            
+      |===========                                                           |  16%
+      |                                                                            
+      |============                                                          |  16%
+      |                                                                            
+      |============                                                          |  17%
+      |                                                                            
+      |==============                                                        |  19%
+      |                                                                            
+      |==============                                                        |  20%
+      |                                                                            
+      |==============                                                        |  21%
+      |                                                                            
+      |===============                                                       |  21%
+      |                                                                            
+      |===============                                                       |  22%
+      |                                                                            
+      |================                                                      |  22%
+      |                                                                            
+      |================                                                      |  23%
+      |                                                                            
+      |=================                                                     |  24%
+      |                                                                            
+      |=================                                                     |  25%
+      |                                                                            
+      |==================                                                    |  25%
+      |                                                                            
+      |==================                                                    |  26%
+      |                                                                            
+      |===================                                                   |  27%
+      |                                                                            
+      |===================                                                   |  28%
+      |                                                                            
+      |====================                                                  |  28%
+      |                                                                            
+      |====================                                                  |  29%
+      |                                                                            
+      |=====================                                                 |  30%
+      |                                                                            
+      |=====================                                                 |  31%
+      |                                                                            
+      |======================                                                |  31%
+      |                                                                            
+      |======================                                                |  32%
+      |                                                                            
+      |=======================                                               |  32%
+      |                                                                            
+      |=======================                                               |  33%
+      |                                                                            
+      |=======================                                               |  34%
+      |                                                                            
+      |========================                                              |  34%
+      |                                                                            
+      |========================                                              |  35%
+      |                                                                            
+      |=========================                                             |  35%
+      |                                                                            
+      |=========================                                             |  36%
+      |                                                                            
+      |==========================                                            |  36%
+      |                                                                            
+      |==========================                                            |  37%
+      |                                                                            
+      |==========================                                            |  38%
+      |                                                                            
+      |===========================                                           |  38%
+      |                                                                            
+      |===========================                                           |  39%
+      |                                                                            
+      |============================                                          |  39%
+      |                                                                            
+      |============================                                          |  40%
+      |                                                                            
+      |============================                                          |  41%
+      |                                                                            
+      |=============================                                         |  41%
+      |                                                                            
+      |=============================                                         |  42%
+      |                                                                            
+      |==============================                                        |  42%
+      |                                                                            
+      |==============================                                        |  43%
+      |                                                                            
+      |===============================                                       |  44%
+      |                                                                            
+      |===============================                                       |  45%
+      |                                                                            
+      |================================                                      |  45%
+      |                                                                            
+      |================================                                      |  46%
+      |                                                                            
+      |=================================                                     |  47%
+      |                                                                            
+      |=================================                                     |  48%
+      |                                                                            
+      |==================================                                    |  48%
+      |                                                                            
+      |==================================                                    |  49%
+      |                                                                            
+      |===================================                                   |  49%
+      |                                                                            
+      |===================================                                   |  50%
+      |                                                                            
+      |===================================                                   |  51%
+      |                                                                            
+      |====================================                                  |  51%
+      |                                                                            
+      |====================================                                  |  52%
+      |                                                                            
+      |=====================================                                 |  52%
+      |                                                                            
+      |=====================================                                 |  53%
+      |                                                                            
+      |=====================================                                 |  54%
+      |                                                                            
+      |======================================                                |  54%
+      |                                                                            
+      |======================================                                |  55%
+      |                                                                            
+      |=======================================                               |  55%
+      |                                                                            
+      |=======================================                               |  56%
+      |                                                                            
+      |========================================                              |  56%
+      |                                                                            
+      |========================================                              |  57%
+      |                                                                            
+      |========================================                              |  58%
+      |                                                                            
+      |=========================================                             |  58%
+      |                                                                            
+      |=========================================                             |  59%
+      |                                                                            
+      |==========================================                            |  59%
+      |                                                                            
+      |==========================================                            |  60%
+      |                                                                            
+      |==========================================                            |  61%
+      |                                                                            
+      |===========================================                           |  61%
+      |                                                                            
+      |===========================================                           |  62%
+      |                                                                            
+      |============================================                          |  62%
+      |                                                                            
+      |============================================                          |  63%
+      |                                                                            
+      |============================================                          |  64%
+      |                                                                            
+      |=============================================                         |  64%
+      |                                                                            
+      |=============================================                         |  65%
+      |                                                                            
+      |==============================================                        |  65%
+      |                                                                            
+      |==============================================                        |  66%
+      |                                                                            
+      |===============================================                       |  67%
+      |                                                                            
+      |===============================================                       |  68%
+      |                                                                            
+      |================================================                      |  68%
+      |                                                                            
+      |================================================                      |  69%
+      |                                                                            
+      |=================================================                     |  69%
+      |                                                                            
+      |=================================================                     |  70%
+      |                                                                            
+      |=================================================                     |  71%
+      |                                                                            
+      |==================================================                    |  71%
+      |                                                                            
+      |==================================================                    |  72%
+      |                                                                            
+      |===================================================                   |  72%
+      |                                                                            
+      |===================================================                   |  73%
+      |                                                                            
+      |====================================================                  |  74%
+      |                                                                            
+      |====================================================                  |  75%
+      |                                                                            
+      |=====================================================                 |  75%
+      |                                                                            
+      |=====================================================                 |  76%
+      |                                                                            
+      |======================================================                |  76%
+      |                                                                            
+      |======================================================                |  77%
+      |                                                                            
+      |======================================================                |  78%
+      |                                                                            
+      |=======================================================               |  78%
+      |                                                                            
+      |=======================================================               |  79%
+      |                                                                            
+      |========================================================              |  79%
+      |                                                                            
+      |========================================================              |  80%
+      |                                                                            
+      |========================================================              |  81%
+      |                                                                            
+      |=========================================================             |  81%
+      |                                                                            
+      |=========================================================             |  82%
+      |                                                                            
+      |==========================================================            |  82%
+      |                                                                            
+      |==========================================================            |  83%
+      |                                                                            
+      |===========================================================           |  84%
+      |                                                                            
+      |===========================================================           |  85%
+      |                                                                            
+      |============================================================          |  85%
+      |                                                                            
+      |============================================================          |  86%
+      |                                                                            
+      |=============================================================         |  87%
+      |                                                                            
+      |=============================================================         |  88%
+      |                                                                            
+      |==============================================================        |  88%
+      |                                                                            
+      |==============================================================        |  89%
+      |                                                                            
+      |===============================================================       |  89%
+      |                                                                            
+      |===============================================================       |  90%
+      |                                                                            
+      |===============================================================       |  91%
+      |                                                                            
+      |================================================================      |  91%
+      |                                                                            
+      |================================================================      |  92%
+      |                                                                            
+      |=================================================================     |  92%
+      |                                                                            
+      |=================================================================     |  93%
+      |                                                                            
+      |==================================================================    |  94%
+      |                                                                            
+      |==================================================================    |  95%
+      |                                                                            
+      |===================================================================   |  95%
+      |                                                                            
+      |===================================================================   |  96%
+      |                                                                            
+      |====================================================================  |  96%
+      |                                                                            
+      |====================================================================  |  97%
+      |                                                                            
+      |====================================================================  |  98%
+      |                                                                            
+      |===================================================================== |  98%
+      |                                                                            
+      |===================================================================== |  99%
+      |                                                                            
+      |======================================================================|  99%
+      |                                                                            
+      |======================================================================| 100%
+
+    Warning: Spatial* (sp) classes are no longer formally
+    supported in tigris as of version 2.0. We strongly
+    recommend updating your workflow to use sf objects
+    (the default in tigris) instead.
 
 ``` r
+shapevect<-vect(shape)
+shapedf<-as.data.frame(shape)
 tract_income<-merge(shapevect, income_name, by.x="GEOID10", by.y="GEOID")
 
 tract_income$tract_area<-expanse(tract_income, unit="m")
@@ -813,23 +1165,6 @@ summary(tract_income_df)
      Mean   : 70.95   Mean   : 73.91   Mean   : 85.34   Mean   : 6068235  
      3rd Qu.:111.00   3rd Qu.:111.00   3rd Qu.:117.00   3rd Qu.: 6378453  
      Max.   :289.00   Max.   :442.00   Max.   :777.00   Max.   :39492388  
-
-Inserting blocks with buffer
-
-This code chunk examines the demographic distribution and environmental
-benefits of light rail stations in Charlotte, NC. The code processes
-spatial data to:
-
-1.  Calculate the fraction of each income bracket within buffer zones
-    around light rail stations, scaling population data based on the
-    area of overlap between census tracts and buffers.
-2.  Compute changes in pollution levels due to light rail stations,
-    estimating the total impact across all stations. The average
-    pollution reduction for each income bracket is calculated,
-    highlighting the benefits for different demographic groups.
-3.  Present the results in a summary table, showing the average
-    pollution reduction experienced by individuals in each income
-    bracket.
 
 ``` r
 buffdf <- as.data.frame(buff)
@@ -1292,7 +1627,7 @@ kable(final_result,digits = 2)
 
 | total_change_average | less_than_10k_average | 10k_to_15k_average | 15k_to_20k_average | 20k_to_25k_average | 25k_to_30k_average | 30k_to_35k_average | 35k_to_40k_average | 40k_to_45k_average | 45k_to_50k_average | 50k_to_60k_average | 60k_to_75k_average | 75k_to_100k_average | 100k_to_125k_average | 125k_to_150k_average | 150k_to_200k_average | 200k_or_more_average |
 |---------------------:|----------------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|--------------------:|---------------------:|---------------------:|---------------------:|---------------------:|
-|             941794.3 |              723873.7 |           913349.5 |           535128.4 |           631141.9 |           425781.1 |           667596.3 |           858180.4 |           27130.75 |           583608.5 |           630283.2 |            1224778 |             1259106 |              1371636 |              1767583 |              1708899 |              1895423 |
+|                -0.26 |                 -0.25 |              -0.25 |              -0.25 |              -0.25 |              -0.25 |              -0.26 |              -0.25 |              -0.25 |              -0.25 |              -0.25 |              -0.26 |               -0.26 |                -0.26 |                -0.26 |                -0.26 |                -0.27 |
 
 ``` r
 final_result <- reduction_benefit %>%
@@ -1353,12 +1688,10 @@ plot <- ggplot(data = plot_table, aes(x = income_groups, y = V2)) +
 print(plot)
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-23-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-18-1.png)
 
 ``` r
 # dev.off()
-
-#all income groups seem to be getting a similar pollution reduction benefit on the individual level.
 ```
 
 ### **Reduction Benefit in PM2.5 with Factors**
@@ -1432,7 +1765,7 @@ points(x, col = "black", pch = 19, cex = 2)
 points(pm_sources, col = "#B2182B", pch = 17, cex = 2)
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-24-1.png)
+![](README_files/figure-commonmark/unnamed-chunk-19-1.png)
 
 ``` r
 # Plot the buffer around the stations

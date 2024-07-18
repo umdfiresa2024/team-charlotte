@@ -80,6 +80,7 @@ library("maptiles")
 library("leaflet")
 library("tidycensus")
 library("RColorBrewer")
+
 ```
 
 Gathered Data using Google API
@@ -505,26 +506,68 @@ ggplot(df3, aes(x = date, y = mean_pm25, color = before_after))+
 
 DB-OLS Regression Table
 
- 
+**Log(PM2.5)**
 
-|                                  |             |
-|----------------------------------|-------------|
-|                                  | Log(PM2.5)  |
-| Factors                          | \(1\)       |
-| MetroOpen                        | -0.26\*\*\* |
-| Construction Dummy               |             |
-| Day of Week Fixed Effects        |             |
-| Month Fixed Effects              |             |
-| Temperature, Wind, Humidity      |             |
-| Holiday Binary                   |             |
-| All Other Weather Controls       |             |
-| Clean Air Interstate Rule Binary |             |
+| Factors                          | \(1\)       | \(2\)       | \(3\)       | \(4\)       | \(5\)       |
+|--------------------|---------|---------|---------|---------|---------|
+| MetroOpen                        | -0.26\*\*\* | -0.31\*\*\* | -0.30\*\*\* | -0.30\*\*\* | -0.26\*\*\* |
+| Construction Dummy               |             | X           | X           | X           | X           |
+| Days of Week Fixed Effects       |             | X           | X           | X           | X           |
+| Month Fixed Effects              |             | X           | X           | X           | X           |
+| Temperature, Wind, Humidity      |             |             | X           | X           | X           |
+| Holiday Binary                   |             |             |             | X           | X           |
+| All Other Weather Controls       |             |             |             |             | X           |
+| Clean Air Interstate Rule Binary |             |             |             |             | X           |
 
-### Calculating Station level pollution change
+### Interest Variable - Income
 
-Station-level effect and the p-values
+We hypothesize that lower-income individuals live closer to metro rail lines and high-density urban areas, leading to higher PM2.5 exposure. Conversely, higher-income individuals likely reside in suburban areas, using private transportation and experiencing lower PM2.5 exposure.
+
+The variable "targetvars" stores all the different income brackets from the demographics file that was retreieved.
+
+Inserting blocks with buffer
+
+This code chunk examines the demographic distribution and environmental benefits of light rail stations in Charlotte, NC. The code processes spatial data to:
+
+1.  Calculate the fraction of each income bracket within buffer zones around light rail stations, scaling population data based on the area of overlap between census tracts and buffers.
+2.  Compute changes in pollution levels due to light rail stations, estimating the total impact across all stations. The average pollution reduction for each income bracket is calculated, highlighting the benefits for different demographic groups.
+3.  Present the results in a summary table, showing the average pollution reduction experienced by individuals in each income bracket.
 
 ```{r}
+library("tidyverse")
+library("knitr")
+
+df <-read.csv("station_pm_met_holiday_dataCombined_formatted.csv")
+
+df2 <- df %>% mutate(date = as.Date(formatted_date,format = "%Y-%m-%d"))
+
+
+startdate <- as.Date("2003-11-24",format = "%Y-%m-%d")
+
+enddate <- as.Date("2011-11-24",format = "%Y-%m-%d")
+
+opendate <- as.Date("2007-11-24",format = "%Y-%m-%d")
+
+constructionstart <- as.Date("2005-02-26",format = "%Y-%m-%d")
+
+#Clean Air Interstate Rule 
+CAIR <- as.Date("2005-03-10",format = "%Y-%m-%d")
+
+metroOpen_df <- df2 %>% filter(date >= startdate & date<=enddate)%>%
+  mutate(MetroOpen = ifelse(date>=opendate,1,0))%>%
+  mutate(construction = ifelse(date>=constructionstart & date<opendate,1,0))%>%
+  group_by(station_ID)%>%
+  arrange(station_ID,date)%>%
+  mutate(lTair_f_tavg = lag(Tair_f_tavg))%>%
+  mutate(duringCAIR = ifelse(date>=CAIR & date<= enddate,1,0))%>%
+  mutate(lQair_f_tavg = lag(Qair_f_tavg)) %>%
+  mutate(lPsurf_f_tavg = lag(Psurf_f_tavg)) %>%
+  mutate(lWind_f_tavg = lag(Wind_f_tavg)) %>%
+  mutate(t=as.numeric(date-startdate))%>%
+  mutate(t2 = t^2,t3=t^3,t4=t^4)
+
+regression_stats <- summary(m1 <- lm(log(pm25)~MetroOpen:as.factor(station_ID)+construction+as.factor(day_of_week)+as.factor(month) + duringCAIR + Tair_f_tavg + Swnet_tavg + Lwnet_tavg + Qle_tavg + Qh_tavg + Snowf_tavg + Rainf_tavg + Qsm_tavg + SnowT_tavg + SWE_tavg + SnowDepth_tavg + Tair_f_tavg + Rainf_f_tavg + Wind_f_tavg + Qair_f_tavg + Psurf_f_tavg , data = metroOpen_df))
+
 c<- coef(m1)
 len_coef<-length(coef(m1))
 
@@ -535,26 +578,14 @@ coef<-coef(m1)[(len_coef-(26-1)): len_coef]
 pval<-summary(m1)$coefficients[,4][(len_coef-3): len_coef]
 
 kable(cbind(coef, pval), digits=2)
-```
 
-### Census Data
 
-Using American Census Survey (ACS) Data
 
-```{r}
 vars<-load_variables(year=2010, dataset="acs1", cache = TRUE)
 
 
 write.csv(vars, "demographics_variable_acs.csv")
-```
 
-### Interest Variable - Income
-
-We hypothesize that lower-income individuals live closer to metro rail lines and high-density urban areas, leading to higher PM2.5 exposure. Conversely, higher-income individuals likely reside in suburban areas, using private transportation and experiencing lower PM2.5 exposure.
-
-The variable "targetvars" stores all the different income brackets from the demographics file that was retreieved.
-
-```{r}
 #vars range from less than 10k to more than 200k
 
 targetvars <- c("B19001_001", "B19001_002", "B19001_003", "B19001_004", "B19001_005", 
@@ -564,7 +595,7 @@ targetvars <- c("B19001_001", "B19001_002", "B19001_003", "B19001_004", "B19001_
 
 income<-get_acs(geography = "tract", variables=targetvars, state="NC", county="Mecklenburg", output="wide", year = 2010) %>% select(-ends_with("M"))
 
-#the variables that end in E are the estimates while the ones that end in M tell the margin of error.
+
 
 income_name<-income %>%
   rename(total = B19001_001E, 
@@ -584,21 +615,11 @@ income_name<-income %>%
        `125k_to_150k` = B19001_015E, 
        `150k_to_200k` = B19001_016E, 
        `200k_or_more` = B19001_017E)
-```
 
-### Reading Buffer Files
-
-```{r}
-#| output: false
 buff<-vect("Buffer Light Rail/new_buffer_light_rail.shp")
 shape<-tigris::tracts(state="NC", county="Mecklenburg", class="sp", year=2010)
 shapevect<-vect(shape)
 shapedf<-as.data.frame(shape)
-```
-
-### Summary Statistics of Income
-
-```{r}
 tract_income<-merge(shapevect, income_name, by.x="GEOID10", by.y="GEOID")
 
 tract_income$tract_area<-expanse(tract_income, unit="m")
@@ -606,17 +627,6 @@ tract_income$tract_area<-expanse(tract_income, unit="m")
 tract_income_df<-as.data.frame(tract_income)
 
 summary(tract_income_df)
-```
-
-Inserting blocks with buffer
-
-This code chunk examines the demographic distribution and environmental benefits of light rail stations in Charlotte, NC. The code processes spatial data to:
-
-1.  Calculate the fraction of each income bracket within buffer zones around light rail stations, scaling population data based on the area of overlap between census tracts and buffers.
-2.  Compute changes in pollution levels due to light rail stations, estimating the total impact across all stations. The average pollution reduction for each income bracket is calculated, highlighting the benefits for different demographic groups.
-3.  Present the results in a summary table, showing the average pollution reduction experienced by individuals in each income bracket.
-
-```{r}
 buffdf <- as.data.frame(buff)
 
 output <- c()
@@ -904,7 +914,6 @@ plot <- ggplot(data = plot_table, aes(x = income_groups, y = V2)) +
 print(plot)
 # dev.off()
 
-#all income groups seem to be getting a similar pollution reduction benefit on the individual level.
   
 ```
 
