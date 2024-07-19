@@ -74,10 +74,8 @@ editor: visual
 #| warning: false
 #| message: false
 library("tidyverse")
-library("ggmap")
 library("terra")
 library("maptiles")
-library("leaflet")
 library("tidycensus")
 library("RColorBrewer")
 
@@ -509,7 +507,7 @@ DB-OLS Regression Table
 **Log(PM2.5)**
 
 | Factors                          | \(1\)       | \(2\)       | \(3\)       | \(4\)       | \(5\)       |
-|--------------------|---------|---------|---------|---------|---------|
+|---------------|------------|------------|------------|------------|------------|
 | MetroOpen                        | -0.26\*\*\* | -0.31\*\*\* | -0.30\*\*\* | -0.30\*\*\* | -0.26\*\*\* |
 | Construction Dummy               |             | X           | X           | X           | X           |
 | Days of Week Fixed Effects       |             | X           | X           | X           | X           |
@@ -615,9 +613,17 @@ income_name<-income %>%
        `125k_to_150k` = B19001_015E, 
        `150k_to_200k` = B19001_016E, 
        `200k_or_more` = B19001_017E)
+```
+
+```{r}
+#| message: false
+#| warning: false
 
 buff<-vect("Buffer Light Rail/new_buffer_light_rail.shp")
-shape<-tigris::tracts(state="NC", county="Mecklenburg", class="sp", year=2010)
+shape<-tigris::tracts(state="NC", county="Mecklenburg", 
+                      class="sp", 
+                      year=2010,
+                      progress_bar = FALSE)
 shapevect<-vect(shape)
 shapedf<-as.data.frame(shape)
 tract_income<-merge(shapevect, income_name, by.x="GEOID10", by.y="GEOID")
@@ -626,13 +632,11 @@ tract_income$tract_area<-expanse(tract_income, unit="m")
 
 tract_income_df<-as.data.frame(tract_income)
 
-summary(tract_income_df)
 buffdf <- as.data.frame(buff)
 
 output <- c()
 
 for(i in 0:25){
-  print(i)
 
 buff2 <- subset(buff,buff$FID ==i)
 
@@ -715,8 +719,6 @@ intdf<-as.data.frame(int)%>%
     )%>% mutate(FID = i)
 output <- rbind(output,intdf)
 }
-  
-  output
   
 sum_demog<-output %>%
   #combinging all the station's data together
@@ -914,7 +916,6 @@ plot <- ggplot(data = plot_table, aes(x = income_groups, y = V2)) +
 print(plot)
 # dev.off()
 
-  
 ```
 
 ### **Reduction Benefit in PM2.5 with Factors**
